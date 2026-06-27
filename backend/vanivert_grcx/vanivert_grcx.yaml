@@ -1,0 +1,54 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# VANIVERT — grcx configuration
+# Sovereign French regulatory radar for PME compliance
+# Usage: grcx watch --config vanivert_grcx.yaml
+# ═══════════════════════════════════════════════════════════════════════════
+
+sentinels:
+  regulatory:
+    # French regulators
+    - type: rss
+      url: https://www.impots.gouv.fr/portail/files/media/2_professionnel/rss_pro.xml
+      jurisdiction: DGFIP
+
+    - type: rss
+      url: https://www.cnil.fr/fr/rss.xml
+      jurisdiction: CNIL
+
+    - type: rss
+      url: https://www.amf-france.org/fr/rss-actualites
+      jurisdiction: AMF
+
+    - type: rss
+      url: https://acpr.banque-france.fr/liste-actualite/rss.xml
+      jurisdiction: ACPR
+
+    - type: rss
+      url: https://www.arcep.fr/rss-actualites.xml
+      jurisdiction: ARCEP
+
+    # EU regulators (already in grcx upstream)
+    - type: rss
+      url: https://www.esma.europa.eu/rss.xml
+      jurisdiction: ESMA
+
+controls:
+  frameworks:
+    - vanivert_fr    # Our custom French framework (drop in grcx/controls/frameworks/)
+    - iso27001       # Information security
+    - dora           # Digital operational resilience (EU)
+
+resolver:
+  llm: claude-haiku-4-5-20251001   # Anthropic API — set ANTHROPIC_API_KEY
+  # Fallback to local Mistral if no API key (EU-sovereign):
+  # llm: mistral        # requires: OLLAMA_HOST=http://localhost:11434
+  auto_remediate: notify_only
+
+audit:
+  output: ./vanivert-audit/
+  sign: false
+
+# ── Vanivert alert webhook ────────────────────────────────────────────────
+# When grcx detects a critical or warning event, it POSTs to this webhook
+# which triggers n8n to email the affected Vanivert clients.
+# Set VANIVERT_WEBHOOK_URL env var in production.

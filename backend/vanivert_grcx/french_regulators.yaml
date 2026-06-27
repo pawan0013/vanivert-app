@@ -1,0 +1,40 @@
+# Vanivert extension for grcx — French regulatory sources
+# Drop this file alongside grcx.yaml and extend the sentinels list
+
+sentinels:
+  regulatory:
+    # ── DGFiP — e-facturation mandate updates ────────────────────────────
+    - type: rss
+      url: https://www.impots.gouv.fr/portail/files/media/2_professionnel/rss_pro.xml
+      jurisdiction: DGFIP
+      label: "DGFiP — Professionnels"
+
+    # ── CNIL — GDPR enforcement & data protection ────────────────────────
+    - type: rss
+      url: https://www.cnil.fr/fr/rss.xml
+      jurisdiction: CNIL
+      label: "CNIL — Délibérations & Sanctions"
+
+    # ── AMF — Financial markets regulator ────────────────────────────────
+    - type: rss
+      url: https://www.amf-france.org/fr/rss-actualites
+      jurisdiction: AMF
+      label: "AMF — Actualités réglementaires"
+
+    # ── ACPR — Banking & insurance prudential regulator ──────────────────
+    - type: rss
+      url: https://acpr.banque-france.fr/liste-actualite/rss.xml
+      jurisdiction: ACPR
+      label: "ACPR — Publications prudentielles"
+
+    # ── ARCEP — Telecom & voice AI operator regulator ────────────────────
+    - type: rss
+      url: https://www.arcep.fr/rss-actualites.xml
+      jurisdiction: ARCEP
+      label: "ARCEP — Décisions opérateurs"
+
+    # ── Légifrance — Official French law gazette ─────────────────────────
+    - type: rss
+      url: https://www.legifrance.gouv.fr/rss/jorf.xml
+      jurisdiction: LEGIFRANCE
+      label: "Journal Officiel — Textes réglementaires"

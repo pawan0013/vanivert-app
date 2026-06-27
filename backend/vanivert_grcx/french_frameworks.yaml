@@ -1,0 +1,125 @@
+# Vanivert French Compliance Framework
+# Maps DGFiP e-invoicing, RGPD, Loi Pacte, Code du Commerce obligations
+# to auditable controls — drop in grcx/controls/frameworks/
+
+id: vanivert_fr
+name: "Vanivert — Conformité Française PME"
+version: "1.0.0"
+jurisdiction: FR
+description: >
+  Framework de conformité pour les PME françaises intégrant la réforme
+  e-facturation DGFiP 2026, le RGPD, la Loi Pacte, et le Code du Commerce.
+
+controls:
+  # ── E-Facturation DGFiP (PLF 2026) ──────────────────────────────────────
+  - id: FR-EFACT-001
+    category: "E-Facturation DGFiP"
+    description: >
+      Chaque entreprise assujettie à la TVA doit être enrôlée dans l'annuaire
+      centralisé DGFiP et connectée à une Plateforme Agréée (PA) ou PDP avant
+      le 1er septembre 2026.
+    deadline: "2026-09-01"
+    penalty: "50 EUR par facture non conforme, plafond 15 000 EUR/an"
+
+  - id: FR-EFACT-002
+    category: "E-Facturation DGFiP"
+    description: >
+      Les factures doivent être transmises en format structuré : Factur-X
+      (PDF/A-3 + CII XML), UBL 2.1, ou CII. Les PDF simples ne sont plus
+      acceptés entre assujettis à la TVA.
+
+  - id: FR-EFACT-003
+    category: "E-Facturation DGFiP"
+    description: >
+      Statuts de cycle de vie obligatoires : Déposée, Rejetée, Refusée,
+      Encaissée — doivent être retournés en temps réel au système source.
+
+  - id: FR-EFACT-004
+    category: "E-Facturation DGFiP"
+    description: >
+      E-reporting obligatoire pour transactions B2C et B2B internationales.
+      Les données de transaction et de paiement doivent être déclarées
+      séparément du flux e-invoicing.
+
+  - id: FR-EFACT-005
+    category: "E-Facturation DGFiP"
+    description: >
+      Conservation des factures électroniques pendant 10 ans minimum
+      (CGI Art. 54). Archivage avec piste d'audit infalsifiable.
+
+  # ── CIUS-FR Validation ───────────────────────────────────────────────────
+  - id: FR-CIUS-001
+    category: "CIUS-FR"
+    description: >
+      SIRET vendeur (BT-4) : 14 chiffres, valide selon l'algorithme de Luhn.
+      Vérification en temps réel via l'API SIRENE INSEE.
+
+  - id: FR-CIUS-002
+    category: "CIUS-FR"
+    description: >
+      Numéro de TVA intracommunautaire (BT-31) obligatoire pour toute
+      transaction B2B assujettie. Format : FR + 11 caractères.
+
+  - id: FR-CIUS-003
+    category: "CIUS-FR"
+    description: >
+      Cohérence mathématique : la somme des lignes de facture doit être
+      égale au total avec une tolérance de 0,01 EUR maximum.
+
+  # ── RGPD ─────────────────────────────────────────────────────────────────
+  - id: FR-RGPD-001
+    category: "RGPD"
+    description: >
+      Registre des activités de traitement maintenu et accessible à la CNIL
+      sur demande (RGPD Art. 30). Mise à jour à chaque nouveau traitement.
+
+  - id: FR-RGPD-002
+    category: "RGPD"
+    description: >
+      DPA (Data Processing Agreement) signé avec chaque sous-traitant
+      (RGPD Art. 28). Hébergement données sensibles en UE uniquement.
+
+  - id: FR-RGPD-003
+    category: "RGPD"
+    description: >
+      Consentement vocal explicite (pression touche 1) pour tout enregistrement
+      d'appel. Log horodaté par session. Suppression automatique J+30.
+
+  - id: FR-RGPD-004
+    category: "RGPD"
+    description: >
+      Notification de violation à la CNIL dans les 72h (RGPD Art. 33).
+      Notification aux personnes concernées si risque élevé (Art. 34).
+
+  # ── ARCEP — IA Vocale ────────────────────────────────────────────────────
+  - id: FR-ARCEP-001
+    category: "ARCEP"
+    description: >
+      Déclaration d'opérateur ARCEP obligatoire avant tout déploiement
+      commercial d'un service de réception vocale automatisé.
+
+  - id: FR-ARCEP-002
+    category: "ARCEP"
+    description: >
+      Annonce obligatoire en début d'appel : information de l'appelant
+      qu'il interagit avec un système automatisé (non-contournable).
+
+  # ── Code du Commerce ─────────────────────────────────────────────────────
+  - id: FR-CDC-001
+    category: "Code du Commerce"
+    description: >
+      Mentions obligatoires sur les factures (L441-9) : SIREN, forme juridique,
+      capital, RCS, conditions de paiement, pénalités de retard.
+
+  - id: FR-CDC-002
+    category: "Code du Commerce"
+    description: >
+      Délais de paiement légaux (L441-10) : 30 jours règle générale,
+      60 jours date de facture, 45 jours fin de mois. Pénalités automatiques.
+
+  # ── Loi Pacte ────────────────────────────────────────────────────────────
+  - id: FR-PACTE-001
+    category: "Loi Pacte"
+    description: >
+      Obligation de référencement dans le registre national des entreprises
+      (RNE) pour toute entité commerciale. Données à jour.
