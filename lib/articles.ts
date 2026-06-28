@@ -1,0 +1,43 @@
+// lib/articles.ts — single source of truth for all blog articles
+
+export const ARTICLES = [
+  {
+    slug: 'e-facturation-2026-guide-bretagne',
+    title: 'E-facturation 2026 : le guide complet pour les entreprises de Bretagne',
+    excerpt: "Tout ce que les PME et TPE des Côtes d'Armor doivent savoir avant le 1er septembre 2026. Calendrier, obligations, sanctions et solutions concrètes.",
+    category: 'Conformité',
+    categoryColor: '#1F49B0',
+    date: '27 juin 2026',
+    readTime: '8 min',
+    image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&auto=format&fit=crop&q=80',
+    imageAlt: 'Factures et documents comptables sur un bureau professionnel',
+    stat: '15 000 €',
+    statLabel: 'amende maximale',
+  },
+  {
+    slug: 'appels-manques-artisans-bretagne',
+    title: 'Artisans : combien perdez-vous par an à cause des appels manqués ?',
+    excerpt: "Un plombier à Lannion qui rate 3 appels par jour perd en moyenne 18 000 euros de chiffre d'affaires annuel. Le calcul qui fait froid dans le dos.",
+    category: 'IA Vocale',
+    categoryColor: '#7C3AED',
+    date: '27 juin 2026',
+    readTime: '5 min',
+    image: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=1200&auto=format&fit=crop&q=80',
+    imageAlt: 'Artisan plombier au travail, téléphone manqué',
+    stat: '18 000 €',
+    statLabel: 'perdus par an',
+  },
+  {
+    slug: 'annuaire-centralise-dgfip-piege',
+    title: "L'annuaire centralisé DGFiP : le piège que 90 % des PME ne voient pas venir",
+    excerpt: "Signer avec une plateforme agréée ne suffit pas. L'enrôlement dans l'annuaire centralisé prend 2 à 4 semaines — les entreprises qui attendent août rateront le 1er septembre.",
+    category: 'Conformité',
+    categoryColor: '#D97706',
+    date: '27 juin 2026',
+    readTime: '6 min',
+    image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=1200&auto=format&fit=crop&q=80',
+    imageAlt: 'Calendrier avec date butoir marquée, délai réglementaire',
+    stat: '90 %',
+    statLabel: 'des PME ignorent ce piège',
+  },
+]
