@@ -62,7 +62,7 @@ const T = {
     ctaH:'Commencez gratuitement.',
     ctaP:'Vérifiez votre conformité en 2 minutes. Aucune carte bancaire requise.',
     ctaBtn:'Calculer mon risque →',
-    nav:['Smart CFO','Conformité','Réception vocale','Tarifs','Intégrations','Contact'],
+    nav:['Smart CFO','Conformité','Réception vocale','Tarifs','Blog','Contact'],
     popular:'Populaire', month:'/mois HT', start:'Commencer',
     noCommit:'Pas d\'engagement. Résiliable à tout moment.',
     custom:'Offre sur mesure?',
@@ -120,7 +120,7 @@ const T = {
     ctaH:'Start for free.',
     ctaP:'Check your compliance in 2 minutes. No credit card required.',
     ctaBtn:'Calculate my risk →',
-    nav:['Smart CFO','Compliance','Voice Reception','Pricing','Integrations','Contact'],
+    nav:['Smart CFO','Compliance','Voice Reception','Pricing','Blog','Contact'],
     popular:'Popular', month:'/mo ex.VAT', start:'Get started',
     noCommit:'No commitment. Cancel anytime.',
     custom:'Custom offer?',
@@ -234,7 +234,7 @@ function Nav({t,lang,setLang}:{t:typeof T.fr,lang:'fr'|'en',setLang:(l:'fr'|'en'
           </a>
           <ul style={{display:'flex',gap:22,listStyle:'none',alignItems:'center',margin:0,padding:0}} className="nav-links">
             {t.nav.map((l,i)=>(
-              <li key={l}><a href={`#${['cfo','conformite','voice','tarifs','integrations','contact'][i]}`}
+              <li key={l}><a href={`${['#cfo','#conformite','#voice','#tarifs','/blog','#contact'][i]}`}
                 style={{fontSize:13,color:C.g,textDecoration:'none',fontWeight:500,transition:`color 0.2s cubic-bezier(${E.join(',')})`}}
                 onMouseEnter={e=>(e.currentTarget.style.color=C.ink)}
                 onMouseLeave={e=>(e.currentTarget.style.color=C.g)}>{l}</a></li>
@@ -248,6 +248,12 @@ function Nav({t,lang,setLang}:{t:typeof T.fr,lang:'fr'|'en',setLang:(l:'fr'|'en'
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=C.lt;(e.currentTarget as HTMLElement).style.color=C.g}}>
               {t.langSwitch}
             </button>
+            {/* Dashboard */}
+            <a href="/dashboard" style={{fontSize:13,fontWeight:600,color:C.g,textDecoration:'none',padding:'7px 14px',borderRadius:980,transition:'all 0.2s',border:`1px solid transparent`}}
+              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.color=C.ink;(e.currentTarget as HTMLElement).style.borderColor=C.lt}}
+              onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.color=C.g;(e.currentTarget as HTMLElement).style.borderColor='transparent'}}>
+              Dashboard
+            </a>
             {/* Login */}
             <a href="/login" style={{fontSize:13,fontWeight:600,color:C.g,textDecoration:'none',padding:'7px 14px',borderRadius:980,transition:'all 0.2s',border:`1px solid transparent`}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.color=C.ink;(e.currentTarget as HTMLElement).style.borderColor=C.lt}}
@@ -273,7 +279,7 @@ function Nav({t,lang,setLang}:{t:typeof T.fr,lang:'fr'|'en',setLang:(l:'fr'|'en'
             style={{position:'fixed',inset:0,background:C.w,zIndex:300,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:32}}>
             <button onClick={()=>setOpen(false)} style={{position:'absolute',top:24,right:24,fontSize:28,color:C.g,background:'none',border:'none',cursor:'pointer'}}>×</button>
             {t.nav.map((l,i)=>(
-              <motion.a key={l} href={`#${['cfo','conformite','voice','tarifs','integrations','contact'][i]}`}
+              <motion.a key={l} href={`${['#cfo','#conformite','#voice','#tarifs','/blog','#contact'][i]}`}
                 onClick={()=>setOpen(false)}
                 initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:i*0.06,ease:E}}
                 style={{fontSize:22,fontWeight:700,color:C.ink,textDecoration:'none',letterSpacing:'-0.03em'}}>{l}</motion.a>
@@ -714,21 +720,21 @@ export default function Home() {
             </div>
             <div style={{display:'flex',flexWrap:'wrap' as const,gap:48}}>
               {(lang==='fr'?[
-                {h:'Produit',ls:['Smart CFO','Conformité','Réception vocale','Tarifs','Intégrations']},
-                {h:'Ressources',ls:['Blog','Calculateur','Documentation','Contact','Statut système']},
-                {h:'Légal',ls:['Mentions légales','CGV','CGU','Confidentialité','DPA RGPD']},
+                {h:'Produit',ls:[{l:'Smart CFO',u:'#cfo'},{l:'Conformité',u:'#conformite'},{l:'Réception vocale',u:'#voice'},{l:'Tarifs',u:'#tarifs'},{l:'Intégrations',u:'#integrations'},{l:'Dashboard',u:'/dashboard'}]},
+                {h:'Ressources',ls:[{l:'Blog',u:'/blog'},{l:'Calculateur',u:'/calculateur'},{l:'Documentation',u:'/blog'},{l:'Contact',u:'#contact'},{l:'Statut système',u:'#'}]},
+                {h:'Légal',ls:[{l:'Mentions légales',u:'/legal/mentions-legales'},{l:'CGV',u:'/legal/cgv'},{l:'CGU',u:'/legal/cgv'},{l:'Confidentialité',u:'/legal/confidentialite'},{l:'DPA RGPD',u:'/legal/confidentialite'}]},
               ]:[
-                {h:'Product',ls:['Smart CFO','Compliance','Voice Reception','Pricing','Integrations']},
-                {h:'Resources',ls:['Blog','Calculator','Documentation','Contact','System Status']},
-                {h:'Legal',ls:['Legal Notice','Terms','Privacy Policy','GDPR DPA','Security']},
+                {h:'Product',ls:[{l:'Smart CFO',u:'#cfo'},{l:'Compliance',u:'#conformite'},{l:'Voice Reception',u:'#voice'},{l:'Pricing',u:'#tarifs'},{l:'Integrations',u:'#integrations'},{l:'Dashboard',u:'/dashboard'}]},
+                {h:'Resources',ls:[{l:'Blog',u:'/blog'},{l:'Calculator',u:'/calculateur'},{l:'Documentation',u:'/blog'},{l:'Contact',u:'#contact'},{l:'System Status',u:'#'}]},
+                {h:'Legal',ls:[{l:'Legal Notice',u:'/legal/mentions-legales'},{l:'Terms',u:'/legal/cgv'},{l:'Privacy Policy',u:'/legal/confidentialite'},{l:'GDPR DPA',u:'/legal/confidentialite'},{l:'Security',u:'/legal/confidentialite'}]},
               ]).map(col=>(
                 <div key={col.h}>
                   <h4 style={{fontSize:10,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase' as const,fontFamily:'monospace',color:'rgba(255,255,255,0.2)',marginBottom:14,marginTop:0}}>{col.h}</h4>
                   <ul style={{listStyle:'none',padding:0,margin:0,display:'flex',flexDirection:'column' as const,gap:9}}>
-                    {col.ls.map(l=>(
-                      <li key={l}><a href="#" style={{fontSize:13,color:'rgba(255,255,255,0.4)',textDecoration:'none',transition:'color 0.2s'}}
+                    {col.ls.map((item:{l:string,u:string})=>(
+                      <li key={item.l}><a href={item.u} style={{fontSize:13,color:'rgba(255,255,255,0.4)',textDecoration:'none',transition:'color 0.2s'}}
                         onMouseEnter={e=>(e.currentTarget.style.color='#fff')}
-                        onMouseLeave={e=>(e.currentTarget.style.color='rgba(255,255,255,0.4)')}>{l}</a></li>
+                        onMouseLeave={e=>(e.currentTarget.style.color='rgba(255,255,255,0.4)')}>{item.l}</a></li>
                     ))}
                   </ul>
                 </div>
@@ -736,8 +742,12 @@ export default function Home() {
             </div>
           </div>
           <div style={{borderTop:'1px solid rgba(255,255,255,0.07)',paddingTop:24,display:'flex',flexWrap:'wrap' as const,justifyContent:'space-between',alignItems:'center',gap:14}}>
-            <div style={{fontSize:11,fontFamily:'monospace',color:'rgba(255,255,255,0.18)'}}>
-              © 2026 Vanivert. {lang==='fr'?'Tous droits réservés':'All rights reserved'}. SIRET : en cours · contact@vanivert.fr · vanivert.fr · vanivert.eu
+            <div style={{fontSize:11,fontFamily:'monospace',color:'rgba(255,255,255,0.18)',display:'flex',gap:12,flexWrap:'wrap' as const,alignItems:'center'}}>
+              <span>© 2026 Vanivert. SIRET : en cours</span>
+              <a href="mailto:contact@vanivert.fr" style={{color:'rgba(255,255,255,0.35)',textDecoration:'none'}}>contact@vanivert.fr</a>
+              <a href="https://vanivert.fr" style={{color:'rgba(255,255,255,0.35)',textDecoration:'none'}}>vanivert.fr</a>
+              <a href="/legal/mentions-legales" style={{color:'rgba(255,255,255,0.35)',textDecoration:'none'}}>Mentions légales</a>
+              <a href="/legal/confidentialite" style={{color:'rgba(255,255,255,0.35)',textDecoration:'none'}}>Confidentialité</a>
             </div>
             <div style={{display:'flex',gap:7,flexWrap:'wrap' as const}}>
               {['RGPD','EU Hosted','Hetzner DE','Supabase IE'].map(b=>(
@@ -751,7 +761,7 @@ export default function Home() {
       </footer>
 
       {/* WhatsApp FAB */}
-      <a href="https://wa.me/33XXXXXXXXX" target="_blank" rel="noopener" aria-label="WhatsApp"
+      <a href="https://wa.me/33XXXXXXXXX" aria-label="WhatsApp Vanivert" target="_blank" rel="noopener" aria-label="WhatsApp"
         style={{position:'fixed',bottom:32,right:28,zIndex:400,width:52,height:52,borderRadius:'50%',background:'#25D366',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 20px rgba(37,211,102,0.4)',transition:`transform 0.4s cubic-bezier(${EP.join(',')})`,textDecoration:'none'}}
         onMouseEnter={e=>(e.currentTarget.style.transform='scale(1.1)')}
         onMouseLeave={e=>(e.currentTarget.style.transform='scale(1)')}>
