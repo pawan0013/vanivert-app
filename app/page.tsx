@@ -196,6 +196,93 @@ function Dash({t}:{t:typeof T.fr}) {
   )
 }
 
+/* ─── AUDIO DEMO WIDGET ─── */
+function AudioDemo({t}:{t:typeof T.fr}) {
+  const [playing,setPlaying]=useState(false)
+  const [progress,setProgress]=useState(0)
+  const timerRef=typeof window!=='undefined'?{current:null as ReturnType<typeof setInterval>|null}:{current:null}
+
+  function toggle() {
+    if(playing){
+      setPlaying(false)
+      setProgress(0)
+      if(timerRef.current) clearInterval(timerRef.current)
+      return
+    }
+    setPlaying(true)
+    setProgress(0)
+    let p=0
+    timerRef.current=setInterval(()=>{
+      p+=1
+      setProgress(p)
+      if(p>=100){
+        clearInterval(timerRef.current!)
+        setPlaying(false)
+        setProgress(0)
+      }
+    },47) // ~4.7 seconds total
+  }
+
+  const script=t===T.fr
+    ? ["Bonjour, cabinet Dr. Martin.", "Comment puis-je vous aider ?", "Je souhaite prendre rendez-vous.", "Bien sûr. Lundi à 14h ou mardi à 10h ?", "Lundi 14h, parfait.", "C'est confirmé. À lundi !"]
+    : ["Hello, Dr. Martin's practice.", "How can I help you?", "I'd like to book an appointment.", "Monday 2pm or Tuesday 10am?", "Monday 2pm please.", "Confirmed. See you Monday!"]
+
+  const step=Math.min(Math.floor(progress/17),script.length-1)
+
+  return (
+    <div style={{maxWidth:340,margin:'0 auto',background:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:20,padding:'20px 24px'}}>
+      <div style={{fontSize:10,fontFamily:'monospace',letterSpacing:'0.12em',textTransform:'uppercase' as const,color:'rgba(255,255,255,0.3)',marginBottom:12}}>
+        {t===T.fr?'Démo IA vocale en direct':'Live voice AI demo'}
+      </div>
+      <div style={{minHeight:56,marginBottom:16}}>
+        {playing ? (
+          <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+            <div style={{width:28,height:28,borderRadius:'50%',flexShrink:0,
+              background:step%2===0?'rgba(37,99,235,0.3)':'rgba(255,255,255,0.1)',
+              display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,marginTop:2}}>
+              {step%2===0?'🤖':'👤'}
+            </div>
+            <div style={{fontSize:14,color:'rgba(255,255,255,0.85)',lineHeight:1.5,fontStyle:'italic'}}>
+              "{script[step]}"
+            </div>
+          </div>
+        ) : (
+          <div style={{fontSize:13,color:'rgba(255,255,255,0.4)',lineHeight:1.6}}>
+            {t===T.fr
+              ? 'Simulez un appel entrant sur un cabinet médical — entendu par nos clients chaque jour.'
+              : 'Simulate an incoming call to a medical practice — heard by our clients every day.'}
+          </div>
+        )}
+      </div>
+      {playing && (
+        <div style={{marginBottom:12}}>
+          <div style={{height:3,borderRadius:2,background:'rgba(255,255,255,0.1)',overflow:'hidden'}}>
+            <div style={{height:'100%',borderRadius:2,background:C.b,
+              width:`${progress}%`,transition:'width 0.1s linear'}}/>
+          </div>
+        </div>
+      )}
+      <button onClick={toggle}
+        style={{width:'100%',padding:'11px',borderRadius:12,border:'none',cursor:'pointer',
+          background:playing?'rgba(239,68,68,0.2)':'rgba(37,99,235,0.25)',
+          color:playing?'#FCA5A5':'rgba(255,255,255,0.9)',
+          fontFamily:'Inter,sans-serif',fontWeight:700,fontSize:14,
+          display:'flex',alignItems:'center',justifyContent:'center',gap:8,
+          transition:'all 0.2s'}}>
+        {playing?(
+          <><span style={{width:10,height:10,background:'#EF4444',borderRadius:2,display:'inline-block'}}/>
+          {t===T.fr?'Arrêter':'Stop'}</>
+        ):(
+          <><span style={{width:0,height:0,borderLeft:'10px solid currentColor',
+            borderTop:'6px solid transparent',borderBottom:'6px solid transparent',display:'inline-block'}}/>
+          {t===T.fr?'Écouter la démo (4 sec)':'Play demo (4 sec)'}</>
+        )}
+      </button>
+    </div>
+  )
+}
+
+
 /* ─── DATA ─── */
 const INTS=[{n:'Pennylane',l:'P',c:'#0052CC',b:'#EEF5FF'},{n:'Qonto',l:'Q',c:'#1A237E',b:'#E8EAF6'},{n:'Tiime',l:'T',c:'#F57C00',b:'#FFF3E0'},{n:'Sage',l:'S',c:'#2E7D32',b:'#E8F5E9'},{n:'Stripe',l:'S',c:'#4527A0',b:'#EDE7F6'},{n:'GoCardless',l:'G',c:'#00695C',b:'#E0F2F1'},{n:'Doctolib',l:'D',c:'#0277BD',b:'#E3F2FD'},{n:'Google Cal',l:'G',c:'#C62828',b:'#FFEBEE'},{n:'Cegid',l:'C',c:'#E65100',b:'#FFF3E0'},{n:'Docoon',l:'D',c:'#6A1B9A',b:'#F3E5F5'},{n:'Chorus Pro',l:'C',c:'#1B5E20',b:'#E8F5E9'},{n:'Bridge API',l:'B',c:'#01579B',b:'#E1F5FE'},{n:'grcx',l:'G',c:C.b,b:'#EEF3FF'},{n:'Pxtly',l:'P',c:'#4A148C',b:'#F3E5F5'},{n:'Mistral AI',l:'M',c:C.ink,b:C.sub},{n:'Hetzner',l:'H',c:'#D50000',b:'#FFEBEE'},{n:'Supabase',l:'S',c:'#3ECF8E',b:'#E8FDF5'},{n:'n8n',l:'n',c:'#E67E22',b:'#FFF3E0'}]
 
@@ -471,6 +558,9 @@ export default function Home() {
             <motion.div variants={vU} style={{maxWidth:380,margin:'0 auto 28px',background:'rgba(255,255,255,0.05)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:18,padding:'18px 22px'}}>
               <Wave dark/>
               <div style={{fontSize:11,fontFamily:'monospace',color:'rgba(255,255,255,0.3)',letterSpacing:'0.06em',marginTop:10}}>Whisper STT · Mistral 7B · XTTS-v2 · Hetzner Frankfurt</div>
+            </motion.div>
+            <motion.div variants={vU} style={{marginBottom:28}}>
+              <AudioDemo t={t}/>
             </motion.div>
             <motion.div variants={vU} style={{display:'flex',flexWrap:'wrap' as const,gap:8,justifyContent:'center',marginBottom:32}}>
               {['Whisper STT','Mistral 7B','XTTS-v2','Silero VAD','Hetzner DE','Zéro donnée hors UE'].map(tag=>(
