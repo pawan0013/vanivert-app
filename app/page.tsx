@@ -172,23 +172,23 @@ function Nav() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EZ }}
         style={{
-          position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)',
+          position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)',
           zIndex: 200, display: 'flex', alignItems: 'center', gap: 0,
-          background: sc ? 'rgba(5,6,8,0.85)' : 'rgba(255,255,255,0.05)',
-          backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+          background: sc ? 'rgba(5,6,8,0.88)' : 'rgba(14,16,22,0.65)',
+          backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
           border: `1px solid ${sc ? BORDER2 : BORDER}`,
-          borderRadius: 980, padding: '8px 8px 8px 20px',
-          boxShadow: sc ? '0 8px 40px rgba(0,0,0,0.5)' : '0 4px 24px rgba(0,0,0,0.3)',
+          borderRadius: 980, padding: '6px 6px',
+          boxShadow: sc ? '0 8px 40px rgba(0,0,0,0.5)' : '0 2px 20px rgba(0,0,0,0.4)',
           transition: 'all 0.4s cubic-bezier(0.32,0.72,0,1)',
           whiteSpace: 'nowrap',
         }}>
-        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginRight: 16 }}>
-          <div style={{ width: 22, height: 22, borderRadius: 6, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 7, textDecoration: 'none', padding: '5px 14px 5px 8px', borderRight: `1px solid ${BORDER}` }}>
+          <div style={{ width: 22, height: 22, borderRadius: 6, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 13, color: '#fff', fontWeight: 400 }}>v</span>
           </div>
-          <span style={{ fontFamily: 'Georgia, serif', fontSize: 16, color: TEXT, fontWeight: 400, fontStyle: 'italic', letterSpacing: '-0.01em' }}>vanivert</span>
+          <span style={{ fontFamily: 'Georgia, serif', fontSize: 15, color: TEXT, fontWeight: 400, fontStyle: 'italic', letterSpacing: '-0.01em' }}>vanivert</span>
         </a>
-        <div style={{ display: 'flex', gap: 2, marginRight: 12 }} className="nav-links">
+        <div style={{ display: 'flex', gap: 0, padding: '0 6px' }} className="nav-links">
           {links.map(([l, h]) => (
             <a key={l} href={h} style={{ fontSize: 13, color: MUTED, textDecoration: 'none', padding: '5px 12px', borderRadius: 980, transition: 'color 0.2s', fontFamily: 'system-ui, sans-serif', fontWeight: 450 }}
               onMouseEnter={e => (e.currentTarget.style.color = TEXT)}
@@ -197,8 +197,8 @@ function Nav() {
             </a>
           ))}
         </div>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <a href="/login" style={{ fontSize: 13, color: MUTED, textDecoration: 'none', padding: '7px 14px', borderRadius: 980, fontFamily: 'system-ui, sans-serif', fontWeight: 450, transition: 'color 0.2s' }}
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center', padding: '0 4px 0 6px', borderLeft: `1px solid ${BORDER}` }}>
+          <a href="/login" style={{ fontSize: 13, color: MUTED, textDecoration: 'none', padding: '6px 12px', borderRadius: 980, fontFamily: 'system-ui, sans-serif', fontWeight: 450, transition: 'color 0.2s' }}
             onMouseEnter={e => (e.currentTarget.style.color = TEXT)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>
             Connexion
           </a>
