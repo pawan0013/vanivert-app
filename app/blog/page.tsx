@@ -32,17 +32,17 @@ const CAT_COLORS: Record<string, string> = {
 
 export default function BlogIndex() {
   return (
-    <div style={{ minHeight: '100dvh', background: '#050608', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100dvh', background: '#FAFAF8', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       {/* Nav */}
-      <nav style={{ padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.07)', position: 'sticky', top: 0, background: 'rgba(5,6,8,0.92)', backdropFilter: 'blur(20px)', zIndex: 100 }}>
+      <nav style={{ padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(13,13,15,0.08)', position: 'sticky', top: 0, background: 'rgba(250,250,248,0.92)', backdropFilter: 'blur(20px)', zIndex: 100 }}>
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
           <div style={{ width: 24, height: 24, borderRadius: 7, background: '#6366F1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 13, color: '#fff' }}>v</span>
           </div>
-          <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 16, color: 'rgba(255,255,255,0.88)' }}>vanivert</span>
+          <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 16, color: 'rgba(13,13,15,0.88)' }}>vanivert</span>
         </Link>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <Link href="/calculateur" style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', padding: '7px 14px', borderRadius: 980, border: '1px solid rgba(255,255,255,0.10)' }}>
+          <Link href="/calculateur" style={{ fontSize: 13, color: 'rgba(13,13,15,0.50)', textDecoration: 'none', padding: '7px 14px', borderRadius: 980, border: '1px solid rgba(13,13,15,0.12)' }}>
             Calculer mon risque
           </Link>
           <Link href="/demo" style={{ fontSize: 13, fontWeight: 600, color: '#fff', textDecoration: 'none', padding: '8px 18px', borderRadius: 980, background: '#6366F1' }}>
@@ -53,11 +53,11 @@ export default function BlogIndex() {
 
       {/* Header */}
       <div style={{ maxWidth: 880, margin: '0 auto', padding: '72px 32px 48px', textAlign: 'center' }}>
-        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16, fontFamily: 'system-ui' }}>Blog</p>
-        <h1 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(28px, 4vw, 48px)', color: 'rgba(255,255,255,0.88)', marginBottom: 12, marginTop: 0, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
+        <p style={{ fontSize: 10, color: 'rgba(13,13,15,0.32)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16, fontFamily: 'system-ui' }}>Blog</p>
+        <h1 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(28px, 4vw, 48px)', color: 'rgba(13,13,15,0.88)', marginBottom: 12, marginTop: 0, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
           Lire avant de s'y prendre trop tard.
         </h1>
-        <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.45)', maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>
+        <p style={{ fontSize: 15, color: 'rgba(13,13,15,0.50)', maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>
           E-facturation DGFiP, reception vocale IA, gestion financiere. Des articles courts, concrets, ecrits pour les PME et artisans bretons.
         </p>
       </div>
@@ -65,9 +65,9 @@ export default function BlogIndex() {
       {/* Articles */}
       <div style={{ maxWidth: 880, margin: '0 auto', padding: '0 32px 80px' }}>
         {/* Featured article (first one, larger) */}
-        <Link href={`/blog/${POSTS[0].slug}`} style={{ textDecoration: 'none', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, borderRadius: 18, overflow: 'hidden', background: '#111520', border: '1px solid rgba(255,255,255,0.07)', marginBottom: 16, transition: 'border-color 0.3s' }}
-          onMouseEnter={e => ((e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)')}
-          onMouseLeave={e => ((e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)')}>
+        <Link href={`/blog/${POSTS[0].slug}`} style={{ textDecoration: 'none', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, borderRadius: 18, overflow: 'hidden', background: '#FFFFFF', border: '1px solid rgba(13,13,15,0.08)', marginBottom: 16, transition: 'border-color 0.3s' }}
+          onMouseEnter={e => ((e.currentTarget as HTMLElement).style.borderColor = 'rgba(13,13,15,0.18)')}
+          onMouseLeave={e => ((e.currentTarget as HTMLElement).style.borderColor = 'rgba(13,13,15,0.08)')}>
           <div style={{ height: 280, overflow: 'hidden' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={POSTS[0].img} alt={POSTS[0].title} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.75)' }} loading="eager" />
@@ -75,13 +75,13 @@ export default function BlogIndex() {
           <div style={{ padding: '32px 28px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
               <div style={{ display: 'inline-block', background: `${CAT_COLORS[POSTS[0].cat] || '#6366F1'}18`, borderRadius: 6, padding: '3px 10px', fontSize: 10, fontWeight: 600, color: CAT_COLORS[POSTS[0].cat] || '#6366F1', marginBottom: 14, letterSpacing: '0.04em' }}>{POSTS[0].cat}</div>
-              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontStyle: 'italic', fontSize: 22, color: 'rgba(255,255,255,0.88)', lineHeight: 1.35, marginBottom: 12, marginTop: 0, letterSpacing: '-0.01em' }}>{POSTS[0].title}</h2>
-              <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, margin: 0 }}>{POSTS[0].excerpt}</p>
+              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontStyle: 'italic', fontSize: 22, color: 'rgba(13,13,15,0.88)', lineHeight: 1.35, marginBottom: 12, marginTop: 0, letterSpacing: '-0.01em' }}>{POSTS[0].title}</h2>
+              <p style={{ fontSize: 14, color: 'rgba(13,13,15,0.50)', lineHeight: 1.65, margin: 0 }}>{POSTS[0].excerpt}</p>
             </div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 20 }}>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', fontFamily: 'system-ui' }}>{POSTS[0].date}</span>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)' }}>·</span>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', fontFamily: 'system-ui' }}>{POSTS[0].readTime} de lecture</span>
+              <span style={{ fontSize: 11, color: 'rgba(13,13,15,0.32)', fontFamily: 'system-ui' }}>{POSTS[0].date}</span>
+              <span style={{ fontSize: 11, color: 'rgba(13,13,15,0.25)' }}>·</span>
+              <span style={{ fontSize: 11, color: 'rgba(13,13,15,0.32)', fontFamily: 'system-ui' }}>{POSTS[0].readTime} de lecture</span>
               <span style={{ marginLeft: 'auto', fontSize: 13, color: '#6366F1', fontFamily: 'system-ui' }}>Lire →</span>
             </div>
           </div>
@@ -90,21 +90,21 @@ export default function BlogIndex() {
         {/* Remaining 2 articles in a row */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           {POSTS.slice(1).map(post => (
-            <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: 'none', display: 'block', borderRadius: 16, overflow: 'hidden', background: '#111520', border: '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.3s, transform 0.3s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLElement).style.transform = 'none' }}>
+            <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: 'none', display: 'block', borderRadius: 16, overflow: 'hidden', background: '#FFFFFF', border: '1px solid rgba(13,13,15,0.08)', transition: 'border-color 0.3s, transform 0.3s' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(13,13,15,0.18)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(13,13,15,0.08)'; (e.currentTarget as HTMLElement).style.transform = 'none' }}>
               <div style={{ height: 160, overflow: 'hidden' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={post.img} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.7)' }} loading="lazy" />
               </div>
               <div style={{ padding: '20px 22px' }}>
                 <div style={{ display: 'inline-block', background: `${CAT_COLORS[post.cat] || '#6366F1'}18`, borderRadius: 6, padding: '3px 10px', fontSize: 9, fontWeight: 600, color: CAT_COLORS[post.cat] || '#6366F1', marginBottom: 10, letterSpacing: '0.04em' }}>{post.cat}</div>
-                <h3 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontStyle: 'italic', fontSize: 17, color: 'rgba(255,255,255,0.88)', lineHeight: 1.35, marginBottom: 10, marginTop: 0, letterSpacing: '-0.01em' }}>{post.title}</h3>
-                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, margin: '0 0 14px', fontFamily: 'system-ui' }}>{post.excerpt}</p>
+                <h3 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontStyle: 'italic', fontSize: 17, color: 'rgba(13,13,15,0.88)', lineHeight: 1.35, marginBottom: 10, marginTop: 0, letterSpacing: '-0.01em' }}>{post.title}</h3>
+                <p style={{ fontSize: 13, color: 'rgba(13,13,15,0.45)', lineHeight: 1.6, margin: '0 0 14px', fontFamily: 'system-ui' }}>{post.excerpt}</p>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontFamily: 'system-ui' }}>{post.date}</span>
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)' }}>·</span>
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontFamily: 'system-ui' }}>{post.readTime}</span>
+                  <span style={{ fontSize: 10, color: 'rgba(13,13,15,0.30)', fontFamily: 'system-ui' }}>{post.date}</span>
+                  <span style={{ fontSize: 10, color: 'rgba(13,13,15,0.25)' }}>·</span>
+                  <span style={{ fontSize: 10, color: 'rgba(13,13,15,0.30)', fontFamily: 'system-ui' }}>{post.readTime}</span>
                   <span style={{ marginLeft: 'auto', fontSize: 12, color: '#6366F1' }}>Lire →</span>
                 </div>
               </div>
@@ -114,8 +114,8 @@ export default function BlogIndex() {
       </div>
 
       {/* Footer strip */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '24px 32px', textAlign: 'center' }}>
-        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', fontFamily: 'system-ui', marginBottom: 12 }}>Calculez votre risque de non-conformite DGFiP en 2 minutes</p>
+      <div style={{ borderTop: '1px solid rgba(13,13,15,0.08)', padding: '24px 32px', textAlign: 'center' }}>
+        <p style={{ fontSize: 12, color: 'rgba(13,13,15,0.30)', fontFamily: 'system-ui', marginBottom: 12 }}>Calculez votre risque de non-conformite DGFiP en 2 minutes</p>
         <Link href="/calculateur" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 22px', borderRadius: 980, background: '#6366F1', color: '#fff', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
           Calculer mon risque →
         </Link>

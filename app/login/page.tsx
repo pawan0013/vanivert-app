@@ -2,18 +2,18 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const BG = '#050608'
-const BG2 = '#0A0D12'
-const CARD = '#111520'
-const BORDER = 'rgba(255,255,255,0.07)'
-const BORDER2 = 'rgba(255,255,255,0.14)'
+const BG = '#FAFAF8'
+const BG2 = '#F3F2EE'
+const CARD = '#FFFFFF'
+const BORDER = 'rgba(13,13,15,0.08)'
+const BORDER2 = 'rgba(13,13,15,0.14)'
 const VI = '#6366F1'
 const VI2 = '#4F46E5'
 const GR = '#10B981'
 const RED = '#EF4444'
-const TEXT = 'rgba(255,255,255,0.88)'
-const MUTED = 'rgba(255,255,255,0.45)'
-const SUBTLE = 'rgba(255,255,255,0.22)'
+const TEXT = 'rgba(13,13,15,0.88)'
+const MUTED = 'rgba(13,13,15,0.50)'
+const SUBTLE = 'rgba(13,13,15,0.32)'
 const EZ: [number,number,number,number] = [0.32,0.72,0,1]
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -110,7 +110,7 @@ function Input({ label, type = 'text', value, onChange, placeholder, error, righ
         {right}
       </div>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        style={{ width: '100%', padding: '11px 14px', border: `1px solid ${error ? RED : focus ? 'rgba(99,102,241,0.5)' : BORDER}`, borderRadius: 10, background: 'rgba(255,255,255,0.04)', color: TEXT, fontSize: 14, fontFamily: 'system-ui', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.25s' }}
+        style={{ width: '100%', padding: '11px 14px', border: `1px solid ${error ? RED : focus ? 'rgba(99,102,241,0.5)' : BORDER}`, borderRadius: 10, background: 'rgba(13,13,15,0.03)', color: TEXT, fontSize: 14, fontFamily: 'system-ui', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.25s' }}
         onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} />
       {error && <div style={{ fontSize: 11, color: RED, marginTop: 4, fontFamily: 'system-ui' }}>{error}</div>}
     </div>
@@ -227,7 +227,7 @@ export default function Login() {
             <div style={{ background: CARD, borderRadius: 16, padding: '32px 28px', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.04)' }}>
               {/* Mode tabs */}
               {mode !== 'reset' && (
-                <div style={{ display: 'flex', gap: 4, background: 'rgba(255,255,255,0.04)', borderRadius: 12, padding: 4, marginBottom: 24 }}>
+                <div style={{ display: 'flex', gap: 4, background: 'rgba(13,13,15,0.03)', borderRadius: 12, padding: 4, marginBottom: 24 }}>
                   {(['login', 'signup'] as const).map(m => (
                     <button key={m} onClick={() => { setMode(m); setError(''); setSuccess(''); setFieldErrors({}) }}
                       style={{ flex: 1, padding: '8px 0', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'system-ui', fontSize: 13, fontWeight: 500, transition: 'all 0.25s cubic-bezier(0.32,0.72,0,1)', background: mode === m ? 'rgba(255,255,255,0.08)' : 'transparent', color: mode === m ? TEXT : SUBTLE }}>
@@ -332,7 +332,7 @@ export default function Login() {
                   <div style={{ display: 'flex', gap: 8 }}>
                     {[{ p: 'azure' as const, icon: <MsIcon />, label: 'Microsoft' }, { p: 'google' as const, icon: <GgIcon />, label: 'Google' }].map(({ p, icon, label }) => (
                       <button key={p} onClick={() => oAuth(p)}
-                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '11px', border: `1px solid ${BORDER2}`, borderRadius: 10, background: 'rgba(255,255,255,0.04)', cursor: 'pointer', fontFamily: 'system-ui', fontSize: 13, fontWeight: 500, color: TEXT, transition: 'all 0.2s' }}
+                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '11px', border: `1px solid ${BORDER2}`, borderRadius: 10, background: 'rgba(13,13,15,0.03)', cursor: 'pointer', fontFamily: 'system-ui', fontSize: 13, fontWeight: 500, color: TEXT, transition: 'all 0.2s' }}
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.07)' }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)' }}>
                         {icon}{label}
@@ -348,7 +348,7 @@ export default function Login() {
           </p>
         </motion.div>
       </div>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}*{box-sizing:border-box;margin:0;padding:0}input::placeholder{color:rgba(255,255,255,0.2)}`}</style>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}*{box-sizing:border-box;margin:0;padding:0}input::placeholder{color:rgba(13,13,15,0.3)}`}</style>
     </div>
   )
 }

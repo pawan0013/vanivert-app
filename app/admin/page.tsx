@@ -2,26 +2,26 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const BG = '#050608'
-const BG2 = '#0A0D12'
-const CARD = '#111520'
-const CARD2 = '#161B26'
-const BORDER = 'rgba(255,255,255,0.07)'
-const BORDER2 = 'rgba(255,255,255,0.12)'
+const BG = '#FAFAF8'
+const BG2 = '#F3F2EE'
+const CARD = '#FFFFFF'
+const CARD2 = '#F3F2EE'
+const BORDER = 'rgba(13,13,15,0.08)'
+const BORDER2 = 'rgba(13,13,15,0.14)'
 const VI = '#6366F1'
 const VI2 = '#4F46E5'
 const VIG = 'rgba(99,102,241,0.12)'
 const GR = '#10B981'
 const RED = '#EF4444'
 const EM = '#F59E0B'
-const TEXT = 'rgba(255,255,255,0.88)'
-const MUTED = 'rgba(255,255,255,0.45)'
-const SUBTLE = 'rgba(255,255,255,0.22)'
+const TEXT = 'rgba(13,13,15,0.88)'
+const MUTED = 'rgba(13,13,15,0.50)'
+const SUBTLE = 'rgba(13,13,15,0.32)'
 const EZ: [number,number,number,number] = [0.32,0.72,0,1]
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-const CMS_KEY = 'vanivert_cms_v2'
+const CMS_KEY = 'vanivert_cms_v3'
 
 /* ── Full CMS default (mirrors page.tsx DEFAULT_CMS) ── */
 const DEFAULT_CMS = {
@@ -140,7 +140,7 @@ function Field({ label, value, onChange, type = 'text', rows }: {
   label: string; value: string; onChange: (v: string) => void; type?: string; rows?: number
 }) {
   const [focus, setFocus] = useState(false)
-  const base = { width: '100%', padding: '10px 12px', border: `1px solid ${focus ? 'rgba(99,102,241,0.5)' : BORDER}`, borderRadius: 9, background: 'rgba(255,255,255,0.04)', color: TEXT, fontSize: 13, fontFamily: 'system-ui', outline: 'none', boxSizing: 'border-box' as const, transition: 'border-color 0.2s', resize: 'vertical' as const }
+  const base = { width: '100%', padding: '10px 12px', border: `1px solid ${focus ? 'rgba(99,102,241,0.5)' : BORDER}`, borderRadius: 9, background: 'rgba(13,13,15,0.03)', color: TEXT, fontSize: 13, fontFamily: 'system-ui', outline: 'none', boxSizing: 'border-box' as const, transition: 'border-color 0.2s', resize: 'vertical' as const }
   return (
     <div style={{ marginBottom: 14 }}>
       <label style={{ fontSize: 11, color: SUBTLE, fontFamily: 'system-ui', display: 'block', marginBottom: 5 }}>{label}</label>
@@ -359,7 +359,7 @@ function LeadsViewer() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {leads.map(l => (
-            <div key={l.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', borderRadius: 9, background: 'rgba(255,255,255,0.03)', border: `1px solid ${BORDER}` }}>
+            <div key={l.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', borderRadius: 9, background: 'rgba(13,13,15,0.025)', border: `1px solid ${BORDER}` }}>
               <div>
                 <div style={{ fontSize: 13, color: TEXT, fontFamily: 'system-ui' }}>{l.email}</div>
                 {l.company_name && <div style={{ fontSize: 11, color: SUBTLE, fontFamily: 'system-ui', marginTop: 2 }}>{l.company_name}</div>}
@@ -388,7 +388,7 @@ function AlertsViewer() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {alerts.map(a => (
-            <div key={a.id} style={{ padding: '12px 14px', borderRadius: 9, background: 'rgba(255,255,255,0.03)', border: `1px solid ${BORDER}` }}>
+            <div key={a.id} style={{ padding: '12px 14px', borderRadius: 9, background: 'rgba(13,13,15,0.025)', border: `1px solid ${BORDER}` }}>
               <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                 <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 4, background: `${sColor[a.severity] || SUBTLE}18`, color: sColor[a.severity] || SUBTLE, fontFamily: 'system-ui', letterSpacing: '0.06em', flexShrink: 0, textTransform: 'uppercase' as const }}>{a.severity}</span>
                 <div style={{ flex: 1 }}>
@@ -438,7 +438,7 @@ function AdminLogin({ onAuth }: { onAuth: () => void }) {
       <div style={{ position: 'absolute', top: '20%', left: '20%', width: '40%', height: '40%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 65%)', pointerEvents: 'none' }} />
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EZ }}
         style={{ width: '100%', maxWidth: 380 }}>
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${BORDER}`, borderRadius: 22, padding: 8, boxShadow: '0 32px 80px rgba(0,0,0,0.6)' }}>
+        <div style={{ background: 'rgba(13,13,15,0.025)', border: `1px solid ${BORDER}`, borderRadius: 22, padding: 8, boxShadow: '0 32px 80px rgba(0,0,0,0.6)' }}>
           <div style={{ background: CARD, borderRadius: 16, padding: '32px 28px', border: '1px solid rgba(255,255,255,0.05)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
               <div style={{ width: 36, height: 36, borderRadius: 10, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -454,7 +454,7 @@ function AdminLogin({ onAuth }: { onAuth: () => void }) {
                 <div key={f.ph}>
                   <label style={{ fontSize: 11, color: SUBTLE, display: 'block', marginBottom: 5 }}>{f.label}</label>
                   <input type={f.type} value={f.value} onChange={e => f.set(e.target.value)} placeholder={f.ph} required
-                    style={{ width: '100%', padding: '11px 13px', border: `1px solid ${BORDER}`, borderRadius: 9, background: 'rgba(255,255,255,0.04)', color: TEXT, fontSize: 13, fontFamily: 'system-ui', outline: 'none', boxSizing: 'border-box' as const }}
+                    style={{ width: '100%', padding: '11px 13px', border: `1px solid ${BORDER}`, borderRadius: 9, background: 'rgba(13,13,15,0.03)', color: TEXT, fontSize: 13, fontFamily: 'system-ui', outline: 'none', boxSizing: 'border-box' as const }}
                     onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.5)')} onBlur={e => (e.target.style.borderColor = BORDER)} />
                 </div>
               ))}
@@ -595,7 +595,7 @@ export default function Admin() {
           </AnimatePresence>
         </div>
       </main>
-      <style>{`*{box-sizing:border-box;margin:0;padding:0}input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.2)}textarea{color:rgba(255,255,255,0.88)}`}</style>
+      <style>{`*{box-sizing:border-box;margin:0;padding:0}input::placeholder,textarea::placeholder{color:rgba(13,13,15,0.3)}textarea{color:rgba(13,13,15,0.88)}`}</style>
     </div>
   )
 }

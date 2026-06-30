@@ -4,14 +4,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 /* ── TOKENS (exact from Figma screenshots) ── */
 const C = {
-  bg:'#0A0B0F', sidebar:'#0D0E12', card:'#111318', card2:'#161920',
-  border:'rgba(255,255,255,0.07)', border2:'rgba(255,255,255,0.12)',
-  b:'#2563EB', blo:'rgba(37,99,235,0.15)', bhi:'rgba(37,99,235,0.25)',
-  w:'#FFFFFF', g1:'rgba(255,255,255,0.90)', g2:'rgba(255,255,255,0.55)', g3:'rgba(255,255,255,0.28)',
-  grn:'#22C55E', grn2:'rgba(34,197,94,0.12)',
-  red:'#EF4444', red2:'rgba(239,68,68,0.12)',
-  gold:'#F59E0B', gold2:'rgba(245,158,11,0.12)',
-  purple:'#8B5CF6', purple2:'rgba(139,92,246,0.12)',
+  bg:'#FAFAF8', sidebar:'#FFFFFF', card:'#FFFFFF', card2:'#F3F2EE',
+  border:'rgba(13,13,15,0.08)', border2:'rgba(13,13,15,0.14)',
+  b:'#6366F1', blo:'rgba(99,102,241,0.10)', bhi:'rgba(99,102,241,0.18)',
+  w:'#0D0D0F', g1:'rgba(13,13,15,0.88)', g2:'rgba(13,13,15,0.50)', g3:'rgba(13,13,15,0.32)',
+  grn:'#10B981', grn2:'rgba(16,185,129,0.10)',
+  red:'#EF4444', red2:'rgba(239,68,68,0.10)',
+  gold:'#F59E0B', gold2:'rgba(245,158,11,0.10)',
+  purple:'#8B5CF6', purple2:'rgba(139,92,246,0.10)',
   teal:'#14B8A6',
 }
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL||''
@@ -317,8 +317,8 @@ function CashChart({data}:{data:typeof DEMO_CF}) {
       <svg viewBox={`0 0 ${totalW} ${H+20}`} style={{width:'100%',height:'100%'}} overflow="visible">
         {[0,25000,50000,75000,100000].map(v=>(
           <g key={v}>
-            <line x1="40" y1={y(v)} x2={totalW} y2={y(v)} stroke="rgba(255,255,255,0.04)" strokeWidth="0.8"/>
-            <text x="36" y={y(v)+4} textAnchor="end" fill="rgba(255,255,255,0.2)" fontSize="8" fontFamily="monospace">
+            <line x1="40" y1={y(v)} x2={totalW} y2={y(v)} stroke="rgba(13,13,15,0.04)" strokeWidth="0.8"/>
+            <text x="36" y={y(v)+4} textAnchor="end" fill="rgba(13,13,15,0.2)" fontSize="8" fontFamily="monospace">
               {v>=1000?`${v/1000}K`:v===0?'0K':''}
             </text>
           </g>
@@ -342,7 +342,7 @@ function CashChart({data}:{data:typeof DEMO_CF}) {
               onMouseEnter={()=>setHov(i)} onMouseLeave={()=>setHov(null)}/>
             {hov===i&&(
               <g>
-                <line x1={i*W+W/2} y1={0} x2={i*W+W/2} y2={H} stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+                <line x1={i*W+W/2} y1={0} x2={i*W+W/2} y2={H} stroke="rgba(13,13,15,0.1)" strokeWidth="1"/>
                 <rect x={i*W+W/2-36} y={y(d.i)-52} width={72} height={50} rx={6} fill={C.card2} stroke={C.border2} strokeWidth="0.5"/>
                 <text x={i*W+W/2} y={y(d.i)-38} textAnchor="middle" fill={C.g3} fontSize="8" fontFamily="monospace">{d.m} 2026</text>
                 <text x={i*W+W/2} y={y(d.i)-26} textAnchor="middle" fill={C.b} fontSize="9" fontFamily="monospace" fontWeight="700">+{(d.i/1000).toFixed(0)}K EUR</text>
@@ -350,7 +350,7 @@ function CashChart({data}:{data:typeof DEMO_CF}) {
                 <text x={i*W+W/2} y={y(d.i)-2} textAnchor="middle" fill={C.grn} fontSize="8" fontFamily="monospace">={((d.i-d.o)/1000).toFixed(0)}K EUR</text>
               </g>
             )}
-            <text x={i*W+W/2} y={H+14} textAnchor="middle" fill={d.f?'rgba(255,255,255,0.2)':'rgba(255,255,255,0.35)'} fontSize="9" fontFamily="monospace">{d.m}</text>
+            <text x={i*W+W/2} y={H+14} textAnchor="middle" fill={d.f?'rgba(13,13,15,0.2)':'rgba(13,13,15,0.35)'} fontSize="9" fontFamily="monospace">{d.m}</text>
           </g>
         ))}
       </svg>
@@ -456,7 +456,7 @@ function Sidebar({tab,setTab,demo,setDemo,lang,setLang,t}:{
         <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
           {['RGPD','Hetzner DE','Supabase IE','grcx','Pxtly'].map(tag=>(
             <span key={tag} style={{fontSize:8,fontFamily:'monospace',padding:'2px 5px',borderRadius:4,
-              background:'rgba(255,255,255,0.04)',border:`1px solid ${C.border}`,color:C.g3}}>
+              background:'rgba(13,13,15,0.04)',border:`1px solid ${C.border}`,color:C.g3}}>
               {tag}
             </span>
           ))}
@@ -601,7 +601,7 @@ function TabOverview({t,demo,toast}:{t:typeof T.fr;demo:boolean;toast:(m:string,
         <div style={{display:'flex',flexDirection:'column',gap:8}}>
           {visibleAlerts.map(a=>(
             <div key={a.id} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 14px',borderRadius:8,
-              background:'rgba(255,255,255,0.02)',borderLeft:`3px solid ${a.type==='critical'?C.red:a.type==='warning'?C.gold:C.b}`}}>
+              background:'rgba(13,13,15,0.02)',borderLeft:`3px solid ${a.type==='critical'?C.red:a.type==='warning'?C.gold:C.b}`}}>
               <Dot c={a.type==='critical'?C.red:a.type==='warning'?C.gold:C.b} pulse={a.type==='critical'}/>
               <span style={{fontSize:9,fontWeight:700,padding:'2px 7px',borderRadius:4,
                 background:a.type==='critical'?C.red2:a.type==='warning'?C.gold2:C.blo,
@@ -656,7 +656,7 @@ function TabTreasury({t,demo,toast}:{t:typeof T.fr;demo:boolean;toast:(m:string,
   if(!demo) return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'60vh',gap:16}}>
       <div style={{fontSize:9,fontFamily:'monospace',letterSpacing:'0.14em',color:C.g3,textTransform:'uppercase'}}>{t.moduleLoading}</div>
-      <div style={{fontFamily:'monospace',fontWeight:700,fontSize:32,color:'rgba(255,255,255,0.1)'}}>Tresorerie</div>
+      <div style={{fontFamily:'monospace',fontWeight:700,fontSize:32,color:'rgba(13,13,15,0.1)'}}>Tresorerie</div>
       <Btn onClick={()=>setShowConnect(true)} variant="primary">Connecter Bridge PSD2</Btn>
       {showConnect&&(
         <Modal title="CONNEXION BRIDGE API PSD2" onClose={()=>setShowConnect(false)}>
@@ -693,7 +693,7 @@ function TabTreasury({t,demo,toast}:{t:typeof T.fr;demo:boolean;toast:(m:string,
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
         <Card>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}>
-            <SL text={`${t.bankAccounts} (${t.bridgePsd2||'BRIDGE PSD2'})`}/>
+            <SL text={`${t.bankAccounts} (Bridge PSD2)`}/>
             <Btn onClick={()=>toast('Synchronisation en cours...')} variant="ghost" small>Sync maintenant</Btn>
           </div>
           {BANKS.map(b=>(
@@ -722,7 +722,7 @@ function TabTreasury({t,demo,toast}:{t:typeof T.fr;demo:boolean;toast:(m:string,
             {l:t.prevJ60,a:74200,c:'+19%'},
             {l:t.prevJ90,a:89500,c:'+43%'},
           ].map(f=>(
-            <div key={f.l} style={{padding:'12px 14px',borderRadius:9,marginBottom:8,background:'rgba(255,255,255,0.02)',border:`1px solid ${C.border}`}}>
+            <div key={f.l} style={{padding:'12px 14px',borderRadius:9,marginBottom:8,background:'rgba(13,13,15,0.02)',border:`1px solid ${C.border}`}}>
               <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
                 <span style={{fontSize:12,fontWeight:700,fontFamily:'monospace',color:C.g2}}>{f.l}</span>
                 <span style={{fontSize:15,fontWeight:700,fontFamily:'monospace',color:C.b}}>{fmt(f.a)}</span>
@@ -895,7 +895,7 @@ function TabCompliance({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>vo
           <SL text={t.conformiteTitle}/>
           <div style={{display:'flex',alignItems:'center',gap:10}}>
             <span style={{fontSize:10,fontFamily:'monospace',color:C.g3}}>{done}/{COMPLIANCE_ITEMS.length}</span>
-            <div style={{width:120,height:5,borderRadius:3,background:'rgba(255,255,255,0.06)'}}>
+            <div style={{width:120,height:5,borderRadius:3,background:'rgba(13,13,15,0.06)'}}>
               <div style={{width:`${pct}%`,height:'100%',borderRadius:3,background:pct>=80?C.grn:C.gold,transition:'width 1s ease'}}/>
             </div>
             <span style={{fontSize:11,fontWeight:700,fontFamily:'monospace',color:pct>=80?C.grn:C.gold}}>{pct}%</span>
@@ -907,10 +907,10 @@ function TabCompliance({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>vo
             <div key={ctrl.id}>
               <div onClick={()=>setExpand(expand===ctrl.id?null:ctrl.id)}
                 style={{display:'flex',alignItems:'center',gap:12,padding:'11px 14px',borderRadius:9,cursor:'pointer',
-                  background:ctrl.status==='done'?'rgba(34,197,94,0.04)':ctrl.status==='pending'?'rgba(245,158,11,0.04)':'rgba(255,255,255,0.02)',
+                  background:ctrl.status==='done'?'rgba(34,197,94,0.04)':ctrl.status==='pending'?'rgba(245,158,11,0.04)':'rgba(13,13,15,0.02)',
                   border:`1px solid ${ctrl.status==='done'?'rgba(34,197,94,0.12)':ctrl.status==='pending'?'rgba(245,158,11,0.12)':C.border}`}}>
                 <div style={{width:20,height:20,borderRadius:'50%',flexShrink:0,
-                  background:ctrl.status==='done'?C.grn2:ctrl.status==='pending'?C.gold2:'rgba(255,255,255,0.04)',
+                  background:ctrl.status==='done'?C.grn2:ctrl.status==='pending'?C.gold2:'rgba(13,13,15,0.04)',
                   border:`1.5px solid ${ctrl.status==='done'?C.grn:ctrl.status==='pending'?C.gold:C.g3}`,
                   display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontFamily:'monospace',color:ctrl.status==='done'?C.grn:ctrl.status==='pending'?C.gold:C.g3}}>
                   {ctrl.status==='done'?'ok':ctrl.status==='pending'?'...':'--'}
@@ -923,12 +923,12 @@ function TabCompliance({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>vo
                   <div style={{fontSize:9,color:C.g3,marginTop:2,fontFamily:'monospace'}}>{ctrl.id}</div>
                 </div>
                 <Badge status={ctrl.status}/>
-                {ctrl.status!=='done'&&<Btn onClick={(e)=>{if(e)e.stopPropagation();handleAction(ctrl)}} variant={ctrl.status==='pending'?'warning':'ghost'} small>
+                {ctrl.status!=='done'&&<Btn onClick={()=>handleAction(ctrl)} variant={ctrl.status==='pending'?'warning':'ghost'} small>
                   {ctrl.status==='pending'?'Agir':'--'}
                 </Btn>}
               </div>
               {expand===ctrl.id&&(
-                <div style={{padding:'10px 14px 10px 46px',background:'rgba(255,255,255,0.01)',borderRadius:'0 0 9px 9px',
+                <div style={{padding:'10px 14px 10px 46px',background:'rgba(13,13,15,0.01)',borderRadius:'0 0 9px 9px',
                   border:`1px solid ${C.border}`,borderTop:'none',marginTop:-1}}>
                   <div style={{fontSize:11,color:C.g2,fontFamily:'monospace',lineHeight:1.7}}>{ctrl.detail}</div>
                 </div>
@@ -968,7 +968,7 @@ function TabIntegrations({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
           {INTEGRATIONS.map(int=>(
             <div key={int.name} style={{display:'flex',alignItems:'center',gap:12,padding:'14px 16px',borderRadius:10,
-              background:int.status==='connected'?'rgba(34,197,94,0.03)':'rgba(255,255,255,0.02)',
+              background:int.status==='connected'?'rgba(34,197,94,0.03)':'rgba(13,13,15,0.02)',
               border:`1px solid ${int.status==='connected'?'rgba(34,197,94,0.15)':C.border}`}}>
               <div style={{width:42,height:42,borderRadius:10,background:int.bg+'33',
                 display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
@@ -1001,7 +1001,7 @@ function TabIntegrations({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:9}}>
           {OSS_STACK.map(s=>(
             <a key={s.name} href={s.url} target="_blank" rel="noreferrer"
-              style={{padding:'14px 16px',borderRadius:9,background:'rgba(255,255,255,0.02)',
+              style={{padding:'14px 16px',borderRadius:9,background:'rgba(13,13,15,0.02)',
                 border:`1px solid ${C.border}`,textDecoration:'none',display:'block',transition:'all 0.15s'}}
               onMouseEnter={e=>(e.currentTarget as HTMLElement).style.borderColor=C.border2}
               onMouseLeave={e=>(e.currentTarget as HTMLElement).style.borderColor=C.border}>
@@ -1019,7 +1019,7 @@ function TabIntegrations({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>
             <div style={{fontSize:13,color:C.g2,fontFamily:'monospace',lineHeight:1.7}}>
               {configModal.desc}. Integration active et synchronisee.
             </div>
-            <div style={{padding:'12px 14px',borderRadius:9,background:'rgba(255,255,255,0.02)',border:`1px solid ${C.border}`}}>
+            <div style={{padding:'12px 14px',borderRadius:9,background:'rgba(13,13,15,0.02)',border:`1px solid ${C.border}`}}>
               {[['Statut','Connecte'],['Derniere sync','il y a 3 min'],['Donnees',configModal.desc],['Hebergement','EU - RGPD conforme']].map(([k,v])=>(
                 <div key={k} style={{display:'flex',justifyContent:'space-between',padding:'7px 0',borderBottom:`1px solid ${C.border}`}}>
                   <span style={{fontSize:11,fontFamily:'monospace',color:C.g3}}>{k}</span>
@@ -1069,7 +1069,7 @@ function TabAlerts({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>void})
           )}
           {visible.map(a=>(
             <div key={a.id} style={{display:'flex',alignItems:'flex-start',gap:12,padding:'12px 14px',borderRadius:9,
-              background:'rgba(255,255,255,0.02)',borderLeft:`3px solid ${a.type==='critical'?C.red:a.type==='warning'?C.gold:C.b}`}}>
+              background:'rgba(13,13,15,0.02)',borderLeft:`3px solid ${a.type==='critical'?C.red:a.type==='warning'?C.gold:C.b}`}}>
               <Dot c={a.type==='critical'?C.red:a.type==='warning'?C.gold:C.b} pulse={a.type==='critical'}/>
               <span style={{fontSize:9,fontWeight:700,padding:'2px 7px',borderRadius:4,flexShrink:0,
                 background:a.type==='critical'?C.red2:a.type==='warning'?C.gold2:C.blo,
@@ -1132,7 +1132,7 @@ function TabVoice({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>void}) 
             {CALLS_DATA.map(c=>(
               <div key={c.id} onClick={()=>setSel(c.id)}
                 style={{display:'flex',alignItems:'center',gap:12,padding:'13px 14px',borderRadius:10,cursor:'pointer',
-                  background:sel===c.id?C.blo:'rgba(255,255,255,0.02)',
+                  background:sel===c.id?C.blo:'rgba(13,13,15,0.02)',
                   border:`1px solid ${sel===c.id?C.b:C.border}`,transition:'all 0.15s'}}>
                 <div style={{width:36,height:36,borderRadius:10,background:C.blo,display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,flexShrink:0}}>
                   📞
@@ -1144,7 +1144,7 @@ function TabVoice({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>void}) 
                 <div style={{textAlign:'right'}}>
                   <div style={{fontSize:11,fontFamily:'monospace',color:C.g3,marginBottom:3}}>{c.dur}</div>
                   <span style={{fontSize:9,fontWeight:700,padding:'2px 7px',borderRadius:4,fontFamily:'monospace',
-                    background:c.status==='RESERVE'?C.grn2:c.status==='TRANSFERE'?C.gold2:'rgba(255,255,255,0.06)',
+                    background:c.status==='RESERVE'?C.grn2:c.status==='TRANSFERE'?C.gold2:'rgba(13,13,15,0.06)',
                     color:c.status==='RESERVE'?C.grn:c.status==='TRANSFERE'?C.gold:C.g3}}>
                     {c.status}
                   </span>
@@ -1157,7 +1157,7 @@ function TabVoice({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>void}) 
           {selCall&&(
             <Card>
               <SL text={`${t.transcription} - ${selCall.id.toUpperCase()}`}/>
-              <div style={{padding:'14px 16px',borderRadius:9,background:'rgba(255,255,255,0.02)',border:`1px solid ${C.border}`,
+              <div style={{padding:'14px 16px',borderRadius:9,background:'rgba(13,13,15,0.02)',border:`1px solid ${C.border}`,
                 fontSize:13,color:C.g2,fontFamily:'monospace',lineHeight:1.7,fontStyle:'italic',marginBottom:12}}>
                 "{selCall.transcript}"
               </div>
@@ -1198,7 +1198,7 @@ function TabVoice({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>void}) 
             <div>
               <label style={{fontSize:10,fontFamily:'monospace',color:C.g3,display:'block',marginBottom:6}}>NUMERO TWILIO (+33...)</label>
               <input value={twilio} onChange={e=>setTwilio(e.target.value)}
-                style={{width:'100%',padding:'10px 12px',background:'rgba(255,255,255,0.05)',border:`1px solid ${C.border2}`,borderRadius:8,color:C.g1,fontFamily:'monospace',fontSize:13,outline:'none',boxSizing:'border-box'}}/>
+                style={{width:'100%',padding:'10px 12px',background:'rgba(13,13,15,0.05)',border:`1px solid ${C.border2}`,borderRadius:8,color:C.g1,fontFamily:'monospace',fontSize:13,outline:'none',boxSizing:'border-box'}}/>
             </div>
             <div style={{padding:'10px 14px',borderRadius:8,background:C.gold2,border:'1px solid rgba(245,158,11,0.25)',fontSize:12,color:C.gold,fontFamily:'monospace',lineHeight:1.6}}>
               Obtenez un numero +33 sur twilio.com (1 EUR/mois) puis mettez a jour lib/site.config.ts
@@ -1231,7 +1231,7 @@ function TabDocs({t,demo,toast}:{t:typeof T.fr;demo:boolean;toast:(m:string,ok?:
   if(!demo) return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'60vh',gap:16}}>
       <div style={{fontSize:9,fontFamily:'monospace',letterSpacing:'0.14em',color:C.g3,textTransform:'uppercase'}}>{t.moduleLoading}</div>
-      <div style={{fontFamily:'monospace',fontWeight:700,fontSize:32,color:'rgba(255,255,255,0.1)'}}>Documents</div>
+      <div style={{fontFamily:'monospace',fontWeight:700,fontSize:32,color:'rgba(13,13,15,0.1)'}}>Documents</div>
       <Btn onClick={()=>toast('Redirection vers Docling ingestion API...')} variant="primary">Importer des documents</Btn>
     </motion.div>
   )
@@ -1261,7 +1261,7 @@ function TabDocs({t,demo,toast}:{t:typeof T.fr;demo:boolean;toast:(m:string,ok?:
           <input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()}
             placeholder={t.searchPlaceholder}
             style={{flex:1,padding:'11px 14px',borderRadius:9,border:`1.5px solid ${C.border}`,
-              background:'rgba(255,255,255,0.04)',color:C.g1,fontSize:12,fontFamily:'monospace',outline:'none',
+              background:'rgba(13,13,15,0.04)',color:C.g1,fontSize:12,fontFamily:'monospace',outline:'none',
               transition:'border-color 0.2s'}}
             onFocus={e=>(e.target.style.borderColor=C.b)} onBlur={e=>(e.target.style.borderColor=C.border)}/>
           <Btn onClick={()=>search()} variant="primary">{loading?'...':t.interroger}</Btn>
@@ -1270,7 +1270,7 @@ function TabDocs({t,demo,toast}:{t:typeof T.fr;demo:boolean;toast:(m:string,ok?:
           {presets.map(s=>(
             <button key={s} onClick={()=>search(s)}
               style={{fontSize:10,padding:'4px 10px',borderRadius:6,border:`1px solid ${C.border}`,
-                background:'rgba(255,255,255,0.02)',color:C.g3,cursor:'pointer',fontFamily:'monospace'}}>
+                background:'rgba(13,13,15,0.02)',color:C.g3,cursor:'pointer',fontFamily:'monospace'}}>
               {s}
             </button>
           ))}
@@ -1297,7 +1297,7 @@ function TabDocs({t,demo,toast}:{t:typeof T.fr;demo:boolean;toast:(m:string,ok?:
    TAB: BENCHMARK (exact from Figma screenshot 8)
 ══════════════════════════════════════════════════ */
 function TabBenchmark({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>void}) {
-  const cols=['vanivert','pennylane','agicap','qonto','sage'] as const
+  const cols=['v','p','a','q','s'] as const
   return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.3}}>
       <Card style={{marginBottom:12}}>
@@ -1329,16 +1329,16 @@ function TabBenchmark({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>voi
             </thead>
             <tbody>
               {BENCH_ROWS.map((row,i)=>(
-                <tr key={row.feat} style={{borderBottom:`1px solid ${C.border}`,background:i%2===0?'transparent':'rgba(255,255,255,0.01)'}}>
+                <tr key={row.feat} style={{borderBottom:`1px solid ${C.border}`,background:i%2===0?'transparent':'rgba(13,13,15,0.01)'}}>
                   <td style={{padding:'10px 14px',fontSize:12,fontFamily:'monospace',color:C.g2,fontWeight:400}}>{row.feat}</td>
                   {cols.map(col=>(
-                    <td key={col} style={{padding:'10px 14px',textAlign:'center',background:col==='vanivert'?C.blo:'transparent',
-                      borderLeft:col==='vanivert'?`1px solid rgba(37,99,235,0.2)`:undefined,
-                      borderRight:col==='vanivert'?`1px solid rgba(37,99,235,0.2)`:undefined}}>
+                    <td key={col} style={{padding:'10px 14px',textAlign:'center',background:col==='v'?C.blo:'transparent',
+                      borderLeft:col==='v'?`1px solid rgba(37,99,235,0.2)`:undefined,
+                      borderRight:col==='v'?`1px solid rgba(37,99,235,0.2)`:undefined}}>
                       {row[col]?(
                         <span style={{color:C.b,fontSize:14,fontWeight:700}}>✓</span>
                       ):(
-                        <span style={{color:'rgba(255,255,255,0.15)',fontSize:14}}>✗</span>
+                        <span style={{color:'rgba(13,13,15,0.15)',fontSize:14}}>✗</span>
                       )}
                     </td>
                   ))}
@@ -1433,10 +1433,10 @@ export default function Dashboard() {
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
         ::-webkit-scrollbar{width:4px;height:4px}
         ::-webkit-scrollbar-track{background:transparent}
-        ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.07);border-radius:2px}
+        ::-webkit-scrollbar-thumb{background:rgba(13,13,15,0.07);border-radius:2px}
         *{box-sizing:border-box}
         button:active{transform:scale(0.97)}
-        input::placeholder{color:rgba(255,255,255,0.2)}
+        input::placeholder{color:rgba(13,13,15,0.2)}
         a{cursor:pointer}
       `}</style>
     </div>
