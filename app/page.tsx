@@ -52,6 +52,7 @@ interface CMS {
   footer_tagline: string
   company_email: string; company_siret: string; company_address: string
   calc_label: string
+  integrations_label: string; integrations_h2: string; integrations_sub: string
 }
 
 const DEFAULT_CMS: CMS = {
@@ -103,6 +104,9 @@ const DEFAULT_CMS: CMS = {
   company_siret: "SIRET en cours d'enregistrement",
   company_address: "Lannion, Cotes d'Armor, Bretagne",
   calc_label: 'Calculez votre risque',
+  integrations_label: 'Integrations',
+  integrations_h2: 'Connecte a tout ce que vous utilisez deja.',
+  integrations_sub: "Pas de double saisie, pas de fichiers a exporter a la main. Vanivert se branche directement sur votre banque, votre comptabilite, votre agenda et vos outils de paiement.",
 }
 
 function useCMS(): CMS {
@@ -224,45 +228,65 @@ function useIntegrations() {
 }
 
 function OrbitIntegrations() {
-  // Deterministic pseudo-random base positions spread across a 420x420 field,
-  // avoiding the center zone reserved for the vanivert mark.
+  // Wide spread field — roughly 4.6x the area of the original 420x420 box.
+  // Logos drift across a 1200x680 canvas so they read as scattered across
+  // the page width, the way Sequence spreads its document mockups, rather
+  // than clustered in a small centered circle.
   const integrations = useIntegrations()
-  const W = 420, H = 420, CX = 210, CY = 210
+  const W = 1200, H = 680, CX = 600, CY = 340
   function seededPos(seed: number) {
     const a = (seed * 137.508) % 360 // golden angle for even spread
-    const r = 95 + ((seed * 53) % 105) // radius 95-200
+    const rx = 200 + ((seed * 53) % 320) // horizontal radius 200-520
+    const ry = 120 + ((seed * 41) % 190) // vertical radius 120-310 (wide ellipse, not a circle)
     const rad = (a * Math.PI) / 180
-    const x = CX + Math.cos(rad) * r - 20
-    const y = CY + Math.sin(rad) * r - 20
+    const x = CX + Math.cos(rad) * rx - 22
+    const y = CY + Math.sin(rad) * ry - 22
     return { x, y }
   }
   return (
-    <div style={{ position: 'relative', width: W, height: H, flexShrink: 0 }}>
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 60, height: 60, borderRadius: 17, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px ${VI}40`, zIndex: 10 }}>
-        <VanivertLogoMarkWhite s={28} />
+    <div className="orbit-field" style={{ position: 'relative', width: W, height: H, flexShrink: 0 }}>
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 64, height: 64, borderRadius: 18, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px ${VI}40`, zIndex: 10 }}>
+        <VanivertLogoMarkWhite s={30} />
       </div>
       {integrations.map((it, i) => {
         const { x, y } = seededPos(i)
-        const driftX = 14 + (i % 4) * 4
-        const driftY = 16 + ((i * 3) % 5) * 4
+        const driftX = 18 + (i % 4) * 6
+        const driftY = 20 + ((i * 3) % 5) * 6
         const dur = 7 + (i % 5) * 1.6
         const rotAmt = i % 2 === 0 ? 10 : -10
         const Logo = LOGO_COMPONENTS[it.key]
         return (
           <motion.div key={it.key}
             title={it.name}
-            style={{ position: 'absolute', left: x, top: y, width: 42, height: 42, borderRadius: 12, background: it.bg, border: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(13,13,15,0.10)' }}
+            style={{ position: 'absolute', left: x, top: y, width: 44, height: 44, borderRadius: 13, background: it.bg, border: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(13,13,15,0.10)' }}
             animate={{
               x: [0, driftX, -driftX * 0.6, driftX * 0.4, 0],
               y: [0, -driftY, driftY * 0.5, -driftY * 0.3, 0],
               rotate: [0, rotAmt, -rotAmt * 0.5, rotAmt * 0.3, 0],
             }}
             transition={{ duration: dur, repeat: Infinity, ease: 'easeInOut', delay: i * 0.35 }}>
-            <Logo s={17} />
+            <Logo s={18} />
           </motion.div>
         )
       })}
     </div>
+  )
+}
+
+function IntegrationsSection({ cms }: { cms: CMS }) {
+  return (
+    <section style={{ background: BG, padding: '88px 32px 64px', borderTop: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <FadeUp style={{ textAlign: 'center', marginBottom: 8 }}>
+        <p style={{ fontSize: 10, color: SUBTLE, letterSpacing: '0.12em', textTransform: 'uppercase' as const, marginBottom: 14, fontFamily: 'system-ui' }}>{cms.integrations_label}</p>
+        <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 'clamp(24px, 3vw, 38px)', color: INK, marginBottom: 12, letterSpacing: '-0.025em', maxWidth: 600, margin: '0 auto 12px' }}>
+          {cms.integrations_h2}
+        </h2>
+        <p style={{ fontSize: 15, color: MUTED, maxWidth: 480, margin: '0 auto' }}>{cms.integrations_sub}</p>
+      </FadeUp>
+      <div className="orbit-wrap" style={{ marginTop: 32, display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
+        <OrbitIntegrations />
+      </div>
+    </section>
   )
 }
 
@@ -877,8 +901,10 @@ export default function Home() {
         input::placeholder{color:rgba(13,13,15,0.3)}
         .nav-links{display:flex}.mob-nav{display:none}
         @media(max-width:860px){.nav-links{display:none!important}.mob-nav{display:block!important}}
-        @media(max-width:900px){.hero-grid{grid-template-columns:1fr!important}}
-        @media(max-width:768px){.alt-grid{grid-template-columns:1fr!important}.pricing-grid{grid-template-columns:1fr!important}.footer-grid{grid-template-columns:1fr 1fr!important}}
+        @media(max-width:1280px){.orbit-field{transform:scale(0.92)}.orbit-wrap{height:626px}}
+        @media(max-width:900px){.hero-grid{grid-template-columns:1fr!important}.orbit-field{transform:scale(0.72)}.orbit-wrap{height:490px}}
+        @media(max-width:768px){.alt-grid{grid-template-columns:1fr!important}.pricing-grid{grid-template-columns:1fr!important}.footer-grid{grid-template-columns:1fr 1fr!important}.orbit-field{transform:scale(0.56)}.orbit-wrap{height:381px}}
+        @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}.orbit-field{transform:scale(0.42)}.orbit-wrap{height:286px}}
         @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}}
       `}</style>
       <Nav lang={lang} setLang={setLang} />
@@ -889,9 +915,7 @@ export default function Home() {
         <ProductSection label={cms.s1_label} h2={cms.s1_h2} body={cms.s1_body} badge={cms.s1_badge} badgeColor={GR} anchor="facturation" mockup={<InvoiceMockup />} />
         <ProductSection label={cms.s2_label} h2={cms.s2_h2} body={cms.s2_body} badge={cms.s2_badge} badgeColor={VI} anchor="cfo" mockup={<CfoMockup />} />
         <ProductSection label={cms.s3_label} h2={cms.s3_h2} body={cms.s3_body} badge={cms.s3_badge} badgeColor={EM} anchor="voix" mockup={<VoiceMockup />} />
-        <div style={{ background: BG, padding: '40px 32px 0', borderTop: `1px solid ${BORDER}`, display: 'flex', justifyContent: 'center' }}>
-          <OrbitIntegrations />
-        </div>
+        <IntegrationsSection cms={cms} />
         <Pricing cms={cms} />
         <Blog cms={cms} />
         <Contact cms={cms} />

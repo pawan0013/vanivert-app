@@ -101,6 +101,10 @@ const DEFAULT_CMS = {
   // Demo page
   demo_h1: '30 jours gratuits. Sans carte.',
   demo_sub: "Testez tout. Si ca ne vous convient pas, vous ne payez rien.",
+  // Integrations section (homepage)
+  integrations_label: 'Integrations',
+  integrations_h2: 'Connecte a tout ce que vous utilisez deja.',
+  integrations_sub: "Pas de double saisie, pas de fichiers a exporter a la main. Vanivert se branche directement sur votre banque, votre comptabilite, votre agenda et vos outils de paiement.",
 }
 
 type CMS = typeof DEFAULT_CMS
@@ -377,9 +381,9 @@ const INTEGRATIONS_DEFAULT: IntegrationItem[] = [
   { key: 'salesforce', name: 'Salesforce', bg: '#00A1E0', enabled: true },
 ]
 
-function IntegrationsEditor() {
+function IntegrationsEditor({ cms, set, save, saved }: { cms: CMS; set: (k: keyof CMS, v: string) => void; save: () => void; saved: boolean }) {
   const [list, setList] = useState<IntegrationItem[]>(INTEGRATIONS_DEFAULT)
-  const [saved, setSaved] = useState(false)
+  const [logosSaved, setLogosSaved] = useState(false)
 
   useEffect(() => {
     try {
@@ -393,14 +397,14 @@ function IntegrationsEditor() {
 
   function update(key: string, patch: Partial<IntegrationItem>) {
     setList(prev => prev.map(it => it.key === key ? { ...it, ...patch } : it))
-    setSaved(false)
+    setLogosSaved(false)
   }
 
-  function save() {
+  function saveLogos() {
     try {
       localStorage.setItem(INTEGRATIONS_CMS_KEY, JSON.stringify(list))
-      setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
+      setLogosSaved(true)
+      setTimeout(() => setLogosSaved(false), 3000)
     } catch {}
   }
 
@@ -408,11 +412,17 @@ function IntegrationsEditor() {
     if (!confirm('Reinitialiser tous les logos aux valeurs par defaut ?')) return
     localStorage.removeItem(INTEGRATIONS_CMS_KEY)
     setList(INTEGRATIONS_DEFAULT)
-    setSaved(false)
+    setLogosSaved(false)
   }
 
   return (
     <div>
+      <SectionTitle label="Texte de la section (titre, sous-titre)" />
+      <Field label="Etiquette" value={cms.integrations_label} onChange={v => set('integrations_label', v)} />
+      <Field label="Titre" value={cms.integrations_h2} onChange={v => set('integrations_h2', v)} />
+      <Field label="Sous-titre" value={cms.integrations_sub} onChange={v => set('integrations_sub', v)} rows={2} />
+      <SaveBtn onClick={save} saved={saved} />
+
       <SectionTitle label="Logos integrations - orbite page d'accueil + tableau de bord" />
       <p style={{ fontSize: 12, color: SUBTLE, marginBottom: 18, lineHeight: 1.6 }}>
         Activez ou desactivez chaque logo, modifiez le nom affiche, ou changez la couleur de fond.
@@ -440,7 +450,7 @@ function IntegrationsEditor() {
         })}
       </div>
       <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-        <SaveBtn onClick={save} saved={saved} />
+        <SaveBtn onClick={saveLogos} saved={logosSaved} />
         <button onClick={resetAll} style={{ padding: '10px 20px', borderRadius: 980, background: 'transparent', color: SUBTLE, border: `1px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'system-ui', fontSize: 13 }}>
           Reinitialiser
         </button>
@@ -643,7 +653,7 @@ export default function Admin() {
     s1: <SectionEditor n={1} {...editorProps} />,
     s2: <SectionEditor n={2} {...editorProps} />,
     s3: <SectionEditor n={3} {...editorProps} />,
-    integrations: <IntegrationsEditor />,
+    integrations: <IntegrationsEditor {...editorProps} />,
     pricing: <PricingEditor {...editorProps} />,
     combos: <CombosEditor {...editorProps} />,
     contact: <ContactEditor {...editorProps} />,
