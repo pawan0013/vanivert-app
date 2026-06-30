@@ -176,7 +176,7 @@ function OrbitIntegrations() {
   return (
     <div style={{ position: 'relative', width: W, height: H, flexShrink: 0 }}>
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 60, height: 60, borderRadius: 17, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px ${VI}40`, zIndex: 10 }}>
-        <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 22, color: '#fff' }}>v</span>
+        <VanivertLogoMarkWhite s={28} />
       </div>
       {INTEGRATIONS.map((it, i) => {
         const { x, y } = seededPos(i)
@@ -203,11 +203,89 @@ function OrbitIntegrations() {
 
 type Lang = 'fr' | 'en'
 
+function VanivertLogo({ s = 24 }: { s?: number }) {
+  // Leaf + checkmark hybrid: the curved leaf shape (vert = green/sovereign)
+  // resolves into a checkmark stroke (compliance/verified). Single continuous
+  // path, reads clearly at 24px, scales cleanly to favicon size.
+  return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill={VI} />
+      <path
+        d="M9 16.5L14 21.5L23 10.5"
+        stroke="#fff"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <path
+        d="M14 21.5C11.5 19 9.5 15.5 9.5 11.5C9.5 9.8 9.9 8.4 10.5 7.5C11.8 9.2 13.2 10 14.8 10C13.8 11.6 13.5 13.5 14 15.5"
+        stroke="#fff"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        opacity="0.55"
+      />
+    </svg>
+  )
+}
+
+function VanivertLogoMark({ s = 24 }: { s?: number }) {
+  // Standalone indigo mark without the background square, for use on light/cream surfaces
+  return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <path
+        d="M9 16.5L14 21.5L23 10.5"
+        stroke={VI}
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <path
+        d="M14 21.5C11.5 19 9.5 15.5 9.5 11.5C9.5 9.8 9.9 8.4 10.5 7.5C11.8 9.2 13.2 10 14.8 10C13.8 11.6 13.5 13.5 14 15.5"
+        stroke={VI}
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        opacity="0.45"
+      />
+    </svg>
+  )
+}
+
+function VanivertLogoMarkWhite({ s = 24 }: { s?: number }) {
+  // White-stroke mark for use on the indigo orbit center and other colored backgrounds
+  return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <path
+        d="M9 16.5L14 21.5L23 10.5"
+        stroke="#fff"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <path
+        d="M14 21.5C11.5 19 9.5 15.5 9.5 11.5C9.5 9.8 9.9 8.4 10.5 7.5C11.8 9.2 13.2 10 14.8 10C13.8 11.6 13.5 13.5 14 15.5"
+        stroke="#fff"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        opacity="0.55"
+      />
+    </svg>
+  )
+}
+
 function Nav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   const [sc, setSc] = useState(false)
   const [mob, setMob] = useState(false)
   useEffect(() => {
-    const h = () => setSc(window.scrollY > 60)
+    const h = () => setSc(window.scrollY > 24)
     window.addEventListener('scroll', h, { passive: true })
     return () => window.removeEventListener('scroll', h)
   }, [])
@@ -218,39 +296,41 @@ function Nav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   const tCommencer = lang === 'fr' ? 'Commencer' : 'Get started'
   return (
     <>
-      <motion.nav initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EZ }}
-        style={{ position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 200, display: 'flex', alignItems: 'center', background: sc ? 'rgba(250,250,248,0.92)' : 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: `1px solid ${sc ? BORDER2 : BORDER}`, borderRadius: 980, padding: '6px 6px', boxShadow: '0 8px 32px rgba(13,13,15,0.08)', whiteSpace: 'nowrap' }}>
-        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 7, textDecoration: 'none', padding: '5px 14px 5px 8px', borderRight: `1px solid ${BORDER}` }}>
-          <div style={{ width: 22, height: 22, borderRadius: 6, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 13, color: '#fff' }}>v</span>
-          </div>
-          <span style={{ fontFamily: 'Georgia, serif', fontSize: 15, color: INK, fontStyle: 'italic', letterSpacing: '-0.01em' }}>vanivert</span>
-        </a>
-        <div style={{ display: 'flex', gap: 0, padding: '0 6px' }} className="nav-links">
-          {links.map(([l, h]) => (
-            <a key={l} href={h} style={{ fontSize: 13, color: MUTED, textDecoration: 'none', padding: '6px 12px', borderRadius: 980, fontWeight: 450, transition: 'color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>{l}</a>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center', padding: '0 4px 0 6px', borderLeft: `1px solid ${BORDER}` }}>
-          <button onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
-            style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: MUTED, background: 'transparent', border: `1px solid ${BORDER}`, borderRadius: 980, padding: '5px 10px', cursor: 'pointer', letterSpacing: '0.04em' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = INK; (e.currentTarget as HTMLElement).style.borderColor = BORDER2 }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = MUTED; (e.currentTarget as HTMLElement).style.borderColor = BORDER }}>
-            {lang === 'fr' ? 'EN' : 'FR'}
-          </button>
-          <a href="/login" style={{ fontSize: 13, color: MUTED, textDecoration: 'none', padding: '6px 12px', borderRadius: 980, fontWeight: 450 }}
-            onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>{tConnexion}</a>
-          <a href="/demo" style={{ fontSize: 13, fontWeight: 600, color: '#fff', textDecoration: 'none', padding: '8px 18px', borderRadius: 980, background: VI, display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.25s' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = VI2 }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = VI }}>
-            {tCommencer}<span style={{ width: 18, height: 18, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>→</span>
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 68, display: 'flex', alignItems: 'center', background: sc ? 'rgba(250,250,248,0.95)' : BG, backdropFilter: sc ? 'blur(16px)' : 'none', WebkitBackdropFilter: sc ? 'blur(16px)' : 'none', borderBottom: `1px solid ${sc ? BORDER2 : 'transparent'}`, transition: 'all 0.3s ease' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px' }}>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none', flexShrink: 0 }}>
+            <VanivertLogo s={28} />
+            <span style={{ fontFamily: 'Georgia, serif', fontSize: 19, color: INK, fontStyle: 'italic', letterSpacing: '-0.01em' }}>vanivert</span>
           </a>
+          <div style={{ display: 'flex', gap: 4 }} className="nav-links">
+            {links.map(([l, h]) => (
+              <a key={l} href={h} style={{ fontSize: 14, color: MUTED, textDecoration: 'none', padding: '8px 14px', borderRadius: 8, fontWeight: 450, transition: 'color 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>{l}</a>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }} className="nav-links">
+            <button onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
+              style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: MUTED, background: 'transparent', border: `1px solid ${BORDER}`, borderRadius: 980, padding: '5px 10px', cursor: 'pointer', letterSpacing: '0.04em' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = INK; (e.currentTarget as HTMLElement).style.borderColor = BORDER2 }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = MUTED; (e.currentTarget as HTMLElement).style.borderColor = BORDER }}>
+              {lang === 'fr' ? 'EN' : 'FR'}
+            </button>
+            <a href="/login" style={{ fontSize: 14, color: MUTED, textDecoration: 'none', fontWeight: 450 }}
+              onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>{tConnexion}</a>
+            <a href="/demo" style={{ fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', padding: '10px 22px', borderRadius: 980, background: INK, transition: 'background 0.25s' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = VI }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = INK }}>
+              {tCommencer}
+            </a>
+          </div>
         </div>
-      </motion.nav>
+      </nav>
       <div className="mob-nav">
-        <button onClick={() => setMob(!mob)} style={{ position: 'fixed', top: 16, right: 16, zIndex: 300, width: 42, height: 42, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: `1px solid ${BORDER}`, backdropFilter: 'blur(16px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer' }}>
+        <button onClick={() => setMob(!mob)} style={{ position: 'fixed', top: 18, right: 16, zIndex: 300, width: 42, height: 42, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: `1px solid ${BORDER}`, backdropFilter: 'blur(16px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer' }}>
           <span style={{ width: 14, height: 1.5, background: INK }} /><span style={{ width: 14, height: 1.5, background: INK }} /><span style={{ width: 14, height: 1.5, background: INK }} />
         </button>
+        <a href="/" style={{ position: 'fixed', top: 16, left: 16, zIndex: 300, display: 'flex', alignItems: 'center', gap: 7, textDecoration: 'none' }}>
+          <VanivertLogo s={26} />
+        </a>
         <AnimatePresence>
           {mob && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: 'fixed', inset: 0, zIndex: 250, background: 'rgba(250,250,248,0.97)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
@@ -669,7 +749,7 @@ function Footer({ cms, lang }: { cms: CMS; lang: Lang }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr repeat(4, 1fr)', gap: 32, marginBottom: 48 }} className="footer-grid">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-              <div style={{ width: 24, height: 24, borderRadius: 7, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 13, color: '#fff' }}>v</span></div>
+              <VanivertLogo s={24} />
               <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 16, color: INK }}>vanivert</span>
             </div>
             <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.6, maxWidth: 220 }}>{lang === 'fr' ? cms.footer_tagline : "We handle compliance. You handle the business."}</p>
