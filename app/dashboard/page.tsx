@@ -152,20 +152,20 @@ const COMPLIANCE_ITEMS = [
   {id:'ISO-27001',label:'ISO 27001 Phase 1',status:'todo',critical:false,detail:'Prevu mois 6 post-financement'},
 ]
 const INTEGRATIONS = [
-  {name:'Qonto',desc:'Compte bancaire professionnel PSD2',status:'connected',ab:'Q',bg:'#1E3A8A',url:'https://qonto.com'},
-  {name:'Bridge API',desc:'Agregateur bancaire open banking',status:'connected',ab:'Br',bg:'#0C4A6E',url:'https://bridgeapi.io'},
-  {name:'Pennylane',desc:'Comptabilite et facturation en ligne',status:'connected',ab:'PL',bg:'#1E40AF',url:'https://www.pennylane.com'},
-  {name:'Docoon PA',desc:'Signature electronique qualifiee',status:'connected',ab:'Do',bg:'#4C1D95',url:'https://www.docoon.fr'},
-  {name:'Chorus Pro',desc:'Portail e-facturation DGFiP officiel',status:'connected',ab:'Ch',bg:'#14532D',url:'https://chorus-pro.gouv.fr'},
-  {name:'Doctolib',desc:'Gestion des rendez-vous clients',status:'pending',ab:'Dt',bg:'#7C2D12',url:'https://pro.doctolib.fr'},
-  {name:'Google Calendar',desc:'Synchronisation agenda et RDV',status:'connected',ab:'G',bg:'#991B1B',svgType:'google',url:'https://workspace.google.com'},
-  {name:'n8n',desc:'Automatisation de workflows no-code',status:'connected',ab:'n8',bg:'#92400E',url:'https://n8n.io'},
-  {name:'Stripe',desc:'Paiements en ligne et abonnements',status:'connected',ab:'St',bg:'#3730A3',url:'https://dashboard.stripe.com'},
-  {name:'GoCardless',desc:'Prelevements SEPA automatiques',status:'pending',ab:'Gc',bg:'#065F46',url:'https://manage.gocardless.com'},
-  {name:'Sage 100',desc:'ERP comptabilite et gestion',status:'connected',ab:'Sg',bg:'#166534',url:'https://www.sage.com'},
-  {name:'Cegid XRP',desc:'ERP gestion commerciale et RH',status:'connected',ab:'Cd',bg:'#7C2D12',url:'https://www.cegid.com'},
-  {name:'Microsoft 365',desc:'Suite bureautique et Microsoft Teams',status:'connected',ab:'M',bg:'#1E3A8A',svgType:'microsoft',url:'https://admin.microsoft.com'},
-  {name:'Salesforce',desc:'CRM et automatisation commerciale',status:'pending',ab:'Sf',bg:'#0C4A6E',url:'https://www.salesforce.com'},
+  {name:'Qonto',desc:'Compte bancaire professionnel PSD2',status:'connected',logoKey:'qonto',bg:'#000000',url:'https://qonto.com'},
+  {name:'Bridge API',desc:'Agregateur bancaire open banking',status:'connected',logoKey:'bridge',bg:'#1A1A1A',url:'https://bridgeapi.io'},
+  {name:'Pennylane',desc:'Comptabilite et facturation en ligne',status:'connected',logoKey:'pennylane',bg:'#1F3A4D',url:'https://www.pennylane.com'},
+  {name:'Docoon PA',desc:'Signature electronique qualifiee',status:'connected',logoKey:'docoon',bg:'#1A1A1A',url:'https://www.docoon.fr'},
+  {name:'Chorus Pro',desc:'Portail e-facturation DGFiP officiel',status:'connected',logoKey:'chorus_pro',bg:'#3D4FA8',url:'https://chorus-pro.gouv.fr'},
+  {name:'Doctolib',desc:'Gestion des rendez-vous clients',status:'pending',logoKey:'doctolib',bg:'#0F2A4A',url:'https://pro.doctolib.fr'},
+  {name:'Google Calendar',desc:'Synchronisation agenda et RDV',status:'connected',logoKey:'google',bg:'#F3F4F6',url:'https://workspace.google.com'},
+  {name:'n8n',desc:'Automatisation de workflows no-code',status:'connected',logoKey:'n8n',bg:'#EA4B71',url:'https://n8n.io'},
+  {name:'Stripe',desc:'Paiements en ligne et abonnements',status:'connected',logoKey:'stripe',bg:'#635BFF',url:'https://dashboard.stripe.com'},
+  {name:'GoCardless',desc:'Prelevements SEPA automatiques',status:'pending',logoKey:'gocardless',bg:'#0A0A0A',url:'https://manage.gocardless.com'},
+  {name:'Sage 100',desc:'ERP comptabilite et gestion',status:'connected',logoKey:'sage',bg:'#000000',url:'https://www.sage.com'},
+  {name:'Cegid XRP',desc:'ERP gestion commerciale et RH',status:'connected',logoKey:'cegid',bg:'#2D5BFF',url:'https://www.cegid.com'},
+  {name:'Microsoft 365',desc:'Suite bureautique et Microsoft Teams',status:'connected',logoKey:'microsoft',bg:'#F3F4F6',url:'https://admin.microsoft.com'},
+  {name:'Salesforce',desc:'CRM et automatisation commerciale',status:'pending',logoKey:'salesforce',bg:'#00A1E0',url:'https://www.salesforce.com'},
 ]
 const OSS_STACK = [
   {name:'grcx',lic:'MIT',color:'#2563EB',desc:'Backend souverain',url:'https://github.com/grcx-dev/grcx'},
@@ -373,6 +373,50 @@ function MicrosoftIcon({size=16}:{size?:number}) {
     <rect x="0" y="0" width="10" height="10" fill="#F25022"/><rect x="11" y="0" width="10" height="10" fill="#7FBA00"/>
     <rect x="0" y="11" width="10" height="10" fill="#00A4EF"/><rect x="11" y="11" width="10" height="10" fill="#FFB900"/>
   </svg>
+}
+
+function QontoIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" strokeWidth="2.6" fill="none"/><line x1="16.5" y1="16.5" x2="20.5" y2="20.5" stroke="#fff" strokeWidth="2.6" strokeLinecap="round"/></svg>
+}
+function BridgeIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M5 16C5 16 8 8 12 8C16 8 19 16 19 16" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+}
+function PennylaneIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><circle cx="9.5" cy="12" r="5.5" fill="#7CF29C"/><circle cx="14.5" cy="12" r="5.5" fill="#1B4D5C" fillOpacity="0.9"/></svg>
+}
+function DocoonIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><circle cx="9.5" cy="12" r="4" stroke="#fff" strokeWidth="2" fill="none"/><circle cx="15" cy="12" r="4" stroke="#fff" strokeWidth="2" fill="none"/></svg>
+}
+function ChorusProIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><rect x="5" y="13" width="3" height="3" rx="0.5" fill="#fff" opacity="0.55"/><rect x="9" y="9" width="3" height="3" rx="0.5" fill="#fff" opacity="0.75"/><rect x="9" y="14" width="4" height="4" rx="0.5" fill="#fff"/><rect x="14" y="10" width="3" height="3" rx="0.5" fill="#fff" opacity="0.65"/></svg>
+}
+function DoctolibIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M6 17C6 17 7 7 11 7C14 7 14 11 11 12C8.5 12.8 7.5 15 9.5 16.5C11.5 18 14.5 16.5 15 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/><circle cx="17.5" cy="9" r="1" fill="#fff"/></svg>
+}
+function StripeIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M16.5 9.2C16.5 7.7 15.2 7 13.3 7C10.8 7 9.3 8.3 9.3 10.1C9.3 13.3 14.3 12.5 14.3 14.2C14.3 14.9 13.6 15.3 12.5 15.3C11.1 15.3 9.6 14.7 8.5 13.9V16.6C9.5 17.2 11 17.7 12.5 17.7C15.1 17.7 16.8 16.4 16.8 14.4C16.8 10.9 11.7 11.8 11.7 10.2C11.7 9.6 12.3 9.3 13.2 9.3C14.4 9.3 15.7 9.7 16.5 10.2V9.2Z" fill="#fff"/></svg>
+}
+function GoCardlessIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M15.5 9C14.7 8 13.4 7.3 12 7.3C9.4 7.3 7.3 9.4 7.3 12C7.3 14.6 9.4 16.7 12 16.7C14.2 16.7 16 15.2 16.5 13.2H12.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+}
+function SageIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M7 9.5C7 7.5 9 7 10 8C11 9 9.5 10.5 8 11.5C6.5 12.5 5.5 14 6.5 15.5C7.5 17 9.5 16.5 9.5 14.5C9.5 12.5 11.5 11 13.5 11C15.5 11 17 12.5 17 14.5C17 16.5 15.5 17.5 14 16.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" fill="none"/></svg>
+}
+function CegidIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M15 9C13.5 8 11 8 9.5 9.5C8 11 8 13 9.5 14.5C11 16 13.5 16 15 15" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" fill="none"/><circle cx="17.5" cy="7.5" r="1.3" fill="#fff"/></svg>
+}
+function N8nIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><circle cx="6.5" cy="15" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none"/><circle cx="12" cy="15" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none"/><circle cx="17.5" cy="9" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none"/><circle cx="17.5" cy="15" r="1.6" fill="#fff"/><path d="M8.1 15H10.4M13.6 15H15.9M16.6 13.5L14.5 11" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"/></svg>
+}
+function SalesforceIcon({size=18}:{size?:number}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M9.8 8.5C10.5 7.7 11.5 7.2 12.6 7.2C14.1 7.2 15.4 8.1 15.9 9.4C16.3 9.2 16.7 9.1 17.2 9.1C18.7 9.1 20 10.4 20 12C20 13.6 18.7 14.9 17.2 14.9H8C6.3 14.9 5 13.6 5 11.9C5 10.3 6.2 9.1 7.7 9C8 8.7 8.5 8.5 9 8.5C9.3 8.5 9.6 8.5 9.8 8.5Z" fill="#fff"/></svg>
+}
+
+const INTEGRATION_ICONS: Record<string, (p:{size?:number}) => React.ReactElement> = {
+  qonto: QontoIcon, bridge: BridgeIcon, pennylane: PennylaneIcon, docoon: DocoonIcon,
+  chorus_pro: ChorusProIcon, doctolib: DoctolibIcon, stripe: StripeIcon, gocardless: GoCardlessIcon,
+  sage: SageIcon, cegid: CegidIcon, n8n: N8nIcon, salesforce: SalesforceIcon,
+  microsoft: MicrosoftIcon, google: GoogleIcon,
 }
 
 /* ── SIDEBAR ── */
@@ -970,11 +1014,9 @@ function TabIntegrations({t,toast}:{t:typeof T.fr;toast:(m:string,ok?:boolean)=>
             <div key={int.name} style={{display:'flex',alignItems:'center',gap:12,padding:'14px 16px',borderRadius:10,
               background:int.status==='connected'?'rgba(34,197,94,0.03)':'rgba(13,13,15,0.02)',
               border:`1px solid ${int.status==='connected'?'rgba(34,197,94,0.15)':C.border}`}}>
-              <div style={{width:42,height:42,borderRadius:10,background:int.bg+'33',
-                display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                {int.svgType==='microsoft'?<MicrosoftIcon size={20}/>
-                :int.svgType==='google'?<GoogleIcon size={20}/>
-                :<span style={{fontFamily:'monospace',fontWeight:700,fontSize:13,color:'#fff'}}>{int.ab}</span>}
+              <div style={{width:42,height:42,borderRadius:10,background:int.bg,
+                display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,border:`1px solid ${C.border}`}}>
+                {(() => { const Icon = INTEGRATION_ICONS[int.logoKey]; return Icon ? <Icon size={19}/> : null })()}
               </div>
               <div style={{flex:1,minWidth:0}}>
                 <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:2}}>

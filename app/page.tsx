@@ -143,27 +143,90 @@ function MsLogo({ s = 18 }: { s?: number }) {
 function GgLogo({ s = 18 }: { s?: number }) {
   return <svg width={s} height={s} viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
 }
+function QontoLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" strokeWidth="2.6" fill="none" /><line x1="16.5" y1="16.5" x2="20.5" y2="20.5" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /></svg>
+}
+function BridgeLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M5 16C5 16 8 8 12 8C16 8 19 16 19 16" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" /></svg>
+}
+function PennylaneLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="9.5" cy="12" r="5.5" fill="#7CF29C" /><circle cx="14.5" cy="12" r="5.5" fill="#1B4D5C" fillOpacity="0.9" /></svg>
+}
+function SageLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M7 9.5C7 7.5 9 7 10 8C11 9 9.5 10.5 8 11.5C6.5 12.5 5.5 14 6.5 15.5C7.5 17 9.5 16.5 9.5 14.5C9.5 12.5 11.5 11 13.5 11C15.5 11 17 12.5 17 14.5C17 16.5 15.5 17.5 14 16.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" fill="none" /></svg>
+}
+function CegidLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M15 9C13.5 8 11 8 9.5 9.5C8 11 8 13 9.5 14.5C11 16 13.5 16 15 15" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" fill="none" /><circle cx="17.5" cy="7.5" r="1.3" fill="#fff" /></svg>
+}
+function DocoonLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="9.5" cy="12" r="4" stroke="#fff" strokeWidth="2" fill="none" /><circle cx="15" cy="12" r="4" stroke="#fff" strokeWidth="2" fill="none" /></svg>
+}
+function ChorusProLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><rect x="5" y="13" width="3" height="3" rx="0.5" fill="#fff" opacity="0.55" /><rect x="9" y="9" width="3" height="3" rx="0.5" fill="#fff" opacity="0.75" /><rect x="9" y="14" width="4" height="4" rx="0.5" fill="#fff" /><rect x="14" y="10" width="3" height="3" rx="0.5" fill="#fff" opacity="0.65" /></svg>
+}
+function DoctolibLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M6 17C6 17 7 7 11 7C14 7 14 11 11 12C8.5 12.8 7.5 15 9.5 16.5C11.5 18 14.5 16.5 15 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" /><circle cx="17.5" cy="9" r="1" fill="#fff" /></svg>
+}
+function StripeLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M16.5 9.2C16.5 7.7 15.2 7 13.3 7C10.8 7 9.3 8.3 9.3 10.1C9.3 13.3 14.3 12.5 14.3 14.2C14.3 14.9 13.6 15.3 12.5 15.3C11.1 15.3 9.6 14.7 8.5 13.9V16.6C9.5 17.2 11 17.7 12.5 17.7C15.1 17.7 16.8 16.4 16.8 14.4C16.8 10.9 11.7 11.8 11.7 10.2C11.7 9.6 12.3 9.3 13.2 9.3C14.4 9.3 15.7 9.7 16.5 10.2V9.2Z" fill="#fff" /></svg>
+}
+function GoCardlessLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M15.5 9C14.7 8 13.4 7.3 12 7.3C9.4 7.3 7.3 9.4 7.3 12C7.3 14.6 9.4 16.7 12 16.7C14.2 16.7 16 15.2 16.5 13.2H12.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" /></svg>
+}
+function N8nLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="6.5" cy="15" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none" /><circle cx="12" cy="15" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none" /><circle cx="17.5" cy="9" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none" /><circle cx="17.5" cy="15" r="1.6" fill="#fff" /><path d="M8.1 15H10.4M13.6 15H15.9M16.6 13.5L14.5 11" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" /></svg>
+}
+function SalesforceLogo({ s = 18 }: { s?: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M9.8 8.5C10.5 7.7 11.5 7.2 12.6 7.2C14.1 7.2 15.4 8.1 15.9 9.4C16.3 9.2 16.7 9.1 17.2 9.1C18.7 9.1 20 10.4 20 12C20 13.6 18.7 14.9 17.2 14.9H8C6.3 14.9 5 13.6 5 11.9C5 10.3 6.2 9.1 7.7 9C8 8.7 8.5 8.5 9 8.5C9.3 8.5 9.6 8.5 9.8 8.5Z" fill="#fff" /></svg>
+}
 
-const INTEGRATIONS = [
-  { name: 'Qonto', ab: 'Q', bg: '#1B2FA0' },
-  { name: 'Bridge', ab: 'Br', bg: '#0B3D6B' },
-  { name: 'Pennylane', ab: 'PL', bg: '#2563EB' },
-  { name: 'Docoon', ab: 'PA', bg: '#7C3AED' },
-  { name: 'Chorus Pro', ab: 'Ch', bg: '#166534' },
-  { name: 'Doctolib', ab: 'Dt', bg: '#B91C1C' },
-  { name: 'Microsoft', ab: '', bg: '#F3F4F6', ms: true },
-  { name: 'Google', ab: '', bg: '#F3F4F6', gg: true },
-  { name: 'Stripe', ab: 'St', bg: '#4F46E5' },
-  { name: 'GoCardless', ab: 'Gc', bg: '#065F46' },
-  { name: 'Sage 100', ab: 'Sg', bg: '#166534' },
-  { name: 'Cegid', ab: 'Cd', bg: '#92400E' },
-  { name: 'n8n', ab: 'n8', bg: '#854D0E' },
-  { name: 'Salesforce', ab: 'Sf', bg: '#0C4A6E' },
+type LogoKey = 'qonto' | 'bridge' | 'pennylane' | 'docoon' | 'chorus_pro' | 'doctolib' | 'microsoft' | 'google' | 'stripe' | 'gocardless' | 'sage' | 'cegid' | 'n8n' | 'salesforce'
+
+const LOGO_COMPONENTS: Record<LogoKey, (p: { s?: number }) => React.ReactElement> = {
+  qonto: QontoLogo, bridge: BridgeLogo, pennylane: PennylaneLogo, docoon: DocoonLogo,
+  chorus_pro: ChorusProLogo, doctolib: DoctolibLogo, microsoft: MsLogo, google: GgLogo,
+  stripe: StripeLogo, gocardless: GoCardlessLogo, sage: SageLogo, cegid: CegidLogo,
+  n8n: N8nLogo, salesforce: SalesforceLogo,
+}
+
+const INTEGRATIONS_DEFAULT: { key: LogoKey; name: string; bg: string; enabled: boolean }[] = [
+  { key: 'qonto', name: 'Qonto', bg: '#000000', enabled: true },
+  { key: 'bridge', name: 'Bridge', bg: '#1A1A1A', enabled: true },
+  { key: 'pennylane', name: 'Pennylane', bg: '#1F3A4D', enabled: true },
+  { key: 'docoon', name: 'Docoon', bg: '#1A1A1A', enabled: true },
+  { key: 'chorus_pro', name: 'Chorus Pro', bg: '#3D4FA8', enabled: true },
+  { key: 'doctolib', name: 'Doctolib', bg: '#0F2A4A', enabled: true },
+  { key: 'microsoft', name: 'Microsoft', bg: '#F3F4F6', enabled: true },
+  { key: 'google', name: 'Google', bg: '#F3F4F6', enabled: true },
+  { key: 'stripe', name: 'Stripe', bg: '#635BFF', enabled: true },
+  { key: 'gocardless', name: 'GoCardless', bg: '#0A0A0A', enabled: true },
+  { key: 'sage', name: 'Sage', bg: '#000000', enabled: true },
+  { key: 'cegid', name: 'Cegid', bg: '#2D5BFF', enabled: true },
+  { key: 'n8n', name: 'n8n', bg: '#EA4B71', enabled: true },
+  { key: 'salesforce', name: 'Salesforce', bg: '#00A1E0', enabled: true },
 ]
+
+const INTEGRATIONS_CMS_KEY = 'vanivert_integrations_v1'
+
+function useIntegrations() {
+  const [list, setList] = useState(INTEGRATIONS_DEFAULT)
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem(INTEGRATIONS_CMS_KEY)
+      if (s) {
+        const saved = JSON.parse(s) as { key: LogoKey; name: string; bg: string; enabled: boolean }[]
+        // merge by key so new defaults aren't lost if admin saved an older shape
+        setList(INTEGRATIONS_DEFAULT.map(d => saved.find(x => x.key === d.key) || d))
+      }
+    } catch {}
+  }, [])
+  return list.filter(i => i.enabled)
+}
 
 function OrbitIntegrations() {
   // Deterministic pseudo-random base positions spread across a 420x420 field,
   // avoiding the center zone reserved for the vanivert mark.
+  const integrations = useIntegrations()
   const W = 420, H = 420, CX = 210, CY = 210
   function seededPos(seed: number) {
     const a = (seed * 137.508) % 360 // golden angle for even spread
@@ -178,14 +241,16 @@ function OrbitIntegrations() {
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 60, height: 60, borderRadius: 17, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px ${VI}40`, zIndex: 10 }}>
         <VanivertLogoMarkWhite s={28} />
       </div>
-      {INTEGRATIONS.map((it, i) => {
+      {integrations.map((it, i) => {
         const { x, y } = seededPos(i)
         const driftX = 14 + (i % 4) * 4
         const driftY = 16 + ((i * 3) % 5) * 4
         const dur = 7 + (i % 5) * 1.6
         const rotAmt = i % 2 === 0 ? 10 : -10
+        const Logo = LOGO_COMPONENTS[it.key]
         return (
-          <motion.div key={it.name}
+          <motion.div key={it.key}
+            title={it.name}
             style={{ position: 'absolute', left: x, top: y, width: 42, height: 42, borderRadius: 12, background: it.bg, border: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(13,13,15,0.10)' }}
             animate={{
               x: [0, driftX, -driftX * 0.6, driftX * 0.4, 0],
@@ -193,7 +258,7 @@ function OrbitIntegrations() {
               rotate: [0, rotAmt, -rotAmt * 0.5, rotAmt * 0.3, 0],
             }}
             transition={{ duration: dur, repeat: Infinity, ease: 'easeInOut', delay: i * 0.35 }}>
-            {it.ms ? <MsLogo s={17} /> : it.gg ? <GgLogo s={17} /> : <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 11, color: '#fff' }}>{it.ab}</span>}
+            <Logo s={17} />
           </motion.div>
         )
       })}

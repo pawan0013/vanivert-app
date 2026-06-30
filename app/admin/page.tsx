@@ -111,6 +111,7 @@ const SECTIONS = [
   { id: 's1', label: 'Section E-facturation', icon: '◧' },
   { id: 's2', label: 'Section Smart CFO', icon: '◧' },
   { id: 's3', label: 'Section Reception vocale', icon: '◧' },
+  { id: 'integrations', label: 'Logos integrations', icon: '⊕' },
   { id: 'pricing', label: 'Tarifs', icon: '◉' },
   { id: 'combos', label: 'Packs combines', icon: '⊡' },
   { id: 'blog', label: 'Section Blog', icon: '◫' },
@@ -332,6 +333,122 @@ function PagesEditor({ cms, set, save, saved }: { cms: CMS; set: (k: keyof CMS, 
   )
 }
 
+/* ── Integration logo previews (mirrors the registry in page.tsx / dashboard-page.tsx) ── */
+function QontoPreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" strokeWidth="2.6" fill="none"/><line x1="16.5" y1="16.5" x2="20.5" y2="20.5" stroke="#fff" strokeWidth="2.6" strokeLinecap="round"/></svg>}
+function BridgePreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M5 16C5 16 8 8 12 8C16 8 19 16 19 16" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>}
+function PennylanePreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="9.5" cy="12" r="5.5" fill="#7CF29C"/><circle cx="14.5" cy="12" r="5.5" fill="#1B4D5C" fillOpacity="0.9"/></svg>}
+function DocoonPreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="9.5" cy="12" r="4" stroke="#fff" strokeWidth="2" fill="none"/><circle cx="15" cy="12" r="4" stroke="#fff" strokeWidth="2" fill="none"/></svg>}
+function ChorusProPreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><rect x="5" y="13" width="3" height="3" rx="0.5" fill="#fff" opacity="0.55"/><rect x="9" y="9" width="3" height="3" rx="0.5" fill="#fff" opacity="0.75"/><rect x="9" y="14" width="4" height="4" rx="0.5" fill="#fff"/><rect x="14" y="10" width="3" height="3" rx="0.5" fill="#fff" opacity="0.65"/></svg>}
+function DoctolibPreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M6 17C6 17 7 7 11 7C14 7 14 11 11 12C8.5 12.8 7.5 15 9.5 16.5C11.5 18 14.5 16.5 15 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/><circle cx="17.5" cy="9" r="1" fill="#fff"/></svg>}
+function StripePreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M16.5 9.2C16.5 7.7 15.2 7 13.3 7C10.8 7 9.3 8.3 9.3 10.1C9.3 13.3 14.3 12.5 14.3 14.2C14.3 14.9 13.6 15.3 12.5 15.3C11.1 15.3 9.6 14.7 8.5 13.9V16.6C9.5 17.2 11 17.7 12.5 17.7C15.1 17.7 16.8 16.4 16.8 14.4C16.8 10.9 11.7 11.8 11.7 10.2C11.7 9.6 12.3 9.3 13.2 9.3C14.4 9.3 15.7 9.7 16.5 10.2V9.2Z" fill="#fff"/></svg>}
+function GoCardlessPreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M15.5 9C14.7 8 13.4 7.3 12 7.3C9.4 7.3 7.3 9.4 7.3 12C7.3 14.6 9.4 16.7 12 16.7C14.2 16.7 16 15.2 16.5 13.2H12.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>}
+function SagePreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M7 9.5C7 7.5 9 7 10 8C11 9 9.5 10.5 8 11.5C6.5 12.5 5.5 14 6.5 15.5C7.5 17 9.5 16.5 9.5 14.5C9.5 12.5 11.5 11 13.5 11C15.5 11 17 12.5 17 14.5C17 16.5 15.5 17.5 14 16.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" fill="none"/></svg>}
+function CegidPreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M15 9C13.5 8 11 8 9.5 9.5C8 11 8 13 9.5 14.5C11 16 13.5 16 15 15" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" fill="none"/><circle cx="17.5" cy="7.5" r="1.3" fill="#fff"/></svg>}
+function N8nPreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="6.5" cy="15" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none"/><circle cx="12" cy="15" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none"/><circle cx="17.5" cy="9" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none"/><circle cx="17.5" cy="15" r="1.6" fill="#fff"/><path d="M8.1 15H10.4M13.6 15H15.9M16.6 13.5L14.5 11" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"/></svg>}
+function SalesforcePreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M9.8 8.5C10.5 7.7 11.5 7.2 12.6 7.2C14.1 7.2 15.4 8.1 15.9 9.4C16.3 9.2 16.7 9.1 17.2 9.1C18.7 9.1 20 10.4 20 12C20 13.6 18.7 14.9 17.2 14.9H8C6.3 14.9 5 13.6 5 11.9C5 10.3 6.2 9.1 7.7 9C8 8.7 8.5 8.5 9 8.5C9.3 8.5 9.6 8.5 9.8 8.5Z" fill="#fff"/></svg>}
+function MsPreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 21 21"><rect width="10" height="10" fill="#F25022"/><rect x="11" width="10" height="10" fill="#7FBA00"/><rect y="11" width="10" height="10" fill="#00A4EF"/><rect x="11" y="11" width="10" height="10" fill="#FFB900"/></svg>}
+function GgPreview({s=18}:{s?:number}){return <svg width={s} height={s} viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>}
+
+const INTEGRATION_PREVIEWS: Record<string, (p:{s?:number}) => React.ReactElement> = {
+  qonto: QontoPreview, bridge: BridgePreview, pennylane: PennylanePreview, docoon: DocoonPreview,
+  chorus_pro: ChorusProPreview, doctolib: DoctolibPreview, stripe: StripePreview, gocardless: GoCardlessPreview,
+  sage: SagePreview, cegid: CegidPreview, n8n: N8nPreview, salesforce: SalesforcePreview,
+  microsoft: MsPreview, google: GgPreview,
+}
+
+interface IntegrationItem { key: string; name: string; bg: string; enabled: boolean }
+
+const INTEGRATIONS_CMS_KEY = 'vanivert_integrations_v1'
+
+const INTEGRATIONS_DEFAULT: IntegrationItem[] = [
+  { key: 'qonto', name: 'Qonto', bg: '#000000', enabled: true },
+  { key: 'bridge', name: 'Bridge', bg: '#1A1A1A', enabled: true },
+  { key: 'pennylane', name: 'Pennylane', bg: '#1F3A4D', enabled: true },
+  { key: 'docoon', name: 'Docoon', bg: '#1A1A1A', enabled: true },
+  { key: 'chorus_pro', name: 'Chorus Pro', bg: '#3D4FA8', enabled: true },
+  { key: 'doctolib', name: 'Doctolib', bg: '#0F2A4A', enabled: true },
+  { key: 'microsoft', name: 'Microsoft', bg: '#F3F4F6', enabled: true },
+  { key: 'google', name: 'Google', bg: '#F3F4F6', enabled: true },
+  { key: 'stripe', name: 'Stripe', bg: '#635BFF', enabled: true },
+  { key: 'gocardless', name: 'GoCardless', bg: '#0A0A0A', enabled: true },
+  { key: 'sage', name: 'Sage', bg: '#000000', enabled: true },
+  { key: 'cegid', name: 'Cegid', bg: '#2D5BFF', enabled: true },
+  { key: 'n8n', name: 'n8n', bg: '#EA4B71', enabled: true },
+  { key: 'salesforce', name: 'Salesforce', bg: '#00A1E0', enabled: true },
+]
+
+function IntegrationsEditor() {
+  const [list, setList] = useState<IntegrationItem[]>(INTEGRATIONS_DEFAULT)
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem(INTEGRATIONS_CMS_KEY)
+      if (s) {
+        const stored = JSON.parse(s) as IntegrationItem[]
+        setList(INTEGRATIONS_DEFAULT.map(d => stored.find(x => x.key === d.key) || d))
+      }
+    } catch {}
+  }, [])
+
+  function update(key: string, patch: Partial<IntegrationItem>) {
+    setList(prev => prev.map(it => it.key === key ? { ...it, ...patch } : it))
+    setSaved(false)
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(INTEGRATIONS_CMS_KEY, JSON.stringify(list))
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } catch {}
+  }
+
+  function resetAll() {
+    if (!confirm('Reinitialiser tous les logos aux valeurs par defaut ?')) return
+    localStorage.removeItem(INTEGRATIONS_CMS_KEY)
+    setList(INTEGRATIONS_DEFAULT)
+    setSaved(false)
+  }
+
+  return (
+    <div>
+      <SectionTitle label="Logos integrations - orbite page d'accueil + tableau de bord" />
+      <p style={{ fontSize: 12, color: SUBTLE, marginBottom: 18, lineHeight: 1.6 }}>
+        Activez ou desactivez chaque logo, modifiez le nom affiche, ou changez la couleur de fond.
+        Les modifications s&apos;appliquent a l&apos;animation de la page d&apos;accueil et a la liste
+        d&apos;integrations du tableau de bord.
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {list.map(it => {
+          const Preview = INTEGRATION_PREVIEWS[it.key]
+          return (
+            <div key={it.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 10, background: it.enabled ? 'rgba(99,102,241,0.04)' : 'rgba(13,13,15,0.02)', border: `1px solid ${it.enabled ? 'rgba(99,102,241,0.15)' : BORDER}` }}>
+              <div style={{ width: 38, height: 38, borderRadius: 10, background: it.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `1px solid ${BORDER}`, opacity: it.enabled ? 1 : 0.4 }}>
+                {Preview && <Preview s={17} />}
+              </div>
+              <input value={it.name} onChange={e => update(it.key, { name: e.target.value })}
+                style={{ flex: 1, padding: '7px 10px', borderRadius: 7, border: `1px solid ${BORDER}`, background: 'rgba(13,13,15,0.03)', color: TEXT, fontSize: 13, fontFamily: 'system-ui', outline: 'none' }} />
+              <input type="color" value={/^#[0-9A-Fa-f]{6}$/.test(it.bg) ? it.bg : '#000000'} onChange={e => update(it.key, { bg: e.target.value })}
+                title="Couleur de fond" style={{ width: 32, height: 32, borderRadius: 7, border: `1px solid ${BORDER}`, cursor: 'pointer', padding: 0, background: 'transparent' }} />
+              <button onClick={() => update(it.key, { enabled: !it.enabled })}
+                style={{ width: 40, height: 22, borderRadius: 980, border: 'none', cursor: 'pointer', background: it.enabled ? GR : 'rgba(13,13,15,0.15)', position: 'relative', flexShrink: 0, transition: 'background 0.2s' }}>
+                <span style={{ position: 'absolute', top: 2, left: it.enabled ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: '#fff', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+              </button>
+            </div>
+          )
+        })}
+      </div>
+      <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+        <SaveBtn onClick={save} saved={saved} />
+        <button onClick={resetAll} style={{ padding: '10px 20px', borderRadius: 980, background: 'transparent', color: SUBTLE, border: `1px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'system-ui', fontSize: 13 }}>
+          Reinitialiser
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function LeadsViewer() {
   const [leads, setLeads] = useState<{ id: string; email: string; company_name?: string; created_at: string }[]>([])
   const [loading, setLoading] = useState(true)
@@ -526,6 +643,7 @@ export default function Admin() {
     s1: <SectionEditor n={1} {...editorProps} />,
     s2: <SectionEditor n={2} {...editorProps} />,
     s3: <SectionEditor n={3} {...editorProps} />,
+    integrations: <IntegrationsEditor />,
     pricing: <PricingEditor {...editorProps} />,
     combos: <CombosEditor {...editorProps} />,
     contact: <ContactEditor {...editorProps} />,
