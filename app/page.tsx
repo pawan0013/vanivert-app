@@ -707,19 +707,42 @@ function FooterCTA({ cms, lang }: { cms: CMS; lang: Lang }) {
     <section style={{ background: BG, padding: '0 32px 64px' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <FadeUp>
-          <div style={{ background: INK, borderRadius: 28, padding: '72px 40px', textAlign: 'center' as const, position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: '50%', left: '50%', width: 560, height: 560, marginLeft: -280, marginTop: -280, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.08)', pointerEvents: 'none' as const }} />
-            <div style={{ position: 'absolute', top: '50%', left: '50%', width: 760, height: 760, marginLeft: -380, marginTop: -380, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none' as const }} />
+          <div style={{
+            background: CARD,
+            border: `1px solid ${BORDER}`,
+            borderRadius: 24,
+            padding: '88px 40px',
+            textAlign: 'center' as const,
+            position: 'relative',
+            overflow: 'hidden',
+            backgroundImage: `
+              linear-gradient(${BORDER} 1px, transparent 1px),
+              linear-gradient(90deg, ${BORDER} 1px, transparent 1px)
+            `,
+            backgroundSize: '64px 64px',
+            backgroundPosition: 'center center',
+          }}>
+            {/* Soft radial fade so the grid disappears toward the edges, like Sequence's card */}
+            <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 60% 80% at center, transparent 0%, ${CARD} 75%)`, pointerEvents: 'none' as const }} />
+            {/* Tall vertical-oval ring, the signature Sequence shape */}
+            <div style={{ position: 'absolute', top: '50%', left: '50%', width: 540, height: 760, marginLeft: -270, marginTop: -380, borderRadius: '50%', border: `1px solid ${BORDER2}`, pointerEvents: 'none' as const }} />
+            <div style={{ position: 'absolute', top: '50%', left: '50%', width: 540, height: 760, marginLeft: -270, marginTop: -380, borderRadius: '50%', background: `linear-gradient(180deg, transparent 0%, ${VI}06 50%, transparent 100%)`, pointerEvents: 'none' as const }} />
+            {/* Small floating orb accents, left and right of the ring */}
+            <div style={{ position: 'absolute', top: '50%', left: 'calc(50% - 270px)', width: 16, height: 16, marginTop: -8, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #fff, ${VI}30)`, boxShadow: `0 2px 8px rgba(99,102,241,0.15)`, pointerEvents: 'none' as const }} />
+            <div style={{ position: 'absolute', top: '50%', left: 'calc(50% + 254px)', width: 16, height: 16, marginTop: -8, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #fff, ${VI}30)`, boxShadow: `0 2px 8px rgba(99,102,241,0.15)`, pointerEvents: 'none' as const }} />
+
             <div style={{ position: 'relative', zIndex: 2 }}>
-              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(26px, 3.4vw, 40px)', color: '#fff', marginBottom: 12, letterSpacing: '-0.025em', lineHeight: 1.2 }}>
+              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px, 3.6vw, 44px)', color: INK, marginBottom: 16, letterSpacing: '-0.025em', lineHeight: 1.18, maxWidth: 620, margin: '0 auto 16px' }}>
                 {lang === 'fr' ? "Le 1er septembre ne devrait pas etre une surprise." : "September 1st shouldn't be a surprise."}
               </h2>
-              <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', marginBottom: 32 }}>{lang === 'fr' ? 'On vous montre comment.' : 'Let us show you how.'}</p>
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' as const }}>
-                <a href="/demo" style={{ padding: '13px 26px', borderRadius: 980, background: '#fff', color: INK, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
+              <p style={{ fontSize: 15, color: MUTED, marginBottom: 36 }}>{lang === 'fr' ? 'On vous montre comment.' : 'Let us show you how.'}</p>
+              <div style={{ display: 'flex', gap: 24, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' as const }}>
+                <a href="/demo" style={{ padding: '13px 28px', borderRadius: 980, background: INK, color: '#fff', fontWeight: 600, fontSize: 14, textDecoration: 'none', transition: 'background 0.25s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = VI }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = INK }}>
                   {lang === 'fr' ? 'Demander une demo' : 'Book a demo'}
                 </a>
-                <a href="/calculateur" style={{ padding: '13px 26px', borderRadius: 980, color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: 14, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <a href="/calculateur" style={{ fontSize: 14, color: MUTED, fontWeight: 500, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>
                   {lang === 'fr' ? 'Calculer mon risque' : 'Calculate my risk'} →
                 </a>
               </div>
