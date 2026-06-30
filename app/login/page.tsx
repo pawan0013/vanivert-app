@@ -73,7 +73,10 @@ async function sbSignup(email: string, password: string, phone?: string) {
     body: JSON.stringify({ email, password, data: { phone: phone || '' } }),
   })
   const d = await r.json()
-  if (!r.ok) throw new Error(d.error_description || d.msg || 'Erreur lors de la creation')
+  // Supabase returns error in body even on 200 sometimes
+  if (!r.ok || d.error || d.error_code) {
+    throw new Error(d.error_description || d.msg || d.error || d.message || 'Erreur lors de la creation')
+  }
   return d
 }
 async function sbReset(email: string) {
@@ -149,8 +152,13 @@ export default function Login() {
 
   const errMap: Record<string, string> = {
     'Invalid login credentials': 'Email ou mot de passe incorrect.',
-    'Email not confirmed': 'Confirmez votre email avant de vous connecter.',
-    'User already registered': 'Un compte existe deja avec cet email.',
+    'Email not confirmed': 'Verifiez votre email — un lien de confirmation vous a ete envoye.',
+    'User already registered': 'Un compte existe deja avec cet email. Connectez-vous.',
+    'Password should be at least 6 characters': 'Le mot de passe doit faire au moins 8 caracteres.',
+    'Signup is disabled': 'Les inscriptions sont temporairement desactivees.',
+    'Email rate limit exceeded': 'Trop de tentatives. Attendez quelques minutes et reessayez.',
+    'For security purposes, you can only request this after': 'Attendez quelques secondes avant de reessayer.',
+    'Un compte existe deja avec cet email.': 'Un compte existe deja avec cet email. Connectez-vous.',
   }
 
   function validate() {
@@ -182,16 +190,28 @@ export default function Login() {
       }
       if (mode === 'signup') {
         const d = await sbSignup(email, password, phone)
-        if (d.user && !d.session) { setSuccess('Compte cree. Verifiez votre email pour confirmer.'); setLoading(false); return }
+        // Email confirmation OFF: session returned immediately -> go to dashboard
         if (d.session) { saveSession(d.session); window.location.href = '/dashboard'; return }
-        throw new Error('Erreur lors de la creation')
+        // Email confirmation ON: user created, awaiting email click
+        if (d.user && d.user.id) {
+          // Empty identities = email already registered (but not confirmed)
+          if (d.user.identities && d.user.identities.length === 0) {
+            throw new Error('Un compte existe deja avec cet email.')
+          }
+          setSuccess('Compte cree ! Verifiez votre boite email pour confirmer.')
+          setLoading(false)
+          return
+        }
+        throw new Error('Erreur inattendue. Reessayez dans quelques secondes.')
       }
       const d = await sbLogin(method === 'email' ? email : phone, password)
       saveSession(d)
       window.location.href = '/dashboard'
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Une erreur est survenue'
-      setError(errMap[msg] || msg)
+      // Match exact or partial error messages
+    const matched = Object.keys(errMap).find(k => msg.includes(k) || msg.startsWith(k))
+    setError(matched ? errMap[matched] : msg)
       setLoading(false)
     }
   }
