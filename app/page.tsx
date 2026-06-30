@@ -162,36 +162,38 @@ const INTEGRATIONS = [
 ]
 
 function OrbitIntegrations() {
-  const inner = INTEGRATIONS.slice(0, 7)
-  const outer = INTEGRATIONS.slice(7)
+  // Deterministic pseudo-random base positions spread across a 420x420 field,
+  // avoiding the center zone reserved for the vanivert mark.
+  const W = 420, H = 420, CX = 210, CY = 210
+  function seededPos(seed: number) {
+    const a = (seed * 137.508) % 360 // golden angle for even spread
+    const r = 95 + ((seed * 53) % 105) // radius 95-200
+    const rad = (a * Math.PI) / 180
+    const x = CX + Math.cos(rad) * r - 20
+    const y = CY + Math.sin(rad) * r - 20
+    return { x, y }
+  }
   return (
-    <div style={{ position: 'relative', width: 380, height: 380, flexShrink: 0 }}>
-      <div style={{ position: 'absolute', top: '50%', left: '50%', width: 200, height: 200, marginLeft: -100, marginTop: -100, borderRadius: '50%', border: `1px solid ${BORDER}` }} />
-      <div style={{ position: 'absolute', top: '50%', left: '50%', width: 320, height: 320, marginLeft: -160, marginTop: -160, borderRadius: '50%', border: `1px solid ${BORDER}` }} />
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 56, height: 56, borderRadius: 16, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px ${VI}40`, zIndex: 10 }}>
-        <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 20, color: '#fff' }}>v</span>
+    <div style={{ position: 'relative', width: W, height: H, flexShrink: 0 }}>
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 60, height: 60, borderRadius: 17, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px ${VI}40`, zIndex: 10 }}>
+        <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 22, color: '#fff' }}>v</span>
       </div>
-      {inner.map((it, i) => {
-        const a = (i / inner.length) * 2 * Math.PI
-        const x = Math.cos(a) * 100 + 190 - 20, y = Math.sin(a) * 100 + 190 - 20
+      {INTEGRATIONS.map((it, i) => {
+        const { x, y } = seededPos(i)
+        const driftX = 14 + (i % 4) * 4
+        const driftY = 16 + ((i * 3) % 5) * 4
+        const dur = 7 + (i % 5) * 1.6
+        const rotAmt = i % 2 === 0 ? 10 : -10
         return (
-          <motion.div key={it.name} style={{ position: 'absolute', left: x, top: y, width: 40, height: 40, borderRadius: 11, background: it.bg, border: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(13,13,15,0.10)' }}
-            animate={{ rotate: 360 }} transition={{ duration: 22, repeat: Infinity, ease: 'linear', delay: -i * 3 }}>
-            <motion.div animate={{ rotate: -360 }} transition={{ duration: 22, repeat: Infinity, ease: 'linear', delay: -i * 3 }}>
-              {it.ms ? <MsLogo s={16} /> : it.gg ? <GgLogo s={16} /> : <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 10, color: '#fff' }}>{it.ab}</span>}
-            </motion.div>
-          </motion.div>
-        )
-      })}
-      {outer.map((it, i) => {
-        const a = (i / outer.length) * 2 * Math.PI - Math.PI / outer.length
-        const x = Math.cos(a) * 160 + 190 - 20, y = Math.sin(a) * 160 + 190 - 20
-        return (
-          <motion.div key={it.name} style={{ position: 'absolute', left: x, top: y, width: 40, height: 40, borderRadius: 11, background: it.bg, border: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(13,13,15,0.10)' }}
-            animate={{ rotate: -360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear', delay: -i * 4 }}>
-            <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear', delay: -i * 4 }}>
-              {it.ms ? <MsLogo s={16} /> : it.gg ? <GgLogo s={16} /> : <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 10, color: '#fff' }}>{it.ab}</span>}
-            </motion.div>
+          <motion.div key={it.name}
+            style={{ position: 'absolute', left: x, top: y, width: 42, height: 42, borderRadius: 12, background: it.bg, border: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(13,13,15,0.10)' }}
+            animate={{
+              x: [0, driftX, -driftX * 0.6, driftX * 0.4, 0],
+              y: [0, -driftY, driftY * 0.5, -driftY * 0.3, 0],
+              rotate: [0, rotAmt, -rotAmt * 0.5, rotAmt * 0.3, 0],
+            }}
+            transition={{ duration: dur, repeat: Infinity, ease: 'easeInOut', delay: i * 0.35 }}>
+            {it.ms ? <MsLogo s={17} /> : it.gg ? <GgLogo s={17} /> : <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 11, color: '#fff' }}>{it.ab}</span>}
           </motion.div>
         )
       })}
@@ -199,7 +201,9 @@ function OrbitIntegrations() {
   )
 }
 
-function Nav() {
+type Lang = 'fr' | 'en'
+
+function Nav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   const [sc, setSc] = useState(false)
   const [mob, setMob] = useState(false)
   useEffect(() => {
@@ -207,7 +211,11 @@ function Nav() {
     window.addEventListener('scroll', h, { passive: true })
     return () => window.removeEventListener('scroll', h)
   }, [])
-  const links = [['E-facturation', '#facturation'], ['Smart CFO', '#cfo'], ['Voix', '#voix'], ['Tarifs', '#tarifs'], ['Blog', '/blog']]
+  const links = lang === 'fr'
+    ? [['E-facturation', '#facturation'], ['Smart CFO', '#cfo'], ['Voix', '#voix'], ['Tarifs', '#tarifs'], ['Blog', '/blog']]
+    : [['E-invoicing', '#facturation'], ['Smart CFO', '#cfo'], ['Voice', '#voix'], ['Pricing', '#tarifs'], ['Blog', '/blog']]
+  const tConnexion = lang === 'fr' ? 'Connexion' : 'Sign in'
+  const tCommencer = lang === 'fr' ? 'Commencer' : 'Get started'
   return (
     <>
       <motion.nav initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EZ }}
@@ -225,11 +233,17 @@ function Nav() {
           ))}
         </div>
         <div style={{ display: 'flex', gap: 4, alignItems: 'center', padding: '0 4px 0 6px', borderLeft: `1px solid ${BORDER}` }}>
+          <button onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
+            style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: MUTED, background: 'transparent', border: `1px solid ${BORDER}`, borderRadius: 980, padding: '5px 10px', cursor: 'pointer', letterSpacing: '0.04em' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = INK; (e.currentTarget as HTMLElement).style.borderColor = BORDER2 }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = MUTED; (e.currentTarget as HTMLElement).style.borderColor = BORDER }}>
+            {lang === 'fr' ? 'EN' : 'FR'}
+          </button>
           <a href="/login" style={{ fontSize: 13, color: MUTED, textDecoration: 'none', padding: '6px 12px', borderRadius: 980, fontWeight: 450 }}
-            onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>Connexion</a>
+            onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>{tConnexion}</a>
           <a href="/demo" style={{ fontSize: 13, fontWeight: 600, color: '#fff', textDecoration: 'none', padding: '8px 18px', borderRadius: 980, background: VI, display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.25s' }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = VI2 }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = VI }}>
-            Commencer<span style={{ width: 18, height: 18, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>→</span>
+            {tCommencer}<span style={{ width: 18, height: 18, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>→</span>
           </a>
         </div>
       </motion.nav>
@@ -240,9 +254,13 @@ function Nav() {
         <AnimatePresence>
           {mob && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: 'fixed', inset: 0, zIndex: 250, background: 'rgba(250,250,248,0.97)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              {[...links, ['Connexion', '/login'], ['Commencer', '/demo']].map(([l, h]) => (
+              {[...links, [tConnexion, '/login'], [tCommencer, '/demo']].map(([l, h]) => (
                 <a key={l} href={h} onClick={() => setMob(false)} style={{ fontSize: 24, fontFamily: 'Georgia, serif', fontStyle: 'italic', color: INK, textDecoration: 'none', padding: '12px 32px' }}>{l}</a>
               ))}
+              <button onClick={() => { setLang(lang === 'fr' ? 'en' : 'fr'); setMob(false) }}
+                style={{ marginTop: 8, fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: MUTED, background: 'transparent', border: `1px solid ${BORDER2}`, borderRadius: 980, padding: '8px 18px', cursor: 'pointer' }}>
+                {lang === 'fr' ? 'Switch to English' : 'Passer en francais'}
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -251,57 +269,76 @@ function Nav() {
   )
 }
 
-function MiniCalculator({ cms }: { cms: CMS }) {
+function MiniCalculator({ cms, lang }: { cms: CMS; lang: Lang }) {
   const [siret, setSiret] = useState('')
   const [step, setStep] = useState<'input' | 'result'>('input')
   const [score, setScore] = useState<{ grade: string; color: string; fine: string } | null>(null)
   function compute() {
     if (siret.replace(/\s/g, '').length < 9) return
     const grades = [
-      { grade: 'C', color: EM, fine: '7 500 EUR' },
-      { grade: 'D', color: '#EF4444', fine: '15 000 EUR' },
-      { grade: 'B', color: GR, fine: '2 500 EUR' },
+      { grade: 'C', color: EM, fine: lang === 'fr' ? '7 500 EUR' : '7,500 EUR' },
+      { grade: 'D', color: '#EF4444', fine: lang === 'fr' ? '15 000 EUR' : '15,000 EUR' },
+      { grade: 'B', color: GR, fine: lang === 'fr' ? '2 500 EUR' : '2,500 EUR' },
     ]
     setScore(grades[siret.length % 3])
     setStep('result')
   }
   return (
-    <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 18, padding: '22px 24px', boxShadow: '0 20px 50px rgba(13,13,15,0.08)', width: '100%', maxWidth: 360 }}>
-      <div style={{ fontSize: 10, color: SUBTLE, letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: 14, fontFamily: 'monospace' }}>{cms.calc_label}</div>
+    <div style={{ background: CARD, border: `1.5px solid ${EM}30`, borderRadius: 18, padding: '22px 24px', boxShadow: `0 20px 50px rgba(13,13,15,0.08), 0 0 0 1px ${EM}08`, width: '100%', maxWidth: 360 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 14 }}>
+        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#EF4444', animation: 'pulse 1.6s ease-in-out infinite' }} />
+        <div style={{ fontSize: 10, color: '#DC2626', letterSpacing: '0.1em', textTransform: 'uppercase' as const, fontFamily: 'monospace', fontWeight: 700 }}>{lang === 'fr' ? cms.calc_label : EN_HERO.calcLabel}</div>
+      </div>
       {step === 'input' ? (
         <>
           <div style={{ display: 'flex', gap: 8 }}>
-            <input value={siret} onChange={e => setSiret(e.target.value)} placeholder="Votre SIRET ou SIREN" maxLength={14}
+            <input value={siret} onChange={e => setSiret(e.target.value)} placeholder={lang === 'fr' ? 'Votre SIRET ou SIREN' : EN_HERO.calcPlaceholder} maxLength={14}
               style={{ flex: 1, padding: '11px 14px', borderRadius: 10, border: `1px solid ${BORDER2}`, fontSize: 13, fontFamily: 'system-ui', outline: 'none', color: INK }}
               onKeyDown={e => e.key === 'Enter' && compute()} />
-            <button onClick={compute} style={{ padding: '11px 16px', borderRadius: 10, background: VI, color: '#fff', border: 'none', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>→</button>
+            <button onClick={compute} style={{ padding: '11px 16px', borderRadius: 10, background: EM, color: '#fff', border: 'none', fontWeight: 600, fontSize: 13, cursor: 'pointer', boxShadow: `0 4px 14px ${EM}40` }}>→</button>
           </div>
-          <div style={{ fontSize: 11, color: SUBTLE, marginTop: 10 }}>Resultat en 5 secondes. Aucune carte requise.</div>
+          <div style={{ fontSize: 11, color: '#B45309', marginTop: 10, fontWeight: 500 }}>{lang === 'fr' ? "62 jours restants. Verifiez avant qu'il ne soit trop tard." : EN_HERO.calcUrgent}</div>
         </>
       ) : score && (
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
             <div style={{ width: 48, height: 48, borderRadius: 12, background: `${score.color}15`, border: `1.5px solid ${score.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Georgia, serif', fontSize: 22, fontWeight: 700, color: score.color }}>{score.grade}</div>
             <div>
-              <div style={{ fontSize: 12, color: MUTED }}>Exposition estimee</div>
+              <div style={{ fontSize: 12, color: MUTED }}>{lang === 'fr' ? 'Exposition estimee' : EN_HERO.calcExposure}</div>
               <div style={{ fontSize: 17, fontWeight: 700, color: INK, fontFamily: 'monospace' }}>{score.fine}</div>
             </div>
           </div>
-          <a href="/calculateur" style={{ display: 'block', textAlign: 'center', padding: '10px', borderRadius: 9, background: VI, color: '#fff', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>Voir le rapport complet →</a>
+          <a href="/calculateur" style={{ display: 'block', textAlign: 'center', padding: '10px', borderRadius: 9, background: VI, color: '#fff', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>{lang === 'fr' ? 'Voir le rapport complet →' : EN_HERO.calcReport + ' →'}</a>
         </div>
       )}
     </div>
   )
 }
 
-function Hero({ cms }: { cms: CMS }) {
+const EN_HERO = {
+  h1: 'Your invoices. Your cash flow.',
+  rotating: ['Without the paperwork.', 'Without manual follow-ups.', 'Before September 1st.', 'With real DGFiP compliance.'],
+  sub: "We handle DGFiP e-invoicing, your real-time cash flow, and your missed calls. You run your business.",
+  cta1: 'Start for free',
+  cta2: 'See a demo',
+  countdown: ['days', 'hours', 'min', 'sec'],
+  countdownNote: 'before the DGFiP deadline',
+  calcLabel: 'Check your risk',
+  calcPlaceholder: 'Your SIRET or SIREN',
+  calcUrgent: "62 days left. Check before it's too late.",
+  calcReport: 'See full report',
+  calcExposure: 'Estimated exposure',
+}
+
+function Hero({ cms, lang }: { cms: CMS; lang: Lang }) {
   const { days, hours, mins, secs } = useCountdown()
   const pad = (n: number) => String(n).padStart(2, '0')
   const [phrase, setPhrase] = useState(0)
+  const rotating = lang === 'fr' ? cms.hero_h1_rotating : EN_HERO.rotating
   useEffect(() => {
-    const id = setInterval(() => setPhrase(p => (p + 1) % cms.hero_h1_rotating.length), 3600)
+    const id = setInterval(() => setPhrase(p => (p + 1) % rotating.length), 3600)
     return () => clearInterval(id)
-  }, [cms.hero_h1_rotating.length])
+  }, [rotating.length])
 
   return (
     <section style={{ minHeight: '100dvh', background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '110px 24px 60px', position: 'relative', overflow: 'hidden' }}>
@@ -310,53 +347,47 @@ function Hero({ cms }: { cms: CMS }) {
 
       <div style={{ maxWidth: 1180, width: '100%', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 56, alignItems: 'center', position: 'relative', zIndex: 2 }} className="hero-grid">
         <div style={{ textAlign: 'left' as const }}>
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 980, background: `${VI}10`, border: `1px solid ${VI}25`, marginBottom: 24 }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: VI }} />
-            <span style={{ fontSize: 11, color: VI2, fontWeight: 500 }}>{cms.hero_eyebrow}</span>
-          </motion.div>
-
           <motion.h1 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-            style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 'clamp(34px, 4.6vw, 58px)', color: INK, lineHeight: 1.08, marginBottom: 14, letterSpacing: '-0.03em' }}>
-            {cms.hero_h1}<br />
+            style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 'clamp(34px, 4.6vw, 58px)', color: INK, lineHeight: 1.08, marginBottom: 14, letterSpacing: '-0.03em', marginTop: 0 }}>
+            {lang === 'fr' ? cms.hero_h1 : EN_HERO.h1}<br />
             <AnimatePresence mode="wait">
-              <motion.span key={phrase} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }}
+              <motion.span key={phrase + lang} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }}
                 style={{ fontStyle: 'italic', color: SUBTLE, display: 'inline-block' }}>
-                {cms.hero_h1_rotating[phrase]}
+                {rotating[phrase % rotating.length]}
               </motion.span>
             </AnimatePresence>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
             style={{ fontSize: 16, color: MUTED, lineHeight: 1.65, maxWidth: 460, marginBottom: 28 }}>
-            {cms.hero_sub}
+            {lang === 'fr' ? cms.hero_sub : EN_HERO.sub}
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} style={{ display: 'flex', gap: 10, marginBottom: 36 }}>
             <a href="/demo" style={{ padding: '13px 24px', borderRadius: 980, background: VI, color: '#fff', fontWeight: 600, fontSize: 14, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-              {cms.hero_cta1}<span style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>→</span>
+              {lang === 'fr' ? cms.hero_cta1 : EN_HERO.cta1}<span style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>→</span>
             </a>
             <a href="/dashboard" style={{ padding: '13px 24px', borderRadius: 980, border: `1px solid ${BORDER2}`, color: MUTED, fontWeight: 500, fontSize: 14, textDecoration: 'none' }}>
-              {cms.hero_cta2}
+              {lang === 'fr' ? cms.hero_cta2 : EN_HERO.cta2}
             </a>
           </motion.div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.4 }}
             style={{ display: 'inline-flex', alignItems: 'stretch', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 16, padding: '18px 26px', boxShadow: '0 16px 40px rgba(13,13,15,0.06)' }}>
-            {[[pad(days), 'jours'], [pad(hours), 'heures'], [pad(mins), 'min'], [pad(secs), 'sec']].map(([v, l], i) => (
+            {[[pad(days), lang === 'fr' ? 'jours' : EN_HERO.countdown[0]], [pad(hours), lang === 'fr' ? 'heures' : EN_HERO.countdown[1]], [pad(mins), lang === 'fr' ? 'min' : EN_HERO.countdown[2]], [pad(secs), lang === 'fr' ? 'sec' : EN_HERO.countdown[3]]].map(([v, l], i) => (
               <div key={l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 18px', borderRight: i < 3 ? `1px solid ${BORDER}` : undefined }}>
                 <span style={{ fontSize: 38, fontWeight: 700, color: INK, lineHeight: 1, fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}>{v}</span>
                 <span style={{ fontSize: 10, color: SUBTLE, letterSpacing: '0.1em', marginTop: 5, textTransform: 'uppercase' as const }}>{l}</span>
               </div>
             ))}
             <div style={{ display: 'flex', alignItems: 'center', paddingLeft: 18, maxWidth: 110 }}>
-              <span style={{ fontSize: 11, color: SUBTLE, lineHeight: 1.4 }}>avant la deadline DGFiP</span>
+              <span style={{ fontSize: 11, color: SUBTLE, lineHeight: 1.4 }}>{lang === 'fr' ? 'avant la deadline DGFiP' : EN_HERO.countdownNote}</span>
             </div>
           </motion.div>
         </div>
 
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.4 }} style={{ display: 'flex', justifyContent: 'center' }}>
-          <MiniCalculator cms={cms} />
+          <MiniCalculator cms={cms} lang={lang} />
         </motion.div>
       </div>
     </section>
@@ -591,19 +622,73 @@ function Contact({ cms }: { cms: CMS }) {
   )
 }
 
-function Footer({ cms }: { cms: CMS }) {
+function FooterCTA({ cms, lang }: { cms: CMS; lang: Lang }) {
   return (
-    <footer style={{ background: BG, borderTop: `1px solid ${BORDER}`, padding: '40px 32px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' as const, gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 22, height: 22, borderRadius: 6, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 12, color: '#fff' }}>v</span></div>
-          <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 14, color: INK }}>vanivert</span>
-          <span style={{ fontSize: 11, color: SUBTLE, marginLeft: 8 }}>{cms.footer_tagline}</span>
-        </div>
-        <div style={{ display: 'flex', gap: 18 }}>
-          {[['Mentions legales', '/legal/mentions-legales'], ['CGV', '/legal/cgv'], ['Confidentialite', '/legal/confidentialite'], ['Admin', '/admin']].map(([l, h]) => (
-            <a key={l} href={h} style={{ fontSize: 12, color: MUTED, textDecoration: 'none' }}>{l}</a>
+    <section style={{ background: BG, padding: '0 32px 64px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <FadeUp>
+          <div style={{ background: INK, borderRadius: 28, padding: '72px 40px', textAlign: 'center' as const, position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: '50%', left: '50%', width: 560, height: 560, marginLeft: -280, marginTop: -280, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.08)', pointerEvents: 'none' as const }} />
+            <div style={{ position: 'absolute', top: '50%', left: '50%', width: 760, height: 760, marginLeft: -380, marginTop: -380, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none' as const }} />
+            <div style={{ position: 'relative', zIndex: 2 }}>
+              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(26px, 3.4vw, 40px)', color: '#fff', marginBottom: 12, letterSpacing: '-0.025em', lineHeight: 1.2 }}>
+                {lang === 'fr' ? "Le 1er septembre ne devrait pas etre une surprise." : "September 1st shouldn't be a surprise."}
+              </h2>
+              <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', marginBottom: 32 }}>{lang === 'fr' ? 'On vous montre comment.' : 'Let us show you how.'}</p>
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' as const }}>
+                <a href="/demo" style={{ padding: '13px 26px', borderRadius: 980, background: '#fff', color: INK, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
+                  {lang === 'fr' ? 'Demander une demo' : 'Book a demo'}
+                </a>
+                <a href="/calculateur" style={{ padding: '13px 26px', borderRadius: 980, color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: 14, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  {lang === 'fr' ? 'Calculer mon risque' : 'Calculate my risk'} →
+                </a>
+              </div>
+            </div>
+          </div>
+        </FadeUp>
+      </div>
+    </section>
+  )
+}
+
+function Footer({ cms, lang }: { cms: CMS; lang: Lang }) {
+  const cols = lang === 'fr' ? [
+    { h: 'Produit', links: [['Smart CFO', '#cfo'], ['E-facturation', '#facturation'], ['Reception vocale', '#voix'], ['Tarifs', '#tarifs'], ['Integrations', '#facturation'], ['Dashboard', '/dashboard']] },
+    { h: 'Ressources', links: [['Blog', '/blog'], ['Calculateur de risque', '/calculateur'], ['Documentation', '/blog'], ['Changelog', '/blog']] },
+    { h: 'Societe', links: [['A propos', '/'], ['Clients', '/'], ['Carrieres', '/'], ['Partenaires', '/'], ['Contact', '#contact']] },
+    { h: 'Legal', links: [['Mentions legales', '/legal/mentions-legales'], ['CGV', '/legal/cgv'], ['Confidentialite', '/legal/confidentialite'], ['Statut', '/'], ['Administration', '/admin']] },
+  ] : [
+    { h: 'Product', links: [['Smart CFO', '#cfo'], ['E-invoicing', '#facturation'], ['Voice reception', '#voix'], ['Pricing', '#tarifs'], ['Integrations', '#facturation'], ['Dashboard', '/dashboard']] },
+    { h: 'Resources', links: [['Blog', '/blog'], ['Risk calculator', '/calculateur'], ['Documentation', '/blog'], ['Changelog', '/blog']] },
+    { h: 'Company', links: [['About', '/'], ['Customers', '/'], ['Careers', '/'], ['Partners', '/'], ['Contact', '#contact']] },
+    { h: 'Legal', links: [['Legal notice', '/legal/mentions-legales'], ['Terms of service', '/legal/cgv'], ['Privacy', '/legal/confidentialite'], ['Status', '/'], ['Admin', '/admin']] },
+  ]
+  return (
+    <footer style={{ background: BG2, borderTop: `1px solid ${BORDER}`, padding: '56px 32px 32px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr repeat(4, 1fr)', gap: 32, marginBottom: 48 }} className="footer-grid">
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+              <div style={{ width: 24, height: 24, borderRadius: 7, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 13, color: '#fff' }}>v</span></div>
+              <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 16, color: INK }}>vanivert</span>
+            </div>
+            <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.6, maxWidth: 220 }}>{lang === 'fr' ? cms.footer_tagline : "We handle compliance. You handle the business."}</p>
+          </div>
+          {cols.map(col => (
+            <div key={col.h}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: INK, marginBottom: 14 }}>{col.h}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                {col.links.map(([l, h]) => (
+                  <a key={l} href={h} style={{ fontSize: 13, color: MUTED, textDecoration: 'none' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>{l}</a>
+                ))}
+              </div>
+            </div>
           ))}
+        </div>
+        <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' as const, gap: 10 }}>
+          <span style={{ fontSize: 12, color: SUBTLE }}>© 2026 Vanivert. {cms.company_siret}.</span>
+          <span style={{ fontSize: 12, color: SUBTLE }}>{cms.company_address}</span>
         </div>
       </div>
     </footer>
@@ -612,10 +697,12 @@ function Footer({ cms }: { cms: CMS }) {
 
 export default function Home() {
   const cms = useCMS()
+  const [lang, setLang] = useState<Lang>('fr')
   return (
     <>
       <style>{`
         @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-33.33%)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
         *{box-sizing:border-box;margin:0;padding:0}
         html{scroll-behavior:smooth}
         body{background:${BG};color:${INK};font-family:system-ui,-apple-system,sans-serif;overflow-x:hidden}
@@ -623,11 +710,12 @@ export default function Home() {
         .nav-links{display:flex}.mob-nav{display:none}
         @media(max-width:860px){.nav-links{display:none!important}.mob-nav{display:block!important}}
         @media(max-width:900px){.hero-grid{grid-template-columns:1fr!important}}
-        @media(max-width:768px){.alt-grid{grid-template-columns:1fr!important}.pricing-grid{grid-template-columns:1fr!important}}
+        @media(max-width:768px){.alt-grid{grid-template-columns:1fr!important}.pricing-grid{grid-template-columns:1fr!important}.footer-grid{grid-template-columns:1fr 1fr!important}}
+        @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}}
       `}</style>
-      <Nav />
+      <Nav lang={lang} setLang={setLang} />
       <main>
-        <Hero cms={cms} />
+        <Hero cms={cms} lang={lang} />
         <ClientLogos cms={cms} />
         <ModulePills cms={cms} />
         <ProductSection label={cms.s1_label} h2={cms.s1_h2} body={cms.s1_body} badge={cms.s1_badge} badgeColor={GR} anchor="facturation" mockup={<InvoiceMockup />} />
@@ -639,8 +727,9 @@ export default function Home() {
         <Pricing cms={cms} />
         <Blog cms={cms} />
         <Contact cms={cms} />
+        <FooterCTA cms={cms} lang={lang} />
       </main>
-      <Footer cms={cms} />
+      <Footer cms={cms} lang={lang} />
     </>
   )
 }
