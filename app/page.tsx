@@ -53,6 +53,7 @@ interface CMS {
   company_email: string; company_siret: string; company_address: string
   calc_label: string
   integrations_label: string; integrations_h2: string; integrations_sub: string
+  agent_label: string
 }
 
 const DEFAULT_CMS: CMS = {
@@ -107,6 +108,7 @@ const DEFAULT_CMS: CMS = {
   integrations_label: 'Integrations',
   integrations_h2: 'Connecte a tout ce que vous utilisez deja.',
   integrations_sub: "Pas de double saisie, pas de fichiers a exporter a la main. Vanivert se branche directement sur votre banque, votre comptabilite, votre agenda et vos outils de paiement.",
+  agent_label: 'Agent Vanivert',
 }
 
 function useCMS(): CMS {
@@ -564,6 +566,139 @@ function Hero({ cms, lang }: { cms: CMS; lang: Lang }) {
 }
 
 const CLIENT_LOGOS = ['PROLANN SAS', 'Hotel Ker Buhe', 'Oxxius Lannion', 'Apizee SAS', 'Cristalens', 'Cabinet Dr. Martin', 'MECA ARMOR']
+/* ── AGENT FLOW: three documents spread wide, center card animates through
+   processing states. Mirrors Sequence's contract->agent->invoice strip
+   exactly, rebuilt for Vanivert's facture/conformite flow. ── */
+function DocSkeleton({ lines, signature }: { lines: { w: string; tone?: 'normal' | 'highlight' }[]; signature?: boolean }) {
+  return (
+    <>
+      {lines.map((l, i) => (
+        <div key={i} style={{ height: 7, width: l.w, borderRadius: 3, background: l.tone === 'highlight' ? `${VI}35` : 'rgba(13,13,15,0.08)', marginBottom: 6 }} />
+      ))}
+      {signature && (
+        <div style={{ marginTop: 18 }}>
+          <svg width="64" height="20" viewBox="0 0 64 20"><path d="M4 14C8 6 12 18 16 10C20 4 24 16 28 8C32 4 36 14 40 9" stroke="rgba(13,13,15,0.3)" strokeWidth="1.4" fill="none" strokeLinecap="round" /></svg>
+        </div>
+      )}
+    </>
+  )
+}
+
+function StatusBadge({ label, color }: { label: string; color: string }) {
+  return (
+    <span style={{ fontSize: 11, fontWeight: 600, color, background: `${color}18`, padding: '4px 11px', borderRadius: 980 }}>{label}</span>
+  )
+}
+
+function DocCard({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return (
+    <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '20px 18px', width: 220, position: 'relative', boxShadow: '0 8px 24px rgba(13,13,15,0.06)', ...style }}>
+      {/* folded-corner detail matching Sequence's document mockup */}
+      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, background: `linear-gradient(135deg, transparent 50%, ${BORDER} 50%)`, borderBottomRightRadius: 9 }} />
+      {children}
+    </div>
+  )
+}
+
+function AgentFlowSection({ cms }: { cms: CMS }) {
+  // Cycles through processing states every 3.2s: contract received -> agent
+  // reviewing -> validated, while the side documents update their status
+  // pills in sync, exactly like Sequence's "Review required" -> "Sent" beat.
+  const [step, setStep] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setStep(s => (s + 1) % 3), 3200)
+    return () => clearInterval(id)
+  }, [])
+  const states = [
+    { tag: 'En verification', tagColor: EM, leftBadge: { label: 'Recue', color: SUBTLE }, rightBadge: { label: 'En attente', color: EM } },
+    { tag: 'Validation CIUS-FR', tagColor: VI, leftBadge: { label: 'Conforme', color: GR }, rightBadge: { label: 'Programmee', color: VI } },
+    { tag: 'Conforme DGFiP', tagColor: GR, leftBadge: { label: 'Conforme', color: GR }, rightBadge: { label: 'Envoyee', color: GR } },
+  ]
+  const s = states[step]
+
+  return (
+    <section style={{ background: BG, padding: '64px 32px 32px', overflow: 'hidden' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, position: 'relative' }} className="agent-flow">
+        {/* Left: incoming contract */}
+        <FadeUp delay={0.05} style={{ flexShrink: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <DocCard>
+              <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', marginBottom: 10, fontFamily: 'monospace' }}>CONTRAT</div>
+              <DocSkeleton lines={[{ w: '75%' }, { w: '55%' }, { w: '0' }, { w: '90%' }, { w: '65%' }, { w: '0' }, { w: '80%' }, { w: '40%' }]} />
+            </DocCard>
+            <DocCard style={{ width: 200, transform: 'translateX(18px)' }}>
+              <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', marginBottom: 10, fontFamily: 'monospace' }}>CONTRAT</div>
+              <DocSkeleton lines={[{ w: '60%' }, { w: '40%' }, { w: '0' }, { w: '85%' }, { w: '70%' }, { w: '90%' }, { w: '50%' }]} signature />
+            </DocCard>
+          </div>
+        </FadeUp>
+
+        {/* Center: live agent card */}
+        <FadeUp delay={0.15} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 280 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <VanivertLogoMark s={18} />
+            <span style={{ fontSize: 13, color: MUTED, fontFamily: 'system-ui' }}>{cms.agent_label}</span>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.35 }}
+              style={{ marginBottom: 14, padding: '5px 13px', borderRadius: 980, background: `${s.tagColor}15`, border: `1px solid ${s.tagColor}35` }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: s.tagColor }}>{s.tag}</span>
+            </motion.div>
+          </AnimatePresence>
+          <DocCard style={{ width: 260 }}>
+            <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', marginBottom: 14, fontFamily: 'monospace' }}>FACTURE</div>
+            <DocSkeleton lines={[{ w: '50%' }, { w: '0' }]} />
+            <div style={{ height: 10 }} />
+            <AnimatePresence mode="wait">
+              <motion.div key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+                <DocSkeleton lines={[
+                  { w: '95%', tone: step >= 1 ? 'highlight' : 'normal' },
+                  { w: '70%', tone: step >= 1 ? 'highlight' : 'normal' },
+                  { w: '0' },
+                  { w: '85%' },
+                  { w: '60%' },
+                  { w: '0' },
+                  { w: '100%', tone: step >= 2 ? 'highlight' : 'normal' },
+                ]} />
+              </motion.div>
+            </AnimatePresence>
+          </DocCard>
+        </FadeUp>
+
+        {/* Right: outgoing invoices */}
+        <FadeUp delay={0.05} style={{ flexShrink: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-end' }}>
+            <DocCard>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', fontFamily: 'monospace' }}>FACTURE</div>
+                <AnimatePresence mode="wait">
+                  <motion.div key={step} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }}>
+                    <StatusBadge label={s.leftBadge.label} color={s.leftBadge.color} />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+              <DocSkeleton lines={[{ w: '90%' }, { w: '60%' }, { w: '0' }, { w: '75%' }, { w: '50%' }]} />
+              <div style={{ marginTop: 12, height: 18, width: 70, borderRadius: 5, background: 'rgba(13,13,15,0.05)' }} />
+            </DocCard>
+            <DocCard style={{ width: 200, transform: 'translateX(-18px)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', fontFamily: 'monospace' }}>FACTURE</div>
+                <AnimatePresence mode="wait">
+                  <motion.div key={step} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3, delay: 0.08 }}>
+                    <StatusBadge label={s.rightBadge.label} color={s.rightBadge.color} />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+              <DocSkeleton lines={[{ w: '80%' }, { w: '55%' }, { w: '0' }, { w: '65%' }]} />
+              <div style={{ marginTop: 12, height: 18, width: 60, borderRadius: 5, background: 'rgba(13,13,15,0.05)' }} />
+            </DocCard>
+          </div>
+        </FadeUp>
+      </div>
+    </section>
+  )
+}
+
 function ClientLogos({ cms }: { cms: CMS }) {
   return (
     <section style={{ background: BG, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}`, padding: '22px 0' }}>
@@ -902,7 +1037,8 @@ export default function Home() {
         .nav-links{display:flex}.mob-nav{display:none}
         @media(max-width:860px){.nav-links{display:none!important}.mob-nav{display:block!important}}
         @media(max-width:1280px){.orbit-field{transform:scale(0.92)}.orbit-wrap{height:626px}}
-        @media(max-width:900px){.hero-grid{grid-template-columns:1fr!important}.orbit-field{transform:scale(0.72)}.orbit-wrap{height:490px}}
+        @media(max-width:900px){.hero-grid{grid-template-columns:1fr!important}.orbit-field{transform:scale(0.72)}.orbit-wrap{height:490px}.agent-flow{transform:scale(0.82);transform-origin:top center}}
+        @media(max-width:680px){.agent-flow{flex-direction:column!important;align-items:center!important;gap:32px!important;transform:scale(1)}}
         @media(max-width:768px){.alt-grid{grid-template-columns:1fr!important}.pricing-grid{grid-template-columns:1fr!important}.footer-grid{grid-template-columns:1fr 1fr!important}.orbit-field{transform:scale(0.56)}.orbit-wrap{height:381px}}
         @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}.orbit-field{transform:scale(0.42)}.orbit-wrap{height:286px}}
         @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}}
@@ -910,6 +1046,7 @@ export default function Home() {
       <Nav lang={lang} setLang={setLang} />
       <main>
         <Hero cms={cms} lang={lang} />
+        <AgentFlowSection cms={cms} />
         <ClientLogos cms={cms} />
         <ModulePills cms={cms} />
         <ProductSection label={cms.s1_label} h2={cms.s1_h2} body={cms.s1_body} badge={cms.s1_badge} badgeColor={GR} anchor="facturation" mockup={<InvoiceMockup />} />

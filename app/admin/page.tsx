@@ -105,6 +105,7 @@ const DEFAULT_CMS = {
   integrations_label: 'Integrations',
   integrations_h2: 'Connecte a tout ce que vous utilisez deja.',
   integrations_sub: "Pas de double saisie, pas de fichiers a exporter a la main. Vanivert se branche directement sur votre banque, votre comptabilite, votre agenda et vos outils de paiement.",
+  agent_label: 'Agent Vanivert',
 }
 
 type CMS = typeof DEFAULT_CMS
@@ -417,7 +418,9 @@ function IntegrationsEditor({ cms, set, save, saved }: { cms: CMS; set: (k: keyo
 
   return (
     <div>
-      <SectionTitle label="Texte de la section (titre, sous-titre)" />
+      <SectionTitle label="Animation document - sous le hero (contrat -> agent -> facture)" />
+      <Field label="Nom affiche sous le logo (carte centrale)" value={cms.agent_label} onChange={v => set('agent_label', v)} />
+      <SectionTitle label="Texte de la section integrations" />
       <Field label="Etiquette" value={cms.integrations_label} onChange={v => set('integrations_label', v)} />
       <Field label="Titre" value={cms.integrations_h2} onChange={v => set('integrations_h2', v)} />
       <Field label="Sous-titre" value={cms.integrations_sub} onChange={v => set('integrations_sub', v)} rows={2} />
