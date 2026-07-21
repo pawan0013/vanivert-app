@@ -684,54 +684,57 @@ function Contact() {
         }),
       })
     } catch {}
-    await new Promise(r=>setTimeout(r,400)); setSent(true); setLoading(false)
+    setSent(true); setLoading(false)
+    setTimeout(() => {
+      setSent(false); setName(''); setEmail(''); setAgency(''); setAgents(''); setMessage('')
+    }, 3000)
   }
   const inp:React.CSSProperties={width:'100%',padding:'13px 16px',borderRadius:12,border:`1px solid ${BDR2}`,fontSize:14,outline:'none',color:INK,fontFamily:'system-ui,sans-serif',background:BG,boxSizing:'border-box' as const}
   return (
     <section id="contact" style={{background:BG,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
-      <div style={{maxWidth:960,margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 1fr',gap:56,alignItems:'center'}} className="alt-grid">
-        <FadeUp>
-          <Pill color={BLUE}>Contact</Pill>
-          <h2 style={{fontFamily:'system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',fontStyle:'italic',fontWeight:400,fontSize:'clamp(26px,3.2vw,40px)',color:INK,marginTop:14,marginBottom:12,letterSpacing:'-0.03em'}}>Parlez-nous de votre agence.</h2>
-          <p style={{fontSize:14,color:MUTED,lineHeight:1.75,marginBottom:28}}>Demande de demo, question technique, partenariat - nous repondons personnellement sous 24h ouvrees.</p>
-          <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:20}}>
-            {[['📧','team@vanivert.eu','mailto:team@vanivert.eu'],['📍',PARIS_ADDRESS,'https://maps.google.com/?q=Cergy,France'],['🏛',`SIRET ${SIRET}`,'#'],['🔗','linkedin.com/company/vanivert','https://linkedin.com/company/vanivert']].map(([icon,label,href])=>(
-              <a key={label} href={href} target={href.startsWith('http')?'_blank':'_self'} rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none'}}>
-                <span style={{fontSize:16}}>{icon}</span>
-                <span style={{fontSize:13,color:MUTED}}>{label}</span>
-              </a>
-            ))}
+      <div style={{maxWidth:560,margin:'0 auto'}}>
+        <FadeUp style={{textAlign:'center' as const,marginBottom:36}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16,justifyContent:'center'}}>
+            <span style={{width:28,height:3,borderRadius:2,background:`linear-gradient(90deg,${BLUE},${ORG})`}}/>
+            <span style={{fontSize:11,fontWeight:800,color:BLUE,letterSpacing:'0.14em',textTransform:'uppercase' as const}}>Contact</span>
+            <span style={{width:28,height:3,borderRadius:2,background:`linear-gradient(90deg,${ORG},${BLUE})`}}/>
           </div>
+          <h2 style={{fontWeight:700,fontSize:'clamp(26px,3.2vw,40px)',color:INK,marginBottom:12,letterSpacing:'-0.03em'}}>Parlez-nous de votre agence.</h2>
+          <p style={{fontSize:14,color:MUTED,lineHeight:1.7}}>Demande de demo, question technique, partenariat - nous repondons personnellement sous 24h ouvrees.</p>
         </FadeUp>
         <FadeUp delay={0.1}>
-          {sent ? (
-            <div style={{padding:28,borderRadius:18,background:BLUE_LT,border:`1px solid ${BLUE}20`,textAlign:'center' as const}}>
-              <div style={{fontSize:36,marginBottom:12}}>✅</div>
-              <div style={{fontSize:16,fontWeight:600,color:INK,marginBottom:8}}>Message recu !</div>
-              <div style={{fontSize:13,color:MUTED}}>Pawan vous repond sous 24h ouvrees.</div>
-            </div>
-          ) : (
-            <form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:10}}>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-                <input required value={name} onChange={e=>setName(e.target.value)} placeholder="Votre prenom" style={inp}/>
-                <input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email professionnel" style={inp}/>
-              </div>
-              <input value={agency} onChange={e=>setAgency(e.target.value)} placeholder="Nom de votre agence" style={inp}/>
-              <select value={agents} onChange={e=>setAgents(e.target.value)} style={{...inp,appearance:'none' as const}}>
-                <option value="">Nombre d&apos;agents</option>
-                <option value="1">1 agent</option>
-                <option value="2-5">2 a 5 agents</option>
-                <option value="6-15">6 a 15 agents</option>
-                <option value="15+">Plus de 15 agents</option>
-              </select>
-              <textarea value={message} onChange={e=>setMessage(e.target.value)} placeholder="Votre message (optionnel)" rows={3} style={{...inp,resize:'vertical' as const}}/>
-              <p style={{fontSize:11,color:SUBTLE,lineHeight:1.55}}>En soumettant ce formulaire, vous acceptez que vos donnees soient utilisees pour vous recontacter. Conforme RGPD. Voir notre <a href="/legal/confidentialite" style={{color:BLUE}}>politique de confidentialite</a>.</p>
-              <button type="submit" disabled={loading} style={{padding:'14px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,border:'none',cursor:'pointer',transition:'background 0.25s',boxShadow:`0 4px 14px ${BLUE}28`}}
-                onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
-                {loading?'...':'Demander une demo gratuite →'}
-              </button>
-            </form>
-          )}
+          <AnimatePresence mode="wait">
+            {sent ? (
+              <motion.div key="sent" initial={{opacity:0,scale:0.96}} animate={{opacity:1,scale:1}} exit={{opacity:0,scale:0.96}} transition={{duration:0.3}}
+                style={{padding:40,borderRadius:18,background:BLUE_LT,border:`1px solid ${BLUE}20`,textAlign:'center' as const}}>
+                <div style={{fontSize:40,marginBottom:14}}>✅</div>
+                <div style={{fontSize:17,fontWeight:700,color:INK,marginBottom:8}}>Message envoye !</div>
+                <div style={{fontSize:13,color:MUTED}}>Nous vous repondons sous 24h ouvrees.</div>
+              </motion.div>
+            ) : (
+              <motion.form key="form" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.25}}
+                onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:10}}>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                  <input required value={name} onChange={e=>setName(e.target.value)} placeholder="Votre prenom" style={inp}/>
+                  <input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email professionnel" style={inp}/>
+                </div>
+                <input value={agency} onChange={e=>setAgency(e.target.value)} placeholder="Nom de votre agence" style={inp}/>
+                <select value={agents} onChange={e=>setAgents(e.target.value)} style={{...inp,appearance:'none' as const}}>
+                  <option value="">Nombre d&apos;agents</option>
+                  <option value="1">1 agent</option>
+                  <option value="2-5">2 a 5 agents</option>
+                  <option value="6-15">6 a 15 agents</option>
+                  <option value="15+">Plus de 15 agents</option>
+                </select>
+                <textarea value={message} onChange={e=>setMessage(e.target.value)} placeholder="Votre message (optionnel)" rows={3} style={{...inp,resize:'vertical' as const}}/>
+                <p style={{fontSize:11,color:SUBTLE,lineHeight:1.55,textAlign:'center' as const}}>En soumettant ce formulaire, vous acceptez que vos donnees soient utilisees pour vous recontacter. Conforme RGPD. Voir notre <a href="/legal/confidentialite" style={{color:BLUE}}>politique de confidentialite</a>.</p>
+                <button type="submit" disabled={loading} style={{padding:'14px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,border:'none',cursor:'pointer',transition:'background 0.25s',boxShadow:`0 4px 14px ${BLUE}28`}}
+                  onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
+                  {loading?'Envoi...':'Demander une demo gratuite →'}
+                </button>
+              </motion.form>
+            )}
+          </AnimatePresence>
         </FadeUp>
       </div>
     </section>
