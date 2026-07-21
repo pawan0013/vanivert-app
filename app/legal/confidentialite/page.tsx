@@ -1,7 +1,9 @@
 export const metadata = { title: 'Politique de confidentialite - Vanivert' }
 const INK='#0C0E1A',BLUE='#2563EB',BG='#FFFFFF',BDR='rgba(12,14,26,0.07)',MUTED='rgba(12,14,26,0.52)',SUBTLE='rgba(12,14,26,0.32)'
 function Logo() {
-  return (<svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill={BLUE}/><circle cx="16" cy="11" r="3" fill="white"/><circle cx="10" cy="21" r="2.5" fill="white" opacity="0.7"/><circle cx="22" cy="21" r="2.5" fill="white" opacity="0.7"/><line x1="16" y1="14" x2="10" y2="19" stroke="white" strokeWidth="1.5" opacity="0.6"/><line x1="16" y1="14" x2="22" y2="19" stroke="white" strokeWidth="1.5" opacity="0.6"/></svg>)
+  const s=28,cx=s/2,cy=s/2,R=s*0.38,nr=s*0.06,cr=s*0.16
+  const pts=Array.from({length:8},(_,i)=>{const a=(i/8)*Math.PI*2-Math.PI/2;return{x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)}})
+  return (<svg width={s} height={s} viewBox={`0 0 ${s} ${s}`} fill='none'><circle cx={cx} cy={cy} r={R} stroke='#2563EB' strokeWidth={1} fill='none' strokeOpacity='0.4'/>{pts.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r={nr} fill='#2563EB' opacity='0.65'/>)}<circle cx={cx} cy={cy} r={cr} fill='#2563EB'/></svg>)
 }
 function Section({title,children}:{title:string;children:React.ReactNode}) {
   return (<div style={{marginBottom:36}}><h2 style={{fontFamily:'Georgia,serif',fontSize:18,fontWeight:400,color:INK,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${BDR}`}}>{title}</h2><div style={{fontSize:14,color:MUTED,lineHeight:1.75}}>{children}</div></div>)
