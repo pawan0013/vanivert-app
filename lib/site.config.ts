@@ -6,7 +6,7 @@ export const SITE_CONFIG = {
   legalForm:       'SAS en cours d\'immatriculation',
   founderName:     'Pawan Kumar',
   founderEmail:    'pawan@vanivert.fr',
-  email:           'contact@vanivert.fr',
+  email:           'team@vanivert.eu',
   phone:           '+33 X XX XX XX XX',
   whatsapp:        '+33 X XX XX XX XX',
   address:         'Lannion, Côtes-d\'Armor, Bretagne, France',
@@ -18,7 +18,7 @@ export const SITE_CONFIG = {
   siteUrl:         'https://vanivert.fr',
   hostingProvider: 'Vercel Inc., 340 Pine Street Suite 900, San Francisco CA 94104, USA',
   dataHosting:     'Supabase (Dublin, Irlande) + Hetzner (Frankfurt, Allemagne)',
-  dpoEmail:        'privacy@vanivert.fr',
+  dpoEmail:        'privacy@vanivert.eu',
   linkedIn:        'https://www.linkedin.com/company/vanivert',
   adminPassword:   'change-me-immediately-in-production',
 }

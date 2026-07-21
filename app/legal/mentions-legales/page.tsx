@@ -51,7 +51,7 @@ export default function MentionsLegales() {
           <p>Adresse : 1 Clos des Sylthes, 95800 Cergy, France</p>
           <p>SIRET : 93429900900019</p>
           <p>Code APE : 8559B</p>
-          <p>Email : <a href="mailto:contact@vanivert.fr" style={{ color: BLUE }}>contact@vanivert.fr</a></p>
+          <p>Email : <a href="mailto:team@vanivert.eu" style={{ color: BLUE }}>team@vanivert.eu</a></p>
         </Section>
 
         <Section title="Hebergement">
@@ -64,7 +64,7 @@ export default function MentionsLegales() {
         </Section>
 
         <Section title="Donnees personnelles et RGPD">
-          <p>Conformement au Reglement General sur la Protection des Donnees (RGPD) et a la loi Informatique et Libertes, vous disposez de droits d&apos;acces, de rectification et de suppression de vos donnees. Pour exercer ces droits, contactez : <a href="mailto:contact@vanivert.fr" style={{ color: BLUE }}>contact@vanivert.fr</a></p>
+          <p>Conformement au Reglement General sur la Protection des Donnees (RGPD) et a la loi Informatique et Libertes, vous disposez de droits d&apos;acces, de rectification et de suppression de vos donnees. Pour exercer ces droits, contactez : <a href="mailto:team@vanivert.eu" style={{ color: BLUE }}>team@vanivert.eu</a></p>
           <p style={{ marginTop: 8 }}>Voir notre <a href="/legal/confidentialite" style={{ color: BLUE }}>politique de confidentialite complete</a>.</p>
         </Section>
 

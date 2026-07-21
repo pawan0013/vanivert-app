@@ -28,7 +28,7 @@ const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 // Paris address from registration doc
 const PARIS_ADDRESS = '1 Clos des Sylthes, 95800 Cergy, France'
 const SIRET = '93429900900019'
-const EMAIL = 'contact@vanivert.fr'
+const EMAIL = 'team@vanivert.eu'
 
 // CURSOR DOT
 function CursorDot() {
@@ -137,7 +137,7 @@ function Nav() {
   const [sc,setSc]=useState(false)
   const [mob,setMob]=useState(false)
   useEffect(()=>{const h=()=>setSc(window.scrollY>30);window.addEventListener('scroll',h,{passive:true});return()=>window.removeEventListener('scroll',h)},[])
-  const links:[string,string][]=[['Fonctionnalites','#features'],['ROI','#roi'],['Blog','/blog'],['Equipe','/equipe']]
+  const links:[string,string][]=[['Fonctionnalites','#features'],['ROI','#roi'],['Blog','/blog'],['Equipe','#team']]
   return (
     <>
       <nav style={{position:'fixed',top:3,left:0,right:0,zIndex:200,height:64,display:'flex',alignItems:'center',background:sc?'rgba(255,255,255,0.96)':'transparent',backdropFilter:sc?'blur(18px)':'none',WebkitBackdropFilter:sc?'blur(18px)':'none',borderBottom:`1px solid ${sc?BDR2:'transparent'}`,transition:'all 0.35s cubic-bezier(0.32,0.72,0,1)'}}>
@@ -158,7 +158,7 @@ function Nav() {
             <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
               style={{fontSize:13,fontWeight:600,color:'#fff',textDecoration:'none',padding:'9px 22px',borderRadius:980,background:BLUE,display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s cubic-bezier(0.32,0.72,0,1)',boxShadow:`0 4px 14px ${BLUE}28`}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
-              Boostez votre chiffre
+              Boostez votre CA
               <span style={{width:20,height:20,borderRadius:'50%',background:'rgba(255,255,255,0.22)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11}}>→</span>
             </a>
           </div>
@@ -572,6 +572,67 @@ function BlogPreview() {
   )
 }
 
+
+// TEAM + STORY
+function TeamStory() {
+  return (
+    <section id="team" style={{background:BG,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
+      <div style={{maxWidth:1000,margin:'0 auto'}}>
+        <FadeUp>
+          <div style={{textAlign:'center',marginBottom:48}}>
+            <div style={{fontSize:11,fontWeight:700,color:BLUE,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:12}}>Notre histoire</div>
+            <h2 style={{fontWeight:600,fontSize:'clamp(24px,3vw,40px)',color:INK,letterSpacing:'-0.025em',marginBottom:14}}>
+              Construire ce qui n&apos;existait pas.
+            </h2>
+          </div>
+        </FadeUp>
+        <FadeUp delay={0.1}>
+          <div style={{maxWidth:720,margin:'0 auto 48px',fontSize:16,color:MUTED,lineHeight:1.85,textAlign:'center' as const}}>
+            <p style={{marginBottom:16}}>Apres des annees a travailler dans la logistique internationale et la tech pour des entreprises qui brassent des milliards, nous avons pose un pied dans l&apos;immobilier francais et decouvert un constat simple : les agences perdent des clients parce que personne ne repond a 20h un samedi soir.</p>
+            <p style={{marginBottom:16}}>Pas parce qu&apos;elles manquent de talent. Pas parce que le marche est mort. Mais parce que les outils n&apos;ont pas suivi. Les leads arrivent dans 3 boites mail, les visites se confirment par telephone, les clients disparaissent apres la vente.</p>
+            <p>Nous avons construit Vanivert pour que l&apos;agence tourne en pilote automatique. Pas pour remplacer l&apos;humain, mais pour lui rendre son temps.</p>
+          </div>
+        </FadeUp>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:20}} className="stats-grid">
+          {[
+            {name:'Pawan Kumar',role:'Co-fondateur, CTO',bio:'Ex-logistique maritime internationale (15+ pays, clients BP). EDHEC MiM Finance. Construit des systemes qui tournent sans supervision.',linkedin:'https://linkedin.com/in/pawan-kumar-iiitg'},
+            {name:'Adithya Latchoumanassamy',role:'Co-fondateur, CEO',bio:'Entrepreneur en France depuis 2024. Enregistre au Guichet Unique (SIRET 93429900900019). Gere les operations commerciales et la conformite.',linkedin:'https://linkedin.com/company/vanivert'},
+            {name:'Hitesh',role:'Lead Backend Engineer',bio:'Architecture distribuee, pipelines WhatsApp, integration ElevenLabs. Construit le moteur qui fait tourner Sophie 24h/24.',linkedin:'https://linkedin.com/company/vanivert'},
+          ].map((p,i) => (
+            <FadeUp key={p.name} delay={i*0.08}>
+              <div style={{padding:'28px 24px',borderRadius:16,background:BG2,border:`1px solid ${BDR}`,textAlign:'center' as const}}>
+                <div style={{width:56,height:56,borderRadius:'50%',background:i===0?BLUE:i===1?ORG:TEAL,display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 14px',fontSize:22,color:'#fff',fontWeight:700}}>{p.name[0]}</div>
+                <div style={{fontSize:15,fontWeight:600,color:INK,marginBottom:2}}>{p.name}</div>
+                <div style={{fontSize:12,fontWeight:600,color:BLUE,marginBottom:10}}>{p.role}</div>
+                <div style={{fontSize:13,color:MUTED,lineHeight:1.6,marginBottom:14}}>{p.bio}</div>
+                <a href={p.linkedin} target="_blank" rel="noopener noreferrer" style={{fontSize:12,fontWeight:600,color:BLUE,textDecoration:'none'}}>LinkedIn →</a>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// INVESTORS STRIP
+function InvestorsStrip() {
+  return (
+    <section style={{background:INK,padding:'48px 32px'}}>
+      <div style={{maxWidth:900,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap' as const,gap:20}}>
+        <div>
+          <div style={{fontSize:11,fontWeight:700,color:ORG,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:6}}>Investisseurs</div>
+          <div style={{fontSize:20,fontWeight:600,color:'#fff',marginBottom:4}}>Interessé par Vanivert ?</div>
+          <div style={{fontSize:14,color:'rgba(255,255,255,0.5)'}}>SIRET 93429900900019 - Enregistre en France - EU Sovereign</div>
+        </div>
+        <a href="mailto:investors@vanivert.eu" style={{padding:'12px 28px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:13,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 4px 14px ${BLUE}40`}}>
+          investors@vanivert.eu →
+        </a>
+      </div>
+    </section>
+  )
+}
+
 // CONTACT
 function Contact() {
   const [name,setName]=useState(''), [email,setEmail]=useState(''), [agency,setAgency]=useState(''), [agents,setAgents]=useState(''), [message,setMessage]=useState(''), [sent,setSent]=useState(false), [loading,setLoading]=useState(false)
@@ -591,7 +652,7 @@ function Contact() {
           <h2 style={{fontFamily:'system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',fontStyle:'italic',fontWeight:400,fontSize:'clamp(26px,3.2vw,40px)',color:INK,marginTop:14,marginBottom:12,letterSpacing:'-0.03em'}}>On vous rappelle.<br/>Promis.</h2>
           <p style={{fontSize:14,color:MUTED,lineHeight:1.75,marginBottom:28}}>Pas un bot. Pawan Kumar, co-fondateur, vous repond personnellement sous 24h ouvrees.</p>
           <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:20}}>
-            {[['📧',EMAIL,`mailto:${EMAIL}`],['📍',PARIS_ADDRESS,'https://maps.google.com/?q=Cergy,France'],['🏛',`SIRET ${SIRET}`,'#'],['🔗','linkedin.com/company/vanivert','https://linkedin.com/company/vanivert']].map(([icon,label,href])=>(
+            {[['📧','team@vanivert.eu','mailto:team@vanivert.eu'],['📍',PARIS_ADDRESS,'https://maps.google.com/?q=Cergy,France'],['🏛',`SIRET ${SIRET}`,'#'],['🔗','linkedin.com/company/vanivert','https://linkedin.com/company/vanivert'],['💼','investors@vanivert.eu','mailto:investors@vanivert.eu']].map(([icon,label,href])=>(
               <a key={label} href={href} target={href.startsWith('http')?'_blank':'_self'} rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none'}}>
                 <span style={{fontSize:16}}>{icon}</span>
                 <span style={{fontSize:13,color:MUTED}}>{label}</span>
@@ -654,7 +715,7 @@ function FooterCTA() {
                 <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
                   style={{padding:'14px 32px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${BLUE}40`}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
-                  Boostez votre chiffre →
+                  Boostez votre CA →
                 </a>
                 <a href="#contact" style={{padding:'14px 32px',borderRadius:980,border:'1.5px solid rgba(255,255,255,0.2)',color:'rgba(255,255,255,0.7)',fontWeight:500,fontSize:14,textDecoration:'none',transition:'all 0.25s'}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor='rgba(255,255,255,0.5)';(e.currentTarget as HTMLElement).style.color='#fff'}}
@@ -674,7 +735,7 @@ function FooterCTA() {
 function Footer() {
   const cols=[
     {h:'Produit',links:[['Fonctionnalites','#features'],['ROI','#roi'],['Demo','https://realestate-eu-demo.vercel.app/login'],['Connexion','/login']]},
-    {h:'Ressources',links:[['Blog','/blog'],['Equipe','/equipe'],['Contact','#contact']]},
+    {h:'Ressources',links:[['Blog','/blog'],['Equipe','#team'],['Contact','#contact'],['Investisseurs','mailto:investors@vanivert.eu']]},
     {h:'Legal',links:[['Mentions legales','/legal/mentions-legales'],['CGV','/legal/cgv'],['Confidentialite','/legal/confidentialite'],['Admin','/admin']]},
   ]
   return (
@@ -721,7 +782,7 @@ function GDPR() {
     <motion.div initial={{opacity:0,y:24}} animate={{opacity:1,y:0}} transition={{delay:2.5}}
       style={{position:'fixed',bottom:20,left:20,right:20,zIndex:9990,maxWidth:480,margin:'0 auto',background:CARD,border:`1px solid ${BDR2}`,borderRadius:18,padding:'20px 22px',boxShadow:'0 8px 40px rgba(0,0,0,0.10)',display:'flex',flexDirection:'column',gap:10}}>
       <p style={{fontSize:13,fontWeight:600,color:INK,margin:0}}>Ce site utilise des cookies</p>
-      <p style={{fontSize:12,color:MUTED,lineHeight:1.55,margin:0}}>Cookies fonctionnels uniquement. Hebergement 100% UE. Aucune donnee transmise a des tiers. <a href="/legal/confidentialite" style={{color:BLUE}}>En savoir plus</a></p>
+      <p style={{fontSize:12,color:MUTED,lineHeight:1.55,margin:0}}>Cookies fonctionnels uniquement. Hebergement 100% UE. Aucune donnee transmise a des tiers. <a href="/legal/confidentialite" style={{color:BLUE}}>En savoir plus - privacy@vanivert.eu</a></p>
       <div style={{display:'flex',gap:8}}>
         <button onClick={accept} style={{flex:1,padding:'9px 16px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:600,fontSize:12,border:'none',cursor:'pointer'}}>Accepter</button>
         <button onClick={decline} style={{flex:1,padding:'9px 16px',borderRadius:980,background:'transparent',color:MUTED,fontWeight:500,fontSize:12,border:`1px solid ${BDR2}`,cursor:'pointer'}}>Refuser</button>
@@ -760,7 +821,8 @@ export default function Home() {
         <ROICalc/>
         <FeaturesSection/>
         <SocialProof/>
-        <BlogPreview/>
+        <TeamStory/>
+        <InvestorsStrip/>
         <Contact/>
         <FooterCTA/>
       </main>
