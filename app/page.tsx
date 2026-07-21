@@ -669,9 +669,21 @@ function Contact() {
   const [name,setName]=useState(''), [email,setEmail]=useState(''), [agency,setAgency]=useState(''), [agents,setAgents]=useState(''), [message,setMessage]=useState(''), [sent,setSent]=useState(false), [loading,setLoading]=useState(false)
   async function submit(e:React.FormEvent) {
     e.preventDefault(); if(!email||!name) return; setLoading(true)
-    if(SB_URL&&SB_KEY){
-      await fetch(`${SB_URL}/rest/v1/demo_requests`,{method:'POST',headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({name,email,agency_name:agency,agent_count:agents,message,created_at:new Date().toISOString()})}).catch(()=>{})
-    }
+    try {
+      await fetch('https://api.web3forms.com/submit', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', Accept:'application/json' },
+        body: JSON.stringify({
+          access_key: '35166257-a70e-45c4-895c-0f32d06200f8',
+          subject: `Nouvelle demande de demo - ${agency || name}`,
+          from_name: 'Vanivert - Formulaire site',
+          name, email,
+          agency_name: agency,
+          agent_count: agents,
+          message: message || '(aucun message)',
+        }),
+      })
+    } catch {}
     await new Promise(r=>setTimeout(r,400)); setSent(true); setLoading(false)
   }
   const inp:React.CSSProperties={width:'100%',padding:'13px 16px',borderRadius:12,border:`1px solid ${BDR2}`,fontSize:14,outline:'none',color:INK,fontFamily:'system-ui,sans-serif',background:BG,boxSizing:'border-box' as const}
