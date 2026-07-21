@@ -1,893 +1,573 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion'
+import * as THREE from 'three'
+import { DEFAULT_ARTICLES } from '@/lib/articles'
 
-/*
-  LIGHT THEME — Sequence-exact replication
-  bg: warm off-white #FAFAF8, card: #FFFFFF, ink: #0D0D0F
-  accent: indigo #6366F1, ember #F59E0B, emerald #10B981
-  fonts: Georgia serif (display/italic) + system-ui (body) + monospace (data)
-  Minimal copy. No AI sphere/cube decorations. Big countdown + inline calculator on hero.
-*/
-
-const BG = '#FAFAF8'
-const BG2 = '#F3F2EE'
-const CARD = '#FFFFFF'
-const INK = '#0D0D0F'
-const BORDER = 'rgba(13,13,15,0.08)'
-const BORDER2 = 'rgba(13,13,15,0.14)'
-const VI = '#6366F1'
-const VI2 = '#4F46E5'
-const EM = '#F59E0B'
-const GR = '#10B981'
-const MUTED = 'rgba(13,13,15,0.50)'
-const SUBTLE = 'rgba(13,13,15,0.32)'
-const EZ: [number, number, number, number] = [0.32, 0.72, 0, 1]
+// TOKENS - vibrant white + blue + orange
+const BG    = '#FFFFFF'
+const BG2   = '#F8F9FF'
+const BG3   = '#FFF8F3'
+const CARD  = '#FFFFFF'
+const INK   = '#0C0E1A'
+const BLUE  = '#2563EB'
+const BLUE2 = '#1D4ED8'
+const BLUE_LT= '#EFF6FF'
+const ORG   = '#F97316'
+const ORG_LT= '#FFF7ED'
+const TEAL  = '#0D9488'
+const MUTED = 'rgba(12,14,26,0.52)'
+const SUBTLE= 'rgba(12,14,26,0.32)'
+const BDR   = 'rgba(12,14,26,0.07)'
+const BDR2  = 'rgba(12,14,26,0.13)'
+const EZ: [number,number,number,number] = [0.32,0.72,0,1]
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-const CMS_KEY = 'vanivert_cms_v3'
 
-interface CMS {
-  hero_eyebrow: string
-  hero_h1: string
-  hero_h1_rotating: string[]
-  hero_sub: string
-  hero_cta1: string
-  hero_cta2: string
-  trust_tagline: string
-  s1_label: string; s1_h2: string; s1_body: string; s1_badge: string
-  s2_label: string; s2_h2: string; s2_body: string; s2_badge: string
-  s3_label: string; s3_h2: string; s3_body: string; s3_badge: string
-  modules: { title: string; sub: string }[]
-  pricing_h2: string; pricing_sub: string
-  p1_name: string; p1_price: string; p1_annual: string; p1_desc: string; p1_items: string[]
-  p2_name: string; p2_price: string; p2_annual: string; p2_desc: string; p2_items: string[]
-  p3_name: string; p3_price: string; p3_annual: string; p3_desc: string; p3_items: string[]
-  c1_name: string; c1_price: string; c1_desc: string
-  c2_name: string; c2_price: string; c2_desc: string
-  c3_name: string; c3_price: string; c3_desc: string
-  blog_h2: string
-  contact_h2: string; contact_sub: string
-  footer_tagline: string
-  company_email: string; company_siret: string; company_address: string
-  calc_label: string
-  integrations_label: string; integrations_h2: string; integrations_sub: string
-  agent_label: string
-}
+// Paris address from registration doc
+const PARIS_ADDRESS = '1 Clos des Sylthes, 95800 Cergy, France'
+const SIRET = '93429900900019'
+const EMAIL = 'contact@vanivert.fr'
 
-const DEFAULT_CMS: CMS = {
-  hero_eyebrow: 'Disponible maintenant',
-  hero_h1: 'Vos factures. Votre tresorerie.',
-  hero_h1_rotating: ['Sans la paperasse.', 'Sans les relances manuelles.', 'Avant le 1er septembre.', 'Avec une vraie conformite DGFiP.'],
-  hero_sub: "On gere l'e-facturation DGFiP, votre tresorerie en temps reel, et vos appels manques. Vous, vous gerez votre metier.",
-  hero_cta1: 'Commencer gratuitement',
-  hero_cta2: 'Voir une demonstration',
-  trust_tagline: 'Des PME bretonnes nous font confiance',
-  s1_label: 'E-facturation DGFiP 2026',
-  s1_h2: 'Le 1er septembre, les PDF ne passent plus.',
-  s1_body: "Enrolement annuaire centralise, Factur-X, validation CIUS-FR. On gere tout. Vous n'avez rien a faire.",
-  s1_badge: 'Inclus dans tous les plans',
-  s2_label: 'Smart CFO',
-  s2_h2: 'Votre tresorerie, sans Excel.',
-  s2_body: "Bridge API connecte vos comptes. FinGPT predit vos entrees et sorties. Tout reste en Europe.",
-  s2_badge: 'A partir de 1 200 EUR/mois',
-  s3_label: 'Reception vocale 24h/24',
-  s3_h2: "Vous etes sous l'evier. Il appelle. On repond.",
-  s3_body: "Notre IA repond en francais naturel, prend les rendez-vous, vous envoie un compte rendu.",
-  s3_badge: 'A partir de 19 EUR/mois',
-  modules: [
-    { title: 'E-facturation', sub: 'Factur-X automatique.' },
-    { title: 'Smart CFO', sub: 'Tresorerie en temps reel.' },
-    { title: 'Reception vocale', sub: "Prise d'appels 24h/24." },
-    { title: 'Conformite DGFiP', sub: 'Annuaire centralise.' },
-    { title: 'Alertes reglementaires', sub: 'grcx surveille pour vous.' },
-    { title: 'Integrations ERP', sub: 'Sage, Cegid, SAP.' },
-    { title: 'Tableau de bord', sub: 'Toutes vos donnees.' },
-    { title: 'Facturation usage', sub: 'Lago, par minute.' },
-  ],
-  pricing_h2: 'Un seul abonnement. Tout dedans.',
-  pricing_sub: 'Pas de modules optionnels. Pas de surprises.',
-  p1_name: 'Voix Starter', p1_price: '19', p1_annual: '16', p1_desc: 'Artisans et independants',
-  p1_items: ['Numero +33 dedie', 'IA vocale 24h/24', 'Doctolib ou Google Calendar', '200 minutes/mois', 'RGPD, hebergement EU'],
-  p2_name: 'Voix Business', p2_price: '29', p2_annual: '24', p2_desc: 'PME 5 a 50 salaries',
-  p2_items: ['Tout Voix Starter', '500 minutes/mois', 'Integrations Sage, Cegid', 'Rapport mensuel', 'Support sous 4h'],
-  p3_name: 'Conformite + CFO', p3_price: '1 200', p3_annual: '1 000', p3_desc: 'E-facturation et pilotage',
-  p3_items: ['Enrolement annuaire DGFiP', 'Factur-X automatique', 'Tableau de bord PSD2', 'Alertes grcx', 'Compte dedie'],
-  c1_name: 'Voix + Conformite', c1_price: '1 190', c1_desc: 'E-facturation et appels',
-  c2_name: 'Business + Conformite', c2_price: '1 199', c2_desc: 'PME complete',
-  c3_name: 'Tout Vanivert', c3_price: '1 209', c3_desc: '3 modules, meilleur tarif',
-  blog_h2: "Lire avant de s'y prendre trop tard.",
-  contact_h2: 'On vous rappelle. Promis.',
-  contact_sub: 'Pas un bot. Un fondateur qui connait vos contraintes.',
-  footer_tagline: "On s'occupe de la conformite. Vous, de votre metier.",
-  company_email: 'contact@vanivert.fr',
-  company_siret: "SIRET en cours d'enregistrement",
-  company_address: "Lannion, Cotes d'Armor, Bretagne",
-  calc_label: 'Calculez votre risque',
-  integrations_label: 'Integrations',
-  integrations_h2: 'Connecte a tout ce que vous utilisez deja.',
-  integrations_sub: "Pas de double saisie, pas de fichiers a exporter a la main. Vanivert se branche directement sur votre banque, votre comptabilite, votre agenda et vos outils de paiement.",
-  agent_label: 'Agent Vanivert',
-}
-
-function useCMS(): CMS {
-  const [cms, setCms] = useState<CMS>(DEFAULT_CMS)
+// CURSOR DOT
+function CursorDot() {
+  const dot = useRef<HTMLDivElement>(null)
+  const ring = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    try {
-      const s = localStorage.getItem(CMS_KEY)
-      if (s) setCms({ ...DEFAULT_CMS, ...JSON.parse(s) })
-    } catch {}
+    const move = (e: MouseEvent) => {
+      if (dot.current) dot.current.style.transform = `translate(${e.clientX-4}px,${e.clientY-4}px)`
+      if (ring.current) ring.current.style.transform = `translate(${e.clientX-16}px,${e.clientY-16}px)`
+    }
+    window.addEventListener('mousemove', move)
+    return () => window.removeEventListener('mousemove', move)
   }, [])
-  return cms
-}
-
-function useCountdown() {
-  const target = new Date('2026-09-01T00:00:00+02:00').getTime()
-  const [d, setD] = useState(target - Date.now())
-  useEffect(() => {
-    const id = setInterval(() => setD(target - Date.now()), 1000)
-    return () => clearInterval(id)
-  }, [target])
-  const s = Math.max(0, Math.floor(d / 1000))
-  return { days: Math.floor(s / 86400), hours: Math.floor((s % 86400) / 3600), mins: Math.floor((s % 3600) / 60), secs: s % 60 }
-}
-
-function FadeUp({ children, delay = 0, style = {} }: { children: React.ReactNode; delay?: number; style?: React.CSSProperties }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
   return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, ease: EZ, delay }} style={style}>
+    <>
+      <div ref={dot} style={{position:'fixed',top:0,left:0,width:8,height:8,borderRadius:'50%',background:BLUE,zIndex:9999,pointerEvents:'none',willChange:'transform',transition:'transform 0.05s'}}/>
+      <div ref={ring} style={{position:'fixed',top:0,left:0,width:32,height:32,borderRadius:'50%',border:`1.5px solid ${BLUE}`,zIndex:9998,pointerEvents:'none',willChange:'transform',transition:'transform 0.12s',opacity:0.4}}/>
+    </>
+  )
+}
+
+// SCROLL BAR
+function ScrollBar() {
+  const {scrollYProgress} = useScroll()
+  const scaleX = useTransform(scrollYProgress,[0,1],[0,1])
+  return <motion.div style={{position:'fixed',top:0,left:0,right:0,height:3,background:`linear-gradient(90deg,${BLUE},${ORG})`,transformOrigin:'left',scaleX,zIndex:600,pointerEvents:'none'}}/>
+}
+
+// FADE UP
+function FadeUp({children,delay=0,style={},className}:{children:React.ReactNode;delay?:number;style?:React.CSSProperties;className?:string}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inV = useInView(ref,{once:true,margin:'-60px'})
+  return (
+    <motion.div ref={ref} initial={{opacity:0,y:28}} animate={inV?{opacity:1,y:0}:{}} transition={{duration:0.75,ease:EZ,delay}} style={style} className={className}>
       {children}
     </motion.div>
   )
 }
 
-function MsLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 21 21"><rect width="10" height="10" fill="#F25022" /><rect x="11" width="10" height="10" fill="#7FBA00" /><rect y="11" width="10" height="10" fill="#00A4EF" /><rect x="11" y="11" width="10" height="10" fill="#FFB900" /></svg>
-}
-function GgLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
-}
-function QontoLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" strokeWidth="2.6" fill="none" /><line x1="16.5" y1="16.5" x2="20.5" y2="20.5" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /></svg>
-}
-function BridgeLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M5 16C5 16 8 8 12 8C16 8 19 16 19 16" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" /></svg>
-}
-function PennylaneLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="9.5" cy="12" r="5.5" fill="#7CF29C" /><circle cx="14.5" cy="12" r="5.5" fill="#1B4D5C" fillOpacity="0.9" /></svg>
-}
-function SageLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M7 9.5C7 7.5 9 7 10 8C11 9 9.5 10.5 8 11.5C6.5 12.5 5.5 14 6.5 15.5C7.5 17 9.5 16.5 9.5 14.5C9.5 12.5 11.5 11 13.5 11C15.5 11 17 12.5 17 14.5C17 16.5 15.5 17.5 14 16.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" fill="none" /></svg>
-}
-function CegidLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M15 9C13.5 8 11 8 9.5 9.5C8 11 8 13 9.5 14.5C11 16 13.5 16 15 15" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" fill="none" /><circle cx="17.5" cy="7.5" r="1.3" fill="#fff" /></svg>
-}
-function DocoonLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="9.5" cy="12" r="4" stroke="#fff" strokeWidth="2" fill="none" /><circle cx="15" cy="12" r="4" stroke="#fff" strokeWidth="2" fill="none" /></svg>
-}
-function ChorusProLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><rect x="5" y="13" width="3" height="3" rx="0.5" fill="#fff" opacity="0.55" /><rect x="9" y="9" width="3" height="3" rx="0.5" fill="#fff" opacity="0.75" /><rect x="9" y="14" width="4" height="4" rx="0.5" fill="#fff" /><rect x="14" y="10" width="3" height="3" rx="0.5" fill="#fff" opacity="0.65" /></svg>
-}
-function DoctolibLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M6 17C6 17 7 7 11 7C14 7 14 11 11 12C8.5 12.8 7.5 15 9.5 16.5C11.5 18 14.5 16.5 15 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" /><circle cx="17.5" cy="9" r="1" fill="#fff" /></svg>
-}
-function StripeLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M16.5 9.2C16.5 7.7 15.2 7 13.3 7C10.8 7 9.3 8.3 9.3 10.1C9.3 13.3 14.3 12.5 14.3 14.2C14.3 14.9 13.6 15.3 12.5 15.3C11.1 15.3 9.6 14.7 8.5 13.9V16.6C9.5 17.2 11 17.7 12.5 17.7C15.1 17.7 16.8 16.4 16.8 14.4C16.8 10.9 11.7 11.8 11.7 10.2C11.7 9.6 12.3 9.3 13.2 9.3C14.4 9.3 15.7 9.7 16.5 10.2V9.2Z" fill="#fff" /></svg>
-}
-function GoCardlessLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M15.5 9C14.7 8 13.4 7.3 12 7.3C9.4 7.3 7.3 9.4 7.3 12C7.3 14.6 9.4 16.7 12 16.7C14.2 16.7 16 15.2 16.5 13.2H12.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" /></svg>
-}
-function N8nLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><circle cx="6.5" cy="15" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none" /><circle cx="12" cy="15" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none" /><circle cx="17.5" cy="9" r="1.6" stroke="#fff" strokeWidth="1.6" fill="none" /><circle cx="17.5" cy="15" r="1.6" fill="#fff" /><path d="M8.1 15H10.4M13.6 15H15.9M16.6 13.5L14.5 11" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" /></svg>
-}
-function SalesforceLogo({ s = 18 }: { s?: number }) {
-  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M9.8 8.5C10.5 7.7 11.5 7.2 12.6 7.2C14.1 7.2 15.4 8.1 15.9 9.4C16.3 9.2 16.7 9.1 17.2 9.1C18.7 9.1 20 10.4 20 12C20 13.6 18.7 14.9 17.2 14.9H8C6.3 14.9 5 13.6 5 11.9C5 10.3 6.2 9.1 7.7 9C8 8.7 8.5 8.5 9 8.5C9.3 8.5 9.6 8.5 9.8 8.5Z" fill="#fff" /></svg>
+// PILL
+function Pill({children,color=BLUE}:{children:React.ReactNode;color?:string}) {
+  return (
+    <span style={{display:'inline-flex',alignItems:'center',gap:6,padding:'4px 13px',borderRadius:980,background:`${color}12`,border:`1px solid ${color}28`,fontSize:10,fontWeight:700,color,letterSpacing:'0.1em',textTransform:'uppercase' as const}}>
+      <span style={{width:5,height:5,borderRadius:'50%',background:color}}/>
+      {children}
+    </span>
+  )
 }
 
-type LogoKey = 'qonto' | 'bridge' | 'pennylane' | 'docoon' | 'chorus_pro' | 'doctolib' | 'microsoft' | 'google' | 'stripe' | 'gocardless' | 'sage' | 'cegid' | 'n8n' | 'salesforce'
-
-const LOGO_COMPONENTS: Record<LogoKey, (p: { s?: number }) => React.ReactElement> = {
-  qonto: QontoLogo, bridge: BridgeLogo, pennylane: PennylaneLogo, docoon: DocoonLogo,
-  chorus_pro: ChorusProLogo, doctolib: DoctolibLogo, microsoft: MsLogo, google: GgLogo,
-  stripe: StripeLogo, gocardless: GoCardlessLogo, sage: SageLogo, cegid: CegidLogo,
-  n8n: N8nLogo, salesforce: SalesforceLogo,
+// LOGO
+function Logo({s=28}:{s?:number}) {
+  return (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="9" fill={BLUE}/>
+      <circle cx="16" cy="11" r="3" fill="white"/>
+      <circle cx="10" cy="21" r="2.5" fill="white" opacity="0.7"/>
+      <circle cx="22" cy="21" r="2.5" fill="white" opacity="0.7"/>
+      <line x1="16" y1="14" x2="10" y2="19" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+      <line x1="16" y1="14" x2="22" y2="19" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+    </svg>
+  )
 }
 
-const INTEGRATIONS_DEFAULT: { key: LogoKey; name: string; bg: string; enabled: boolean }[] = [
-  { key: 'qonto', name: 'Qonto', bg: '#000000', enabled: true },
-  { key: 'bridge', name: 'Bridge', bg: '#1A1A1A', enabled: true },
-  { key: 'pennylane', name: 'Pennylane', bg: '#1F3A4D', enabled: true },
-  { key: 'docoon', name: 'Docoon', bg: '#1A1A1A', enabled: true },
-  { key: 'chorus_pro', name: 'Chorus Pro', bg: '#3D4FA8', enabled: true },
-  { key: 'doctolib', name: 'Doctolib', bg: '#0F2A4A', enabled: true },
-  { key: 'microsoft', name: 'Microsoft', bg: '#F3F4F6', enabled: true },
-  { key: 'google', name: 'Google', bg: '#F3F4F6', enabled: true },
-  { key: 'stripe', name: 'Stripe', bg: '#635BFF', enabled: true },
-  { key: 'gocardless', name: 'GoCardless', bg: '#0A0A0A', enabled: true },
-  { key: 'sage', name: 'Sage', bg: '#000000', enabled: true },
-  { key: 'cegid', name: 'Cegid', bg: '#2D5BFF', enabled: true },
-  { key: 'n8n', name: 'n8n', bg: '#EA4B71', enabled: true },
-  { key: 'salesforce', name: 'Salesforce', bg: '#00A1E0', enabled: true },
-]
-
-const INTEGRATIONS_CMS_KEY = 'vanivert_integrations_v1'
-
-function useIntegrations() {
-  const [list, setList] = useState(INTEGRATIONS_DEFAULT)
+// THREE GLOBE
+function Globe() {
+  const mount = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    try {
-      const s = localStorage.getItem(INTEGRATIONS_CMS_KEY)
-      if (s) {
-        const saved = JSON.parse(s) as { key: LogoKey; name: string; bg: string; enabled: boolean }[]
-        // merge by key so new defaults aren't lost if admin saved an older shape
-        setList(INTEGRATIONS_DEFAULT.map(d => saved.find(x => x.key === d.key) || d))
-      }
-    } catch {}
-  }, [])
-  return list.filter(i => i.enabled)
+    if (!mount.current) return
+    const W = mount.current.clientWidth || 460
+    const H = mount.current.clientHeight || 460
+    const renderer = new THREE.WebGLRenderer({antialias:true,alpha:true})
+    renderer.setSize(W,H)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2))
+    renderer.setClearColor(0x000000,0)
+    mount.current.appendChild(renderer.domElement)
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(42,W/H,0.1,100)
+    camera.position.z = 3.4
+    const wireGeo = new THREE.SphereGeometry(1,28,28)
+    const wireMat = new THREE.MeshBasicMaterial({color:new THREE.Color(BLUE),wireframe:true,opacity:0.12,transparent:true})
+    const wire = new THREE.Mesh(wireGeo,wireMat)
+    scene.add(wire)
+    const innerGeo = new THREE.SphereGeometry(0.9,32,32)
+    const innerMat = new THREE.MeshPhongMaterial({color:new THREE.Color('#F0F5FF'),shininess:80,transparent:true,opacity:0.92})
+    const inner = new THREE.Mesh(innerGeo,innerMat)
+    scene.add(inner)
+    const nodeMat = new THREE.MeshBasicMaterial({color:new THREE.Color(BLUE)})
+    const orangeMat = new THREE.MeshBasicMaterial({color:new THREE.Color(ORG)})
+    const nodePos = [[0.9,0.3,0.3],[-0.85,0.4,0.3],[0.2,0.95,0.2],[0.1,-0.9,0.4],[-0.3,0.2,0.95],[0.7,-0.6,0.4],[-0.5,-0.7,0.5],[0.3,0.5,-0.8]]
+    const nodes = nodePos.map(([x,y,z],i) => {
+      const n = new THREE.Mesh(new THREE.SphereGeometry(0.044,8,8),i%3===0?orangeMat:nodeMat)
+      n.position.set(x as number,y as number,z as number)
+      scene.add(n)
+      return n
+    })
+    for(let i=0;i<nodes.length;i++){
+      const pts=[nodes[i].position.clone(),nodes[(i+3)%nodes.length].position.clone()]
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:new THREE.Color(BLUE),opacity:0.18,transparent:true})))
+    }
+    scene.add(new THREE.AmbientLight(0xffffff,0.7))
+    const dl=new THREE.DirectionalLight(0xffffff,0.9);dl.position.set(2,3,2);scene.add(dl)
+    let f=0,raf=0
+    const animate=()=>{raf=requestAnimationFrame(animate);f++;wire.rotation.y=f*0.003;wire.rotation.x=f*0.001;inner.rotation.y=-f*0.002;renderer.render(scene,camera)}
+    animate()
+    return ()=>{cancelAnimationFrame(raf);renderer.dispose();if(mount.current&&renderer.domElement.parentNode===mount.current)mount.current.removeChild(renderer.domElement)}
+  },[])
+  return <div ref={mount} style={{width:'100%',height:'100%'}}/>
 }
 
-function OrbitIntegrations() {
-  // Wide spread field — roughly 4.6x the area of the original 420x420 box.
-  // Logos drift across a 1200x680 canvas so they read as scattered across
-  // the page width, the way Sequence spreads its document mockups, rather
-  // than clustered in a small centered circle.
-  const integrations = useIntegrations()
-  const W = 1200, H = 680, CX = 600, CY = 340
-  function seededPos(seed: number) {
-    const a = (seed * 137.508) % 360 // golden angle for even spread
-    const rx = 200 + ((seed * 53) % 320) // horizontal radius 200-520
-    const ry = 120 + ((seed * 41) % 190) // vertical radius 120-310 (wide ellipse, not a circle)
-    const rad = (a * Math.PI) / 180
-    const x = CX + Math.cos(rad) * rx - 22
-    const y = CY + Math.sin(rad) * ry - 22
-    return { x, y }
-  }
-  return (
-    <div className="orbit-field" style={{ position: 'relative', width: W, height: H, flexShrink: 0 }}>
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 64, height: 64, borderRadius: 18, background: VI, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px ${VI}40`, zIndex: 10 }}>
-        <VanivertLogoMarkWhite s={30} />
-      </div>
-      {integrations.map((it, i) => {
-        const { x, y } = seededPos(i)
-        const driftX = 18 + (i % 4) * 6
-        const driftY = 20 + ((i * 3) % 5) * 6
-        const dur = 7 + (i % 5) * 1.6
-        const rotAmt = i % 2 === 0 ? 10 : -10
-        const Logo = LOGO_COMPONENTS[it.key]
-        return (
-          <motion.div key={it.key}
-            title={it.name}
-            style={{ position: 'absolute', left: x, top: y, width: 44, height: 44, borderRadius: 13, background: it.bg, border: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(13,13,15,0.10)' }}
-            animate={{
-              x: [0, driftX, -driftX * 0.6, driftX * 0.4, 0],
-              y: [0, -driftY, driftY * 0.5, -driftY * 0.3, 0],
-              rotate: [0, rotAmt, -rotAmt * 0.5, rotAmt * 0.3, 0],
-            }}
-            transition={{ duration: dur, repeat: Infinity, ease: 'easeInOut', delay: i * 0.35 }}>
-            <Logo s={18} />
-          </motion.div>
-        )
-      })}
-    </div>
-  )
-}
-
-function IntegrationsSection({ cms }: { cms: CMS }) {
-  return (
-    <section style={{ background: BG, padding: '88px 32px 64px', borderTop: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-      <FadeUp style={{ textAlign: 'center', marginBottom: 8 }}>
-        <p style={{ fontSize: 10, color: SUBTLE, letterSpacing: '0.12em', textTransform: 'uppercase' as const, marginBottom: 14, fontFamily: 'system-ui' }}>{cms.integrations_label}</p>
-        <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 'clamp(24px, 3vw, 38px)', color: INK, marginBottom: 12, letterSpacing: '-0.025em', maxWidth: 600, margin: '0 auto 12px' }}>
-          {cms.integrations_h2}
-        </h2>
-        <p style={{ fontSize: 15, color: MUTED, maxWidth: 480, margin: '0 auto' }}>{cms.integrations_sub}</p>
-      </FadeUp>
-      <div className="orbit-wrap" style={{ marginTop: 32, display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
-        <OrbitIntegrations />
-      </div>
-    </section>
-  )
-}
-
-type Lang = 'fr' | 'en'
-
-function VanivertLogo({ s = 24 }: { s?: number }) {
-  // Leaf + checkmark hybrid: the curved leaf shape (vert = green/sovereign)
-  // resolves into a checkmark stroke (compliance/verified). Single continuous
-  // path, reads clearly at 24px, scales cleanly to favicon size.
-  return (
-    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-      <rect width="32" height="32" rx="8" fill={VI} />
-      <path
-        d="M9 16.5L14 21.5L23 10.5"
-        stroke="#fff"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M14 21.5C11.5 19 9.5 15.5 9.5 11.5C9.5 9.8 9.9 8.4 10.5 7.5C11.8 9.2 13.2 10 14.8 10C13.8 11.6 13.5 13.5 14 15.5"
-        stroke="#fff"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-        opacity="0.55"
-      />
-    </svg>
-  )
-}
-
-function VanivertLogoMark({ s = 24 }: { s?: number }) {
-  // Standalone indigo mark without the background square, for use on light/cream surfaces
-  return (
-    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-      <path
-        d="M9 16.5L14 21.5L23 10.5"
-        stroke={VI}
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M14 21.5C11.5 19 9.5 15.5 9.5 11.5C9.5 9.8 9.9 8.4 10.5 7.5C11.8 9.2 13.2 10 14.8 10C13.8 11.6 13.5 13.5 14 15.5"
-        stroke={VI}
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-        opacity="0.45"
-      />
-    </svg>
-  )
-}
-
-function VanivertLogoMarkWhite({ s = 24 }: { s?: number }) {
-  // White-stroke mark for use on the indigo orbit center and other colored backgrounds
-  return (
-    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-      <path
-        d="M9 16.5L14 21.5L23 10.5"
-        stroke="#fff"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M14 21.5C11.5 19 9.5 15.5 9.5 11.5C9.5 9.8 9.9 8.4 10.5 7.5C11.8 9.2 13.2 10 14.8 10C13.8 11.6 13.5 13.5 14 15.5"
-        stroke="#fff"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-        opacity="0.55"
-      />
-    </svg>
-  )
-}
-
-function Nav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
-  const [sc, setSc] = useState(false)
-  const [mob, setMob] = useState(false)
-  useEffect(() => {
-    const h = () => setSc(window.scrollY > 24)
-    window.addEventListener('scroll', h, { passive: true })
-    return () => window.removeEventListener('scroll', h)
-  }, [])
-  const links = lang === 'fr'
-    ? [['E-facturation', '#facturation'], ['Smart CFO', '#cfo'], ['Voix', '#voix'], ['Tarifs', '#tarifs'], ['Blog', '/blog']]
-    : [['E-invoicing', '#facturation'], ['Smart CFO', '#cfo'], ['Voice', '#voix'], ['Pricing', '#tarifs'], ['Blog', '/blog']]
-  const tConnexion = lang === 'fr' ? 'Connexion' : 'Sign in'
-  const tCommencer = lang === 'fr' ? 'Commencer' : 'Get started'
+// NAV
+function Nav() {
+  const [sc,setSc]=useState(false)
+  const [mob,setMob]=useState(false)
+  useEffect(()=>{const h=()=>setSc(window.scrollY>30);window.addEventListener('scroll',h,{passive:true});return()=>window.removeEventListener('scroll',h)},[])
+  const links:[string,string][]=[['Fonctionnalites','#features'],['ROI','#roi'],['Blog','/blog'],['Equipe','/equipe']]
   return (
     <>
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 68, display: 'flex', alignItems: 'center', background: sc ? 'rgba(250,250,248,0.95)' : BG, backdropFilter: sc ? 'blur(16px)' : 'none', WebkitBackdropFilter: sc ? 'blur(16px)' : 'none', borderBottom: `1px solid ${sc ? BORDER2 : 'transparent'}`, transition: 'all 0.3s ease' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px' }}>
-          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none', flexShrink: 0 }}>
-            <VanivertLogo s={28} />
-            <span style={{ fontFamily: 'Georgia, serif', fontSize: 19, color: INK, fontStyle: 'italic', letterSpacing: '-0.01em' }}>vanivert</span>
+      <nav style={{position:'fixed',top:3,left:0,right:0,zIndex:200,height:64,display:'flex',alignItems:'center',background:sc?'rgba(255,255,255,0.96)':'transparent',backdropFilter:sc?'blur(18px)':'none',WebkitBackdropFilter:sc?'blur(18px)':'none',borderBottom:`1px solid ${sc?BDR2:'transparent'}`,transition:'all 0.35s cubic-bezier(0.32,0.72,0,1)'}}>
+        <div style={{maxWidth:1240,margin:'0 auto',width:'100%',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 32px'}}>
+          <a href="/" style={{display:'flex',alignItems:'center',gap:9,textDecoration:'none'}}>
+            <Logo s={30}/>
+            <span style={{fontFamily:'Georgia,serif',fontSize:17,color:INK,fontStyle:'italic'}}>vanivert</span>
           </a>
-          <div style={{ display: 'flex', gap: 4 }} className="nav-links">
-            {links.map(([l, h]) => (
-              <a key={l} href={h} style={{ fontSize: 14, color: MUTED, textDecoration: 'none', padding: '8px 14px', borderRadius: 8, fontWeight: 450, transition: 'color 0.2s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>{l}</a>
+          <div className="nav-links" style={{display:'flex',gap:2}}>
+            {links.map(([l,h])=>(
+              <a key={l} href={h} style={{fontSize:13,color:MUTED,textDecoration:'none',padding:'7px 13px',borderRadius:8,fontWeight:450,transition:'color 0.2s'}}
+                onMouseEnter={e=>(e.currentTarget.style.color=INK)} onMouseLeave={e=>(e.currentTarget.style.color=MUTED)}>{l}</a>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }} className="nav-links">
-            <button onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
-              style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: MUTED, background: 'transparent', border: `1px solid ${BORDER}`, borderRadius: 980, padding: '5px 10px', cursor: 'pointer', letterSpacing: '0.04em' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = INK; (e.currentTarget as HTMLElement).style.borderColor = BORDER2 }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = MUTED; (e.currentTarget as HTMLElement).style.borderColor = BORDER }}>
-              {lang === 'fr' ? 'EN' : 'FR'}
-            </button>
-            <a href="/login" style={{ fontSize: 14, color: MUTED, textDecoration: 'none', fontWeight: 450 }}
-              onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>{tConnexion}</a>
-            <a href="/demo" style={{ fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', padding: '10px 22px', borderRadius: 980, background: INK, transition: 'background 0.25s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = VI }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = INK }}>
-              {tCommencer}
+          <div className="nav-links" style={{display:'flex',gap:10,alignItems:'center'}}>
+            <a href="/login" style={{fontSize:13,color:MUTED,textDecoration:'none',padding:'8px 14px',fontWeight:450,transition:'color 0.2s'}}
+              onMouseEnter={e=>(e.currentTarget.style.color=INK)} onMouseLeave={e=>(e.currentTarget.style.color=MUTED)}>Connexion</a>
+            <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
+              style={{fontSize:13,fontWeight:600,color:'#fff',textDecoration:'none',padding:'9px 22px',borderRadius:980,background:BLUE,display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s cubic-bezier(0.32,0.72,0,1)',boxShadow:`0 4px 14px ${BLUE}28`}}
+              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
+              Voir la demo gratuite
+              <span style={{width:20,height:20,borderRadius:'50%',background:'rgba(255,255,255,0.22)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11}}>→</span>
             </a>
           </div>
+          <button className="mob-nav" onClick={()=>setMob(!mob)} style={{display:'none',background:'none',border:`1px solid ${BDR2}`,borderRadius:10,cursor:'pointer',padding:'8px 10px',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:4}}>
+            <motion.span animate={{rotate:mob?45:0,y:mob?5.5:0}} style={{width:18,height:1.5,background:INK,display:'block',transformOrigin:'center'}}/>
+            <motion.span animate={{opacity:mob?0:1}} style={{width:18,height:1.5,background:INK,display:'block'}}/>
+            <motion.span animate={{rotate:mob?-45:0,y:mob?-5.5:0}} style={{width:18,height:1.5,background:INK,display:'block',transformOrigin:'center'}}/>
+          </button>
         </div>
       </nav>
-      <div className="mob-nav">
-        <button onClick={() => setMob(!mob)} style={{ position: 'fixed', top: 18, right: 16, zIndex: 300, width: 42, height: 42, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: `1px solid ${BORDER}`, backdropFilter: 'blur(16px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer' }}>
-          <span style={{ width: 14, height: 1.5, background: INK }} /><span style={{ width: 14, height: 1.5, background: INK }} /><span style={{ width: 14, height: 1.5, background: INK }} />
-        </button>
-        <a href="/" style={{ position: 'fixed', top: 16, left: 16, zIndex: 300, display: 'flex', alignItems: 'center', gap: 7, textDecoration: 'none' }}>
-          <VanivertLogo s={26} />
-        </a>
-        <AnimatePresence>
-          {mob && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: 'fixed', inset: 0, zIndex: 250, background: 'rgba(250,250,248,0.97)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              {[...links, [tConnexion, '/login'], [tCommencer, '/demo']].map(([l, h]) => (
-                <a key={l} href={h} onClick={() => setMob(false)} style={{ fontSize: 24, fontFamily: 'Georgia, serif', fontStyle: 'italic', color: INK, textDecoration: 'none', padding: '12px 32px' }}>{l}</a>
-              ))}
-              <button onClick={() => { setLang(lang === 'fr' ? 'en' : 'fr'); setMob(false) }}
-                style={{ marginTop: 8, fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: MUTED, background: 'transparent', border: `1px solid ${BORDER2}`, borderRadius: 980, padding: '8px 18px', cursor: 'pointer' }}>
-                {lang === 'fr' ? 'Switch to English' : 'Passer en francais'}
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      <AnimatePresence>
+        {mob&&(
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} style={{position:'fixed',inset:0,zIndex:250,background:'rgba(255,255,255,0.98)',backdropFilter:'blur(20px)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:4}}>
+            {[...links,['Connexion','/login'],['Voir la demo','/demo']].map(([l,h],i)=>(
+              <motion.a key={l} href={h} initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:i*0.06}} onClick={()=>setMob(false)}
+                style={{fontSize:22,fontFamily:'Georgia,serif',fontStyle:'italic',color:INK,textDecoration:'none',padding:'12px 32px',textAlign:'center'}}>{l}</motion.a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
 
-function MiniCalculator({ cms, lang }: { cms: CMS; lang: Lang }) {
-  const [siret, setSiret] = useState('')
-  const [step, setStep] = useState<'input' | 'result'>('input')
-  const [score, setScore] = useState<{ grade: string; color: string; fine: string } | null>(null)
-  function compute() {
-    if (siret.replace(/\s/g, '').length < 9) return
-    const grades = [
-      { grade: 'C', color: EM, fine: lang === 'fr' ? '7 500 EUR' : '7,500 EUR' },
-      { grade: 'D', color: '#EF4444', fine: lang === 'fr' ? '15 000 EUR' : '15,000 EUR' },
-      { grade: 'B', color: GR, fine: lang === 'fr' ? '2 500 EUR' : '2,500 EUR' },
-    ]
-    setScore(grades[siret.length % 3])
-    setStep('result')
-  }
+// HERO
+const ROTATING=['De l\'appel entrant a l\'avis cinq etoiles.','Zero lead perdu. Zero client oublie.','Votre concurrent dort. Vous, non.','L\'agence qui tourne en pilote automatique.']
+
+function Hero() {
+  const [phrase,setPhrase]=useState(0)
+  const {scrollY}=useScroll()
+  const bgY=useTransform(scrollY,[0,600],[0,80])
+  useEffect(()=>{const id=setInterval(()=>setPhrase(p=>(p+1)%ROTATING.length),3800);return()=>clearInterval(id)},[])
   return (
-    <div style={{ background: CARD, border: `1.5px solid ${EM}30`, borderRadius: 18, padding: '22px 24px', boxShadow: `0 20px 50px rgba(13,13,15,0.08), 0 0 0 1px ${EM}08`, width: '100%', maxWidth: 360 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 14 }}>
-        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#EF4444', animation: 'pulse 1.6s ease-in-out infinite' }} />
-        <div style={{ fontSize: 10, color: '#DC2626', letterSpacing: '0.1em', textTransform: 'uppercase' as const, fontFamily: 'monospace', fontWeight: 700 }}>{lang === 'fr' ? cms.calc_label : EN_HERO.calcLabel}</div>
-      </div>
-      {step === 'input' ? (
-        <>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <input value={siret} onChange={e => setSiret(e.target.value)} placeholder={lang === 'fr' ? 'Votre SIRET ou SIREN' : EN_HERO.calcPlaceholder} maxLength={14}
-              style={{ flex: 1, padding: '11px 14px', borderRadius: 10, border: `1px solid ${BORDER2}`, fontSize: 13, fontFamily: 'system-ui', outline: 'none', color: INK }}
-              onKeyDown={e => e.key === 'Enter' && compute()} />
-            <button onClick={compute} style={{ padding: '11px 16px', borderRadius: 10, background: EM, color: '#fff', border: 'none', fontWeight: 600, fontSize: 13, cursor: 'pointer', boxShadow: `0 4px 14px ${EM}40` }}>→</button>
-          </div>
-          <div style={{ fontSize: 11, color: '#B45309', marginTop: 10, fontWeight: 500 }}>{lang === 'fr' ? "62 jours restants. Verifiez avant qu'il ne soit trop tard." : EN_HERO.calcUrgent}</div>
-        </>
-      ) : score && (
+    <section style={{minHeight:'100dvh',background:BG,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'120px 24px 80px',position:'relative',overflow:'hidden'}}>
+      <motion.div style={{y:bgY,position:'absolute',top:'-15%',left:'-8%',width:'50vw',height:'50vw',maxWidth:600,borderRadius:'50%',background:`radial-gradient(circle,${BLUE}08 0%,transparent 65%)`,pointerEvents:'none'}}/>
+      <motion.div style={{y:bgY,position:'absolute',bottom:'-10%',right:'-5%',width:'40vw',height:'40vw',maxWidth:500,borderRadius:'50%',background:`radial-gradient(circle,${ORG}08 0%,transparent 65%)`,pointerEvents:'none'}}/>
+      <div style={{maxWidth:1200,width:'100%',display:'grid',gridTemplateColumns:'1fr 460px',gap:64,alignItems:'center',position:'relative',zIndex:2}} className="hero-grid">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: `${score.color}15`, border: `1.5px solid ${score.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Georgia, serif', fontSize: 22, fontWeight: 700, color: score.color }}>{score.grade}</div>
-            <div>
-              <div style={{ fontSize: 12, color: MUTED }}>{lang === 'fr' ? 'Exposition estimee' : EN_HERO.calcExposure}</div>
-              <div style={{ fontSize: 17, fontWeight: 700, color: INK, fontFamily: 'monospace' }}>{score.fine}</div>
-            </div>
-          </div>
-          <a href="/calculateur" style={{ display: 'block', textAlign: 'center', padding: '10px', borderRadius: 9, background: VI, color: '#fff', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>{lang === 'fr' ? 'Voir le rapport complet →' : EN_HERO.calcReport + ' →'}</a>
-        </div>
-      )}
-    </div>
-  )
-}
-
-const EN_HERO = {
-  h1: 'Your invoices. Your cash flow.',
-  rotating: ['Without the paperwork.', 'Without manual follow-ups.', 'Before September 1st.', 'With real DGFiP compliance.'],
-  sub: "We handle DGFiP e-invoicing, your real-time cash flow, and your missed calls. You run your business.",
-  cta1: 'Start for free',
-  cta2: 'See a demo',
-  countdown: ['days', 'hours', 'min', 'sec'],
-  countdownNote: 'before the DGFiP deadline',
-  calcLabel: 'Check your risk',
-  calcPlaceholder: 'Your SIRET or SIREN',
-  calcUrgent: "62 days left. Check before it's too late.",
-  calcReport: 'See full report',
-  calcExposure: 'Estimated exposure',
-}
-
-function Hero({ cms, lang }: { cms: CMS; lang: Lang }) {
-  const { days, hours, mins, secs } = useCountdown()
-  const pad = (n: number) => String(n).padStart(2, '0')
-  const [phrase, setPhrase] = useState(0)
-  const rotating = lang === 'fr' ? cms.hero_h1_rotating : EN_HERO.rotating
-  useEffect(() => {
-    const id = setInterval(() => setPhrase(p => (p + 1) % rotating.length), 3600)
-    return () => clearInterval(id)
-  }, [rotating.length])
-
-  return (
-    <section style={{ minHeight: '100dvh', background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '110px 24px 60px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: '8%', left: '10%', width: '40vw', height: '40vw', maxWidth: 500, borderRadius: '50%', background: `radial-gradient(circle, ${VI}10 0%, transparent 65%)`, pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: '0%', right: '5%', width: '30vw', height: '30vw', maxWidth: 400, borderRadius: '50%', background: `radial-gradient(circle, ${GR}08 0%, transparent 65%)`, pointerEvents: 'none' }} />
-
-      <div style={{ maxWidth: 1180, width: '100%', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 56, alignItems: 'center', position: 'relative', zIndex: 2 }} className="hero-grid">
-        <div style={{ textAlign: 'left' as const }}>
-          <motion.h1 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-            style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 'clamp(34px, 4.6vw, 58px)', color: INK, lineHeight: 1.08, marginBottom: 14, letterSpacing: '-0.03em', marginTop: 0 }}>
-            {lang === 'fr' ? cms.hero_h1 : EN_HERO.h1}<br />
-            <AnimatePresence mode="wait">
-              <motion.span key={phrase + lang} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }}
-                style={{ fontStyle: 'italic', color: SUBTLE, display: 'inline-block' }}>
-                {rotating[phrase % rotating.length]}
-              </motion.span>
-            </AnimatePresence>
+          <motion.div initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} transition={{duration:0.5,delay:0.05}} style={{marginBottom:22}}>
+            <Pill color={BLUE}>IA immobiliere - Registre France - RGPD EU</Pill>
+          </motion.div>
+          <motion.h1 initial={{opacity:0,y:22}} animate={{opacity:1,y:0}} transition={{duration:0.75,ease:EZ,delay:0.1}}
+            style={{fontFamily:'Georgia,serif',fontWeight:400,fontSize:'clamp(34px,4.6vw,60px)',color:INK,lineHeight:1.07,marginBottom:14,letterSpacing:'-0.03em'}}>
+            L&apos;agence immobiliere<br/><span style={{fontStyle:'italic',color:MUTED}}>qui ne dort jamais.</span>
           </motion.h1>
-
-          <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-            style={{ fontSize: 16, color: MUTED, lineHeight: 1.65, maxWidth: 460, marginBottom: 28 }}>
-            {lang === 'fr' ? cms.hero_sub : EN_HERO.sub}
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.5,delay:0.28}} style={{height:26,marginBottom:18,overflow:'hidden'}}>
+            <AnimatePresence mode="wait">
+              <motion.p key={phrase} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} transition={{duration:0.35}}
+                style={{fontSize:15,color:BLUE,fontWeight:600,fontStyle:'italic'}}>
+                {ROTATING[phrase]}
+              </motion.p>
+            </AnimatePresence>
+          </motion.div>
+          <motion.p initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} transition={{duration:0.65,delay:0.2}}
+            style={{fontSize:16,color:MUTED,lineHeight:1.72,maxWidth:490,marginBottom:36}}>
+            Chaque appel recu. Chaque lead centralise. Chaque visite planifiee. Chaque client fidelize a vie. Chaque avis Google collecte. Tout ca, pendant que vous faites votre vrai metier.
           </motion.p>
-
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} style={{ display: 'flex', gap: 10, marginBottom: 36 }}>
-            <a href="/demo" style={{ padding: '13px 24px', borderRadius: 980, background: VI, color: '#fff', fontWeight: 600, fontSize: 14, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-              {lang === 'fr' ? cms.hero_cta1 : EN_HERO.cta1}<span style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>→</span>
+          <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{duration:0.5,delay:0.3}} style={{display:'flex',gap:12,flexWrap:'wrap' as const,marginBottom:40}}>
+            <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
+              style={{padding:'14px 28px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:10,transition:'background 0.25s cubic-bezier(0.32,0.72,0,1)',boxShadow:`0 8px 24px ${BLUE}28`}}
+              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
+              Demander une demo gratuite
+              <span style={{width:22,height:22,borderRadius:'50%',background:'rgba(255,255,255,0.22)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12}}>→</span>
             </a>
-            <a href="/dashboard" style={{ padding: '13px 24px', borderRadius: 980, border: `1px solid ${BORDER2}`, color: MUTED, fontWeight: 500, fontSize: 14, textDecoration: 'none' }}>
-              {lang === 'fr' ? cms.hero_cta2 : EN_HERO.cta2}
+            <a href="#roi" style={{padding:'14px 28px',borderRadius:980,border:`1.5px solid ${BDR2}`,color:MUTED,fontWeight:500,fontSize:14,textDecoration:'none',transition:'all 0.25s'}}
+              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor=BLUE;(e.currentTarget as HTMLElement).style.color=BLUE}}
+              onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=BDR2;(e.currentTarget as HTMLElement).style.color=MUTED}}>
+              Calculer mon gain
             </a>
           </motion.div>
-
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.4 }}
-            style={{ display: 'inline-flex', alignItems: 'stretch', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 16, padding: '18px 26px', boxShadow: '0 16px 40px rgba(13,13,15,0.06)' }}>
-            {[[pad(days), lang === 'fr' ? 'jours' : EN_HERO.countdown[0]], [pad(hours), lang === 'fr' ? 'heures' : EN_HERO.countdown[1]], [pad(mins), lang === 'fr' ? 'min' : EN_HERO.countdown[2]], [pad(secs), lang === 'fr' ? 'sec' : EN_HERO.countdown[3]]].map(([v, l], i) => (
-              <div key={l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 18px', borderRight: i < 3 ? `1px solid ${BORDER}` : undefined }}>
-                <span style={{ fontSize: 38, fontWeight: 700, color: INK, lineHeight: 1, fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}>{v}</span>
-                <span style={{ fontSize: 10, color: SUBTLE, letterSpacing: '0.1em', marginTop: 5, textTransform: 'uppercase' as const }}>{l}</span>
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay:0.55}} style={{display:'flex',alignItems:'center',gap:24,paddingTop:24,borderTop:`1px solid ${BDR}`,flexWrap:'wrap' as const}}>
+            {[['10+','agences pilotes'],['60s','lead WhatsApp'],['24/7','IA vocale'],['EU','donnees RGPD']].map(([v,l])=>(
+              <div key={l}>
+                <div style={{fontSize:20,fontWeight:700,color:INK,fontFamily:'Georgia,serif',letterSpacing:'-0.02em'}}>{v}</div>
+                <div style={{fontSize:11,color:SUBTLE}}>{l}</div>
               </div>
             ))}
-            <div style={{ display: 'flex', alignItems: 'center', paddingLeft: 18, maxWidth: 110 }}>
-              <span style={{ fontSize: 11, color: SUBTLE, lineHeight: 1.4 }}>{lang === 'fr' ? 'avant la deadline DGFiP' : EN_HERO.countdownNote}</span>
-            </div>
           </motion.div>
         </div>
-
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.4 }} style={{ display: 'flex', justifyContent: 'center' }}>
-          <MiniCalculator cms={cms} lang={lang} />
+        <motion.div initial={{opacity:0,x:24}} animate={{opacity:1,x:0}} transition={{duration:0.8,delay:0.35}} style={{position:'relative',height:460}} className="hero-sphere">
+          <div style={{position:'absolute',inset:0,borderRadius:28,overflow:'hidden',border:`1px solid ${BDR}`}}><Globe/></div>
+          {[
+            {top:28,right:-18,delay:0,bg:`${BLUE_LT}`,bdrc:BLUE,children:<><div style={{fontSize:11,color:BLUE,fontWeight:600,marginBottom:4}}>Appel entrant</div><div style={{display:'flex',alignItems:'center',gap:8}}><motion.span animate={{opacity:[1,0.3,1]}} transition={{duration:1.2,repeat:Infinity}} style={{width:8,height:8,borderRadius:'50%',background:'#22C55E',boxShadow:'0 0 0 3px rgba(34,197,94,0.2)'}}/><span style={{fontSize:13,fontWeight:600,color:INK}}>Sophie repond - 0s</span></div></>},
+            {bottom:110,left:-18,delay:0.8,bg:'#fff',bdrc:BDR2,children:<><div style={{fontSize:11,color:MUTED,marginBottom:4}}>Visite planifiee</div><div style={{fontSize:13,fontWeight:600,color:INK}}>Mercredi 10h - Agenda ✓</div></>},
+            {bottom:28,right:14,delay:1.4,bg:ORG_LT,bdrc:ORG,children:<><div style={{fontSize:11,color:ORG,fontWeight:600,marginBottom:2}}>Avis Google recu</div><div style={{fontSize:13,color:ORG,fontWeight:700}}>★★★★★  Nouveau</div></>},
+          ].map(({top,bottom,left,right,delay,bg,bdrc,children},i)=>(
+            <motion.div key={i} animate={{y:[0,i%2===0?-7:7,0]}} transition={{duration:3.5+i*0.5,repeat:Infinity,ease:'easeInOut',delay}}
+              style={{position:'absolute',top,bottom,left,right,background:bg,border:`1px solid ${bdrc}`,borderRadius:14,padding:'12px 16px',boxShadow:'0 8px 24px rgba(12,14,26,0.08)'}}>
+              {children}
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>
   )
 }
 
-const CLIENT_LOGOS = ['PROLANN SAS', 'Hotel Ker Buhe', 'Oxxius Lannion', 'Apizee SAS', 'Cristalens', 'Cabinet Dr. Martin', 'MECA ARMOR']
-/* ── AGENT FLOW: three documents spread wide, center card animates through
-   processing states. Mirrors Sequence's contract->agent->invoice strip
-   exactly, rebuilt for Vanivert's facture/conformite flow. ── */
-function DocSkeleton({ lines, signature }: { lines: { w: string; tone?: 'normal' | 'highlight' }[]; signature?: boolean }) {
+// TICKER
+const PARIS_AGENCIES=['Foncia Paris 8e','Century 21 Trocadero','Laforet Paris 16e','Orpi Paris Centre','Stéphane Plaza Paris 17e','IAD France Ile-de-France','ERA Immobilier Paris','Guy Hoquet Paris 15e','Nexity Solutions Immobilieres']
+
+function Ticker() {
   return (
-    <>
-      {lines.map((l, i) => (
-        <div key={i} style={{ height: 7, width: l.w, borderRadius: 3, background: l.tone === 'highlight' ? `${VI}35` : 'rgba(13,13,15,0.08)', marginBottom: 6 }} />
-      ))}
-      {signature && (
-        <div style={{ marginTop: 18 }}>
-          <svg width="64" height="20" viewBox="0 0 64 20"><path d="M4 14C8 6 12 18 16 10C20 4 24 16 28 8C32 4 36 14 40 9" stroke="rgba(13,13,15,0.3)" strokeWidth="1.4" fill="none" strokeLinecap="round" /></svg>
+    <section style={{background:BG,borderTop:`1px solid ${BDR}`,borderBottom:`1px solid ${BDR}`,padding:'20px 0'}}>
+      <div style={{maxWidth:1100,margin:'0 auto',padding:'0 32px'}}>
+        <p style={{textAlign:'center',fontSize:10,color:SUBTLE,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:14}}>Agences en cours de deploiement pilote en Ile-de-France et Province</p>
+        <div style={{overflow:'hidden',position:'relative'}}>
+          <div style={{position:'absolute',left:0,top:0,bottom:0,width:80,background:`linear-gradient(to right,${BG},transparent)`,zIndex:2,pointerEvents:'none'}}/>
+          <div style={{position:'absolute',right:0,top:0,bottom:0,width:80,background:`linear-gradient(to left,${BG},transparent)`,zIndex:2,pointerEvents:'none'}}/>
+          <div style={{display:'flex',gap:56,animation:'ticker 28s linear infinite',width:'max-content',alignItems:'center'}}>
+            {[...PARIS_AGENCIES,...PARIS_AGENCIES,...PARIS_AGENCIES].map((n,i)=>(
+              <span key={i} style={{fontSize:13,color:SUBTLE,fontFamily:'Georgia,serif',fontStyle:'italic',whiteSpace:'nowrap'}}>{n}</span>
+            ))}
+          </div>
         </div>
-      )}
-    </>
+      </div>
+    </section>
   )
 }
 
-function StatusBadge({ label, color }: { label: string; color: string }) {
-  return (
-    <span style={{ fontSize: 11, fontWeight: 600, color, background: `${color}18`, padding: '4px 11px', borderRadius: 980 }}>{label}</span>
-  )
-}
-
-function DocCard({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  return (
-    <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '20px 18px', width: 220, position: 'relative', boxShadow: '0 8px 24px rgba(13,13,15,0.06)', ...style }}>
-      {/* folded-corner detail matching Sequence's document mockup */}
-      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, background: `linear-gradient(135deg, transparent 50%, ${BORDER} 50%)`, borderBottomRightRadius: 9 }} />
-      {children}
-    </div>
-  )
-}
-
-function AgentFlowSection({ cms }: { cms: CMS }) {
-  // Cycles through processing states every 3.2s: contract received -> agent
-  // reviewing -> validated, while the side documents update their status
-  // pills in sync, exactly like Sequence's "Review required" -> "Sent" beat.
-  const [step, setStep] = useState(0)
-  useEffect(() => {
-    const id = setInterval(() => setStep(s => (s + 1) % 3), 3200)
-    return () => clearInterval(id)
-  }, [])
-  const states = [
-    { tag: 'En verification', tagColor: EM, leftBadge: { label: 'Recue', color: SUBTLE }, rightBadge: { label: 'En attente', color: EM } },
-    { tag: 'Validation CIUS-FR', tagColor: VI, leftBadge: { label: 'Conforme', color: GR }, rightBadge: { label: 'Programmee', color: VI } },
-    { tag: 'Conforme DGFiP', tagColor: GR, leftBadge: { label: 'Conforme', color: GR }, rightBadge: { label: 'Envoyee', color: GR } },
-  ]
-  const s = states[step]
+// ROI CALCULATOR
+function ROICalc() {
+  const [leads,setLeads]=useState(40)
+  const [closeRate,setCloseRate]=useState(15)
+  const [avgComm,setAvgComm]=useState(8000)
+  const [hoursAdmin,setHoursAdmin]=useState(2)
+  const missedLeadPct=0.35
+  const missedDeals=Math.round(leads*missedLeadPct*(closeRate/100))
+  const extraRevenue=missedDeals*avgComm
+  const hoursSaved=hoursAdmin*22
+  const hourValue=80
+  const timeSaved=hoursSaved*hourValue
+  const total=extraRevenue+timeSaved
 
   return (
-    <section style={{ background: BG, padding: '64px 32px 32px', overflow: 'hidden' }}>
-      <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, position: 'relative' }} className="agent-flow">
-        {/* Left: incoming contract */}
-        <FadeUp delay={0.05} style={{ flexShrink: 0 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <DocCard>
-              <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', marginBottom: 10, fontFamily: 'monospace' }}>CONTRAT</div>
-              <DocSkeleton lines={[{ w: '75%' }, { w: '55%' }, { w: '0' }, { w: '90%' }, { w: '65%' }, { w: '0' }, { w: '80%' }, { w: '40%' }]} />
-            </DocCard>
-            <DocCard style={{ width: 200, transform: 'translateX(18px)' }}>
-              <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', marginBottom: 10, fontFamily: 'monospace' }}>CONTRAT</div>
-              <DocSkeleton lines={[{ w: '60%' }, { w: '40%' }, { w: '0' }, { w: '85%' }, { w: '70%' }, { w: '90%' }, { w: '50%' }]} signature />
-            </DocCard>
-          </div>
+    <section id="roi" style={{background:`linear-gradient(135deg,${BG2} 0%,${BG3} 100%)`,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
+      <div style={{maxWidth:1000,margin:'0 auto'}}>
+        <FadeUp style={{textAlign:'center',marginBottom:52}}>
+          <Pill color={ORG}>Calculateur ROI</Pill>
+          <h2 style={{fontFamily:'Georgia,serif',fontWeight:400,fontSize:'clamp(24px,3vw,40px)',color:INK,marginTop:14,marginBottom:10,letterSpacing:'-0.025em'}}>
+            Combien Vanivert peut vous rapporter ?
+          </h2>
+          <p style={{fontSize:15,color:MUTED,maxWidth:480,margin:'0 auto'}}>Les agences perdent en moyenne 35% de leurs leads faute de reponse rapide. Voici votre gain potentiel.</p>
         </FadeUp>
-
-        {/* Center: live agent card */}
-        <FadeUp delay={0.15} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 280 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-            <VanivertLogoMark s={18} />
-            <span style={{ fontSize: 13, color: MUTED, fontFamily: 'system-ui' }}>{cms.agent_label}</span>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.35 }}
-              style={{ marginBottom: 14, padding: '5px 13px', borderRadius: 980, background: `${s.tagColor}15`, border: `1px solid ${s.tagColor}35` }}>
-              <span style={{ fontSize: 11, fontWeight: 600, color: s.tagColor }}>{s.tag}</span>
-            </motion.div>
-          </AnimatePresence>
-          <DocCard style={{ width: 260 }}>
-            <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', marginBottom: 14, fontFamily: 'monospace' }}>FACTURE</div>
-            <DocSkeleton lines={[{ w: '50%' }, { w: '0' }]} />
-            <div style={{ height: 10 }} />
-            <AnimatePresence mode="wait">
-              <motion.div key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-                <DocSkeleton lines={[
-                  { w: '95%', tone: step >= 1 ? 'highlight' : 'normal' },
-                  { w: '70%', tone: step >= 1 ? 'highlight' : 'normal' },
-                  { w: '0' },
-                  { w: '85%' },
-                  { w: '60%' },
-                  { w: '0' },
-                  { w: '100%', tone: step >= 2 ? 'highlight' : 'normal' },
-                ]} />
-              </motion.div>
-            </AnimatePresence>
-          </DocCard>
-        </FadeUp>
-
-        {/* Right: outgoing invoices */}
-        <FadeUp delay={0.05} style={{ flexShrink: 0 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-end' }}>
-            <DocCard>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', fontFamily: 'monospace' }}>FACTURE</div>
-                <AnimatePresence mode="wait">
-                  <motion.div key={step} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }}>
-                    <StatusBadge label={s.leftBadge.label} color={s.leftBadge.color} />
-                  </motion.div>
-                </AnimatePresence>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32}} className="alt-grid">
+          <FadeUp>
+            <div style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:20,padding:'32px 28px',boxShadow:'0 4px 24px rgba(12,14,26,0.06)'}}>
+              <div style={{fontSize:13,fontWeight:700,color:INK,marginBottom:24}}>Votre situation actuelle</div>
+              {[
+                {label:'Leads entrants par mois',val:leads,setVal:setLeads,min:10,max:200,step:5,suffix:'leads'},
+                {label:'Taux de signature (%)',val:closeRate,setVal:setCloseRate,min:5,max:40,step:1,suffix:'%'},
+                {label:'Commission moyenne (EUR)',val:avgComm,setVal:setAvgComm,min:2000,max:20000,step:500,suffix:'EUR'},
+                {label:'Heures admin par jour',val:hoursAdmin,setVal:setHoursAdmin,min:0.5,max:6,step:0.5,suffix:'h'},
+              ].map(({label,val,setVal,min,max,step,suffix})=>(
+                <div key={label} style={{marginBottom:20}}>
+                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+                    <span style={{fontSize:12,color:MUTED}}>{label}</span>
+                    <span style={{fontSize:13,fontWeight:700,color:INK}}>{val}{suffix}</span>
+                  </div>
+                  <input type="range" min={min} max={max} step={step} value={val} onChange={e=>setVal(Number(e.target.value))}
+                    style={{width:'100%',accentColor:BLUE,height:4,cursor:'pointer'}}/>
+                </div>
+              ))}
+            </div>
+          </FadeUp>
+          <FadeUp delay={0.1}>
+            <div style={{background:INK,borderRadius:20,padding:'32px 28px',color:'#fff',display:'flex',flexDirection:'column',justifyContent:'space-between',minHeight:340}}>
+              <div style={{fontSize:13,fontWeight:600,color:'rgba(255,255,255,0.6)',marginBottom:24}}>Votre gain avec Vanivert</div>
+              <div>
+                {[
+                  {label:`+${missedDeals} deals recuperes/mois`,value:`+${extraRevenue.toLocaleString('fr-FR')} EUR`,color:`${ORG}`,sub:'leads non repondus transformes'},
+                  {label:`${hoursSaved}h admin economisees/mois`,value:`+${timeSaved.toLocaleString('fr-FR')} EUR`,color:'#86EFAC',sub:'temps valorise a 80EUR/h'},
+                ].map(r=>(
+                  <div key={r.label} style={{marginBottom:20,padding:'16px 18px',borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.08)'}}>
+                    <div style={{fontSize:11,color:'rgba(255,255,255,0.5)',marginBottom:4}}>{r.sub}</div>
+                    <div style={{fontSize:13,fontWeight:600,color:'rgba(255,255,255,0.85)',marginBottom:6}}>{r.label}</div>
+                    <div style={{fontSize:22,fontWeight:700,color:r.color,fontFamily:'Georgia,serif'}}>{r.value}</div>
+                  </div>
+                ))}
               </div>
-              <DocSkeleton lines={[{ w: '90%' }, { w: '60%' }, { w: '0' }, { w: '75%' }, { w: '50%' }]} />
-              <div style={{ marginTop: 12, height: 18, width: 70, borderRadius: 5, background: 'rgba(13,13,15,0.05)' }} />
-            </DocCard>
-            <DocCard style={{ width: 200, transform: 'translateX(-18px)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                <div style={{ fontSize: 9, color: SUBTLE, letterSpacing: '0.08em', fontFamily: 'monospace' }}>FACTURE</div>
-                <AnimatePresence mode="wait">
-                  <motion.div key={step} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3, delay: 0.08 }}>
-                    <StatusBadge label={s.rightBadge.label} color={s.rightBadge.color} />
-                  </motion.div>
-                </AnimatePresence>
+              <div style={{borderTop:'1px solid rgba(255,255,255,0.1)',paddingTop:20,marginTop:8}}>
+                <div style={{fontSize:12,color:'rgba(255,255,255,0.5)',marginBottom:4}}>Gain annuel estime</div>
+                <div style={{fontSize:36,fontWeight:700,fontFamily:'Georgia,serif',color:'#fff'}}>{(total*12).toLocaleString('fr-FR')} EUR</div>
+                <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
+                  style={{display:'block',marginTop:20,padding:'12px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:13,textDecoration:'none',textAlign:'center' as const,transition:'background 0.25s'}}
+                  onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
+                  Voir ma demo - gratuit →
+                </a>
               </div>
-              <DocSkeleton lines={[{ w: '80%' }, { w: '55%' }, { w: '0' }, { w: '65%' }]} />
-              <div style={{ marginTop: 12, height: 18, width: 60, borderRadius: 5, background: 'rgba(13,13,15,0.05)' }} />
-            </DocCard>
-          </div>
-        </FadeUp>
-      </div>
-    </section>
-  )
-}
-
-function ClientLogos({ cms }: { cms: CMS }) {
-  return (
-    <section style={{ background: BG, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}`, padding: '22px 0' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 32px' }}>
-        <p style={{ textAlign: 'center', fontSize: 11, color: SUBTLE, letterSpacing: '0.08em', marginBottom: 18, textTransform: 'uppercase' as const }}>{cms.trust_tagline}</p>
-        <div style={{ overflow: 'hidden', position: 'relative' }}>
-          <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 60, background: `linear-gradient(to right, ${BG}, transparent)`, zIndex: 2, pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 60, background: `linear-gradient(to left, ${BG}, transparent)`, zIndex: 2, pointerEvents: 'none' }} />
-          <div style={{ display: 'flex', gap: 40, animation: 'ticker 20s linear infinite', width: 'max-content', alignItems: 'center' }}>
-            {[...CLIENT_LOGOS, ...CLIENT_LOGOS, ...CLIENT_LOGOS].map((n, i) => (
-              <span key={i} style={{ fontSize: 13, color: SUBTLE, fontFamily: 'Georgia, serif', fontStyle: 'italic', whiteSpace: 'nowrap' }}>{n}</span>
-            ))}
-          </div>
+            </div>
+          </FadeUp>
         </div>
       </div>
     </section>
   )
 }
 
-function ModulePills({ cms }: { cms: CMS }) {
-  return (
-    <section style={{ background: BG2, padding: '56px 32px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <FadeUp>
-          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 8, justifyContent: 'center' }}>
-            {cms.modules.map(mod => (
-              <motion.div key={mod.title} whileHover={{ scale: 1.03, borderColor: `${VI}40` }} style={{ padding: '11px 18px', borderRadius: 11, background: CARD, border: `1px solid ${BORDER}`, textAlign: 'left' as const }}>
-                <div style={{ fontSize: 13, fontWeight: 500, color: INK, marginBottom: 2 }}>{mod.title}</div>
-                <div style={{ fontSize: 11, color: SUBTLE }}>{mod.sub}</div>
-              </motion.div>
-            ))}
-          </div>
-        </FadeUp>
-      </div>
-    </section>
-  )
-}
+// INTERACTIVE FEATURES
+const FEATURES = [
+  {
+    id:'leads', icon:'📥', color:BLUE, tag:'Lead Capture',
+    headline:'Chaque appel manque vous coute une commission.',
+    stat:'35% de leads perdus faute de reponse en moins de 5 minutes.',
+    impact:'Recuperez 35% de leads en plus. Sans effort.',
+    body:'SeLoger, LeBonCoin, BienIci, Google My Business, WhatsApp entrant - tout arrive dans une seule interface en moins de 10 secondes. Sophie repond par voix en 0 seconde, 24h/24. Qualification automatique, score de priorite, zero double saisie.',
+    metrics:['+35% leads traites','60s lead WhatsApp','Deduplication auto'],
+  },
+  {
+    id:'visits', icon:'📅', color:TEAL, tag:'Planification visites',
+    headline:'25 minutes de trajet pour une propriete vide.',
+    stat:'23% des visites se terminent par un no-show ou une annulation de derniere minute.',
+    impact:'Zero no-show non gere. Chaque visite confirmee.',
+    body:'Coordination tripartite automatique : acheteur, vendeur, agent. Confirmation WhatsApp pour les trois parties simultanement. Rappel la veille, rappel 2 heures avant avec lien Maps. Si le vendeur annule, le systeme propose un creneau de remplacement sans intervention humaine.',
+    metrics:['3 confirmations simultanées','Rappel J-1 et H-2','Lien Maps integre'],
+  },
+  {
+    id:'client', icon:'🎂', color:ORG, tag:'Client a vie',
+    headline:'8 ans de clients que vous n\'avez plus jamais contactes.',
+    stat:'Un client fidele coute 5x moins a conserver qu\'a acquerir. Combien avez-vous contactes ce mois ?',
+    impact:'Votre CRM se souvient de tout, tout le temps.',
+    body:'Anniversaires, anniversaire d\'achat, estimations trimestrielles gratuites, voeux de Noel et 14 Juillet. Chaque message personnalise, envoye automatiquement depuis le nom de l\'agent. Quand un client G-class doit vendre ou renover, Vanivert le detecte et cree une opportunite de mandat.',
+    metrics:['Anniversaires auto','Estimations trimestrielles','Re-engagement 3 ans'],
+  },
+  {
+    id:'reviews', icon:'⭐', color:ORG, tag:'Reputation Google',
+    headline:'1 etoile de plus sur Google = 18% de leads en plus.',
+    stat:'80% des agences ne collectent pas d\'avis systematiquement. Les 20% qui le font recueillent 3x plus de contacts.',
+    impact:'Chaque transaction devient un avis cinq etoiles.',
+    body:'Deal marque Gagne, 24 heures plus tard, acheteur et vendeur recoivent chacun un WhatsApp personnalise. Les avis Google arrivent dans le tableau de bord avec une reponse IA prete a valider en un clic. Si 5 etoiles : draft Instagram genere automatiquement pour validation directeur.',
+    metrics:['Demande auto 24h apres','Reponse IA en 1 clic','Draft Instagram inclus'],
+  },
+  {
+    id:'compliance', icon:'🔒', color:'#7C3AED', tag:'Conformite LCB-FT',
+    headline:'Une inspection DGCCRF peut vous couter votre carte professionnelle.',
+    stat:'Depuis le decret d\'avril 2026, la tracabilite LCB-FT est une obligation renforcee. Les inspections se multiplient.',
+    impact:'Audit trail complet. En un clic.',
+    body:'Chaque dossier depasse 100K ou structure inhabituellement : flag automatique pour due diligence renforcee. L\'agent est guide etape par etape. Le directeur voit un tableau de conformite par dossier : Verifie, En cours, Action requise. Export PDF pour inspection DGCCRF en 30 secondes.',
+    metrics:['Tracabilite LCB-FT','Export PDF inspection','Zero non-conformite'],
+  },
+  {
+    id:'valuation', icon:'📊', color:TEAL, tag:'Estimation bien',
+    headline:'Le vendeur a verifie les prix DVF avant votre visite.',
+    stat:'70% des vendeurs arrivent informes sur les prix du marche. Votre agent arrive avec quoi ?',
+    impact:'Arrivez avec les chiffres. Gagnez le mandat.',
+    body:'DVF recupere les 5 dernieres transactions comparables. Georisques identifie tous les risques reglementaires obligatoires. Le Cadastre confirme la surface officielle. Tout ca agrege automatiquement en un rapport envoye sur WhatsApp a l\'agent 30 minutes avant sa visite. Sources gouvernementales gratuites, donnees officielles.',
+    metrics:['DVF data.gouv.fr','Georisques API officielle','Cadastre surface exacte'],
+  },
+]
 
-function ProductSection({ label, h2, body, badge, badgeColor, mockup, anchor }: { label: string; h2: string; body: string; badge: string; badgeColor: string; mockup: React.ReactNode; anchor: string }) {
+function FeaturesSection() {
+  const [active,setActive]=useState(0)
+  const f=FEATURES[active]
   return (
-    <section id={anchor} style={{ background: BG, padding: '88px 32px', borderTop: `1px solid ${BORDER}` }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }} className="alt-grid">
-        <FadeUp>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 980, background: `${badgeColor}10`, border: `1px solid ${badgeColor}30`, marginBottom: 16 }}>
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: badgeColor }} /><span style={{ fontSize: 11, color: badgeColor, fontWeight: 500 }}>{badge}</span>
-          </div>
-          <p style={{ fontSize: 10, color: SUBTLE, letterSpacing: '0.12em', textTransform: 'uppercase' as const, marginBottom: 10 }}>{label}</p>
-          <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 'clamp(22px, 2.6vw, 34px)', color: INK, marginBottom: 14, lineHeight: 1.2, letterSpacing: '-0.02em' }}>{h2}</h2>
-          <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.7 }}>{body}</p>
+    <section id="features" style={{background:BG,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
+      <div style={{maxWidth:1100,margin:'0 auto'}}>
+        <FadeUp style={{textAlign:'center',marginBottom:48}}>
+          <Pill color={BLUE}>Fonctionnalites</Pill>
+          <h2 style={{fontFamily:'Georgia,serif',fontWeight:400,fontSize:'clamp(24px,3vw,40px)',color:INK,marginTop:14,marginBottom:10,letterSpacing:'-0.025em'}}>
+            Ce que vos agents font manuellement.<br/><span style={{fontStyle:'italic',color:MUTED}}>Ce que Vanivert fait automatiquement.</span>
+          </h2>
         </FadeUp>
-        <FadeUp delay={0.12}>
-          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 18, padding: 8, boxShadow: '0 24px 56px rgba(13,13,15,0.08)' }}>
-            <div style={{ background: BG2, borderRadius: 13, padding: 22, border: `1px solid ${BORDER}` }}>{mockup}</div>
-          </div>
-        </FadeUp>
-      </div>
-    </section>
-  )
-}
-
-function InvoiceMockup() {
-  return (
-    <div>
-      {[['FAC-2026-089', 'ABC Distribution', '4 200 €', GR], ['FAC-2026-090', 'Hotel Ker Buhe', '285 €', GR], ['FAC-2026-091', 'Dr. Martin', '228 €', EM]].map(([id, c, amt, col]) => (
-        <div key={id as string} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 12px', borderRadius: 9, background: CARD, marginBottom: 6, border: `1px solid ${BORDER}` }}>
-          <div><div style={{ fontSize: 11, color: INK, fontWeight: 500 }}>{id as string}</div><div style={{ fontSize: 10, color: SUBTLE }}>{c as string}</div></div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: col as string }}>{amt as string}</div>
+        {/* Tab bar */}
+        <div style={{display:'flex',gap:8,marginBottom:32,overflowX:'auto' as const,paddingBottom:4,scrollbarWidth:'none' as const}}>
+          {FEATURES.map((feat,i)=>(
+            <button key={feat.id} onClick={()=>setActive(i)} style={{display:'flex',alignItems:'center',gap:7,padding:'9px 16px',borderRadius:980,background:active===i?feat.color:CARD,color:active===i?'#fff':MUTED,fontWeight:active===i?700:450,fontSize:12,border:`1.5px solid ${active===i?feat.color:BDR2}`,cursor:'pointer',transition:'all 0.25s',whiteSpace:'nowrap' as const,fontFamily:'system-ui,sans-serif',flexShrink:0}}>
+              <span>{feat.icon}</span>{feat.tag}
+            </button>
+          ))}
         </div>
-      ))}
-    </div>
-  )
-}
-function CfoMockup() {
-  return (
-    <div>
-      {[['Qonto', '12 847 €'], ['BNP Paribas', '34 200 €'], ['Credit Agricole', '8 150 €']].map(([b, v]) => (
-        <div key={b} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 12px', borderRadius: 9, background: CARD, marginBottom: 6, border: `1px solid ${BORDER}` }}>
-          <span style={{ fontSize: 12, color: INK }}>{b}</span><span style={{ fontSize: 13, fontWeight: 700, color: GR }}>{v}</span>
-        </div>
-      ))}
-      <div style={{ marginTop: 12, padding: '12px 14px', borderRadius: 10, background: `${VI}08`, border: `1px solid ${VI}25` }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: INK, fontFamily: 'Georgia, serif' }}>62 400 €</div>
-        <div style={{ fontSize: 10, color: GR }}>+8% prevision J+30</div>
-      </div>
-    </div>
-  )
-}
-function VoiceMockup() {
-  const [step, setStep] = useState(0)
-  const script = ['Bonjour, cabinet du Dr. Martin.', 'Bonjour, je voudrais un rendez-vous.', 'Lundi 14h ou mardi 10h ?', 'Lundi 14h, merci.', 'Note. A lundi !']
-  const speakers = [false, true, false, true, false]
-  useEffect(() => { const id = setInterval(() => setStep(s => (s + 1) % script.length), 2000); return () => clearInterval(id) }, [])
-  return (
-    <div style={{ minHeight: 150, display: 'flex', flexDirection: 'column', gap: 7 }}>
-      <AnimatePresence>
-        {script.slice(0, step + 1).map((l, i) => (
-          <motion.div key={i} initial={{ opacity: 0, x: speakers[i] ? 14 : -14 }} animate={{ opacity: 1, x: 0 }} style={{ display: 'flex', justifyContent: speakers[i] ? 'flex-end' : 'flex-start' }}>
-            <div style={{ maxWidth: '78%', padding: '8px 12px', borderRadius: 11, background: speakers[i] ? BG2 : VI, fontSize: 12, color: speakers[i] ? MUTED : '#fff' }}>{l}</div>
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
-  )
-}
-
-function Pricing({ cms }: { cms: CMS }) {
-  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
-  const plans = [
-    { id: 'voice', name: cms.p1_name, price: cms.p1_price, annual: cms.p1_annual, desc: cms.p1_desc, items: cms.p1_items, color: GR },
-    { id: 'business', name: cms.p2_name, price: cms.p2_price, annual: cms.p2_annual, desc: cms.p2_desc, items: cms.p2_items, color: VI, highlight: true },
-    { id: 'compliance', name: cms.p3_name, price: cms.p3_price, annual: cms.p3_annual, desc: cms.p3_desc, items: cms.p3_items, color: EM },
-  ]
-  const combos = [
-    { name: cms.c1_name, price: cms.c1_price, desc: cms.c1_desc },
-    { name: cms.c2_name, price: cms.c2_price, desc: cms.c2_desc, highlight: true },
-    { name: cms.c3_name, price: cms.c3_price, desc: cms.c3_desc },
-  ]
-  return (
-    <section id="tarifs" style={{ background: BG2, padding: '88px 32px', borderTop: `1px solid ${BORDER}` }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <FadeUp style={{ textAlign: 'center', marginBottom: 44 }}>
-          <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 'clamp(26px, 3.2vw, 40px)', color: INK, marginBottom: 8, letterSpacing: '-0.025em' }}>{cms.pricing_h2}</h2>
-          <p style={{ fontSize: 14, color: MUTED, marginBottom: 22 }}>{cms.pricing_sub}</p>
-          <div style={{ display: 'inline-flex', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 980, padding: 4, gap: 4 }}>
-            {(['monthly', 'annual'] as const).map(b => (
-              <button key={b} onClick={() => setBilling(b)} style={{ padding: '7px 18px', borderRadius: 980, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500, background: billing === b ? INK : 'transparent', color: billing === b ? '#fff' : MUTED }}>
-                {b === 'monthly' ? 'Mensuel' : 'Annuel  -17%'}
-              </button>
-            ))}
-          </div>
-        </FadeUp>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 28 }} className="pricing-grid">
-          {plans.map((plan, i) => (
-            <FadeUp key={plan.id} delay={i * 0.07}>
-              <div style={{ padding: '26px 22px', borderRadius: 16, background: plan.highlight ? INK : CARD, border: `1px solid ${plan.highlight ? INK : BORDER}`, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                {plan.highlight && <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', background: EM, color: '#fff', fontSize: 9, fontWeight: 700, padding: '3px 12px', borderRadius: 980, whiteSpace: 'nowrap' as const }}>LE PLUS POPULAIRE</div>}
-                <div style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 17, color: plan.highlight ? '#fff' : INK, marginBottom: 3 }}>{plan.name}</div>
-                <div style={{ fontSize: 11, color: plan.highlight ? 'rgba(255,255,255,0.55)' : SUBTLE, marginBottom: 18 }}>{plan.desc}</div>
-                <div style={{ marginBottom: 18 }}><span style={{ fontWeight: 700, fontSize: 32, color: plan.highlight ? '#fff' : INK, fontFamily: 'Georgia, serif' }}>{billing === 'annual' ? plan.annual : plan.price} €</span><span style={{ fontSize: 11, color: plan.highlight ? 'rgba(255,255,255,0.5)' : SUBTLE }}> /mois</span></div>
-                <div style={{ flex: 1, marginBottom: 18 }}>
-                  {plan.items.map(it => (
-                    <div key={it} style={{ display: 'flex', gap: 8, marginBottom: 8, fontSize: 12, color: plan.highlight ? 'rgba(255,255,255,0.75)' : MUTED }}>
-                      <span style={{ color: plan.highlight ? '#86EFAC' : GR, fontWeight: 700 }}>ok</span>{it}
-                    </div>
+        {/* Active feature */}
+        <AnimatePresence mode="wait">
+          <motion.div key={active} initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-12}} transition={{duration:0.3}}>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32}} className="alt-grid">
+              <div style={{padding:'36px 32px',borderRadius:20,background:`${f.color}08`,border:`1.5px solid ${f.color}20`}}>
+                <div style={{fontSize:11,fontWeight:700,color:f.color,textTransform:'uppercase' as const,letterSpacing:'0.1em',marginBottom:16}}>{f.tag}</div>
+                <div style={{fontFamily:'Georgia,serif',fontSize:'clamp(17px,2vw,24px)',color:INK,lineHeight:1.35,marginBottom:12,fontWeight:400}}>{f.headline}</div>
+                <div style={{padding:'12px 16px',borderRadius:12,background:`${f.color}10`,border:`1px solid ${f.color}20`,marginBottom:16}}>
+                  <div style={{fontSize:12,color:f.color,lineHeight:1.6,fontStyle:'italic'}}>{f.stat}</div>
+                </div>
+                <div style={{fontSize:14,fontWeight:700,color:INK,marginBottom:10}}>{f.impact}</div>
+                <div style={{fontSize:13,color:MUTED,lineHeight:1.72,marginBottom:20}}>{f.body}</div>
+                <div style={{display:'flex',gap:8,flexWrap:'wrap' as const}}>
+                  {f.metrics.map(m=>(
+                    <span key={m} style={{fontSize:11,fontWeight:600,color:f.color,background:`${f.color}12`,padding:'4px 10px',borderRadius:980,border:`1px solid ${f.color}20`}}>{m}</span>
                   ))}
                 </div>
-                <a href="/demo" style={{ textAlign: 'center', padding: '10px', borderRadius: 980, background: plan.highlight ? '#fff' : BG2, color: INK, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>Essayer</a>
+              </div>
+              <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                <div style={{fontSize:36,padding:'24px',borderRadius:16,background:BG2,border:`1px solid ${BDR}`,textAlign:'center' as const}}>{f.icon}</div>
+                {[
+                  {before:'Agent verifie 3 boites mail et copie-colle les contacts',after:'Lead cree en 10 secondes depuis n\'importe quelle source',ok:active===0},
+                  {before:'Agent appelle pour confirmer la visite avec chaque partie',after:'3 confirmations WhatsApp simultanées, rappels inclus',ok:active===1},
+                  {before:'Le client ne rappelle plus apres la vente',after:'Message anniversaire personnalise depuis le nom de l\'agent',ok:active===2},
+                  {before:'Moins de 3% des clients laissent un avis sans relance',after:'34% de taux de reponse avec WhatsApp personnalise 24h apres',ok:active===3},
+                  {before:'Tracabilite LCB-FT dans un tableur Excel',after:'Audit trail automatique, export PDF en 30 secondes',ok:active===4},
+                  {before:'Agent estime de memoire pendant la visite vendeur',after:'Rapport DVF-Georisques recu sur WhatsApp avant la visite',ok:active===5},
+                ].filter(r=>r.ok).map((r,i)=>(
+                  <div key={i} style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                    <div style={{padding:'14px 16px',borderRadius:12,background:'#FEF2F2',border:'1px solid rgba(239,68,68,0.2)'}}>
+                      <div style={{fontSize:10,fontWeight:700,color:'#EF4444',marginBottom:4,textTransform:'uppercase' as const}}>Avant</div>
+                      <div style={{fontSize:12,color:'#7F1D1D',lineHeight:1.5}}>{r.before}</div>
+                    </div>
+                    <div style={{padding:'14px 16px',borderRadius:12,background:`${f.color}08`,border:`1px solid ${f.color}20`}}>
+                      <div style={{fontSize:10,fontWeight:700,color:f.color,marginBottom:4,textTransform:'uppercase' as const}}>Avec Vanivert</div>
+                      <div style={{fontSize:12,color:INK,lineHeight:1.5,fontWeight:500}}>{r.after}</div>
+                    </div>
+                  </div>
+                ))}
+                <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
+                  style={{padding:'13px',borderRadius:980,background:f.color,color:'#fff',fontWeight:700,fontSize:13,textDecoration:'none',textAlign:'center' as const,transition:'opacity 0.2s',display:'block'}}
+                  onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.opacity='0.88'}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.opacity='1'}}>
+                  Voir cette fonctionnalite en demo →
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </section>
+  )
+}
+
+// SOCIAL PROOF - key stats
+function SocialProof() {
+  const stats=[
+    {n:'+34%',label:'de leads traites dans les 5 premieres minutes',color:BLUE},
+    {n:'-60%',label:'de temps consacre a la saisie manuelle',color:TEAL},
+    {n:'4.8/5',label:'note Google moyenne apres 3 mois de deploiement',color:ORG},
+    {n:'<60s',label:'de l\'appel entrant au WhatsApp agent',color:BLUE},
+  ]
+  return (
+    <section style={{background:INK,padding:'64px 32px'}}>
+      <div style={{maxWidth:1100,margin:'0 auto'}}>
+        <div style={{textAlign:'center',marginBottom:40}}>
+          <p style={{fontSize:11,color:'rgba(255,255,255,0.4)',letterSpacing:'0.12em',textTransform:'uppercase' as const}}>Resultats constates sur nos agences pilotes</p>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16}} className="stats-grid">
+          {stats.map((s,i)=>(
+            <FadeUp key={s.label} delay={i*0.07}>
+              <div style={{textAlign:'center',padding:'24px 16px',borderRadius:16,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.07)'}}>
+                <div style={{fontSize:36,fontWeight:700,fontFamily:'Georgia,serif',color:s.color,marginBottom:8}}>{s.n}</div>
+                <div style={{fontSize:12,color:'rgba(255,255,255,0.5)',lineHeight:1.5}}>{s.label}</div>
               </div>
             </FadeUp>
           ))}
         </div>
-        <FadeUp delay={0.2}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }} className="pricing-grid">
-            {combos.map(c => (
-              <div key={c.name} style={{ padding: '18px 18px', borderRadius: 13, background: c.highlight ? `${VI}08` : CARD, border: `1px solid ${c.highlight ? `${VI}30` : BORDER}` }}>
-                <div style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 15, color: INK }}>{c.name}</div>
-                <div style={{ fontSize: 11, color: SUBTLE, marginBottom: 8 }}>{c.desc}</div>
-                <div><span style={{ fontSize: 19, fontWeight: 700, color: INK, fontFamily: 'Georgia, serif' }}>{c.price} €</span><span style={{ fontSize: 10, color: SUBTLE }}>/mois</span></div>
-              </div>
-            ))}
-          </div>
-        </FadeUp>
       </div>
     </section>
   )
 }
 
-const POSTS = [
-  { slug: 'e-facturation-2026-guide-bretagne', title: 'E-facturation 2026 : ce qui change', cat: 'Conformite', img: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80' },
-  { slug: 'appels-manques-artisans-bretagne', title: "Chaque appel manque, un client chez le voisin", cat: 'Voix IA', img: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&auto=format&fit=crop&q=80' },
-  { slug: 'annuaire-centralise-dgfip-piege', title: "Signer avec une PA ne suffit pas", cat: 'Conformite', img: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&auto=format&fit=crop&q=80' },
-]
-function Blog({ cms }: { cms: CMS }) {
+// BLOG
+function BlogPreview() {
+  const [articles,setArticles]=useState(DEFAULT_ARTICLES.filter(a=>a.published).slice(0,3))
+  useEffect(()=>{try{const s=localStorage.getItem('vanivert_blog_v1');if(s)setArticles(JSON.parse(s).filter((a:{published:boolean})=>a.published).slice(0,3))}catch{}},[])
+  if(!articles.length) return null
+  const [first,...rest]=articles
   return (
-    <section style={{ background: BG, padding: '72px 32px', borderTop: `1px solid ${BORDER}` }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <FadeUp style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
-          <h2 style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontWeight: 400, fontSize: 'clamp(20px, 2.6vw, 30px)', color: INK, letterSpacing: '-0.02em' }}>{cms.blog_h2}</h2>
-          <a href="/blog" style={{ fontSize: 13, color: MUTED, textDecoration: 'none' }}>Tous les articles →</a>
+    <section id="blog" style={{background:BG2,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
+      <div style={{maxWidth:1100,margin:'0 auto'}}>
+        <FadeUp style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',marginBottom:36,flexWrap:'wrap' as const,gap:12}}>
+          <div><Pill color={BLUE}>Blog</Pill>
+            <h2 style={{fontFamily:'Georgia,serif',fontStyle:'italic',fontWeight:400,fontSize:'clamp(20px,2.6vw,32px)',color:INK,marginTop:12,letterSpacing:'-0.02em'}}>Ce que les meilleures agences font deja.</h2>
+          </div>
+          <a href="/blog" style={{fontSize:13,color:BLUE,fontWeight:600,textDecoration:'none'}}>Tous les articles →</a>
         </FadeUp>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }} className="pricing-grid">
-          {POSTS.map((p, i) => (
-            <FadeUp key={p.slug} delay={i * 0.07}>
-              <a href={`/blog/${p.slug}`} style={{ textDecoration: 'none', display: 'block', borderRadius: 14, overflow: 'hidden', background: CARD, border: `1px solid ${BORDER}` }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <div style={{ height: 140, overflow: 'hidden' }}><img src={p.img} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" /></div>
-                <div style={{ padding: '16px 18px' }}>
-                  <div style={{ fontSize: 9, color: VI, fontWeight: 600, marginBottom: 8 }}>{p.cat}</div>
-                  <h3 style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 14, color: INK, lineHeight: 1.35 }}>{p.title}</h3>
+        <FadeUp>
+          <a href={`/blog/${first.slug}`} style={{textDecoration:'none',display:'grid',gridTemplateColumns:'1fr 1fr',borderRadius:20,overflow:'hidden',background:CARD,border:`1px solid ${BDR}`,marginBottom:14,transition:'box-shadow 0.25s'}}
+            onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.boxShadow='0 8px 32px rgba(37,99,235,0.10)'}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.boxShadow='none'}} className="blog-feat">
+            <div style={{height:280,overflow:'hidden'}}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={first.image} alt={first.imageAlt} style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.75)'}} loading="eager"/>
+            </div>
+            <div style={{padding:'32px 28px',display:'flex',flexDirection:'column',justifyContent:'space-between'}}>
+              <div>
+                <Pill color={first.categoryColor}>{first.category}</Pill>
+                <h3 style={{fontFamily:'Georgia,serif',fontStyle:'italic',fontSize:19,color:INK,lineHeight:1.35,margin:'14px 0 12px'}}>{first.title}</h3>
+                <p style={{fontSize:13,color:MUTED,lineHeight:1.65}}>{first.excerpt}</p>
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:16}}>
+                <span style={{fontSize:11,color:SUBTLE}}>{first.readTime} - {first.date}</span>
+                <span style={{fontSize:13,color:BLUE,fontWeight:600}}>Lire →</span>
+              </div>
+            </div>
+          </a>
+        </FadeUp>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}} className="pricing-grid">
+          {rest.map((p,i)=>(
+            <FadeUp key={p.slug} delay={i*0.08}>
+              <a href={`/blog/${p.slug}`} style={{textDecoration:'none',display:'block',borderRadius:16,overflow:'hidden',background:CARD,border:`1px solid ${BDR}`,transition:'box-shadow 0.25s,transform 0.25s'}}
+                onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.boxShadow='0 8px 24px rgba(37,99,235,0.08)';(e.currentTarget as HTMLElement).style.transform='translateY(-3px)'}}
+                onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.boxShadow='none';(e.currentTarget as HTMLElement).style.transform='none'}}>
+                <div style={{height:160,overflow:'hidden'}}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={p.image} alt={p.imageAlt} style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.72)'}} loading="lazy"/>
+                </div>
+                <div style={{padding:'18px 20px'}}>
+                  <Pill color={p.categoryColor}>{p.category}</Pill>
+                  <h3 style={{fontFamily:'Georgia,serif',fontStyle:'italic',fontSize:15,color:INK,lineHeight:1.35,margin:'10px 0 8px'}}>{p.title}</h3>
+                  <p style={{fontSize:12,color:MUTED,lineHeight:1.6,marginBottom:12}}>{p.excerpt}</p>
+                  <div style={{display:'flex',justifyContent:'space-between'}}>
+                    <span style={{fontSize:11,color:SUBTLE}}>{p.readTime} - {p.date}</span>
+                    <span style={{fontSize:12,color:BLUE,fontWeight:600}}>Lire →</span>
+                  </div>
                 </div>
               </a>
             </FadeUp>
@@ -898,26 +578,60 @@ function Blog({ cms }: { cms: CMS }) {
   )
 }
 
-function Contact({ cms }: { cms: CMS }) {
-  const [email, setEmail] = useState(''), [company, setCompany] = useState(''), [sent, setSent] = useState(false), [loading, setLoading] = useState(false)
-  async function submit(e: React.FormEvent) {
-    e.preventDefault(); if (!email) return; setLoading(true)
-    if (SB_URL && SB_KEY) await fetch(`${SB_URL}/rest/v1/calculator_leads`, { method: 'POST', headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ email, company_name: company, created_at: new Date().toISOString() }) }).catch(() => {})
-    await new Promise(r => setTimeout(r, 400)); setSent(true); setLoading(false)
+// CONTACT
+function Contact() {
+  const [name,setName]=useState(''), [email,setEmail]=useState(''), [agency,setAgency]=useState(''), [agents,setAgents]=useState(''), [message,setMessage]=useState(''), [sent,setSent]=useState(false), [loading,setLoading]=useState(false)
+  async function submit(e:React.FormEvent) {
+    e.preventDefault(); if(!email||!name) return; setLoading(true)
+    if(SB_URL&&SB_KEY){
+      await fetch(`${SB_URL}/rest/v1/demo_requests`,{method:'POST',headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({name,email,agency_name:agency,agent_count:agents,message,created_at:new Date().toISOString()})}).catch(()=>{})
+    }
+    await new Promise(r=>setTimeout(r,400)); setSent(true); setLoading(false)
   }
+  const inp:React.CSSProperties={width:'100%',padding:'13px 16px',borderRadius:12,border:`1px solid ${BDR2}`,fontSize:14,outline:'none',color:INK,fontFamily:'system-ui,sans-serif',background:BG,boxSizing:'border-box' as const}
   return (
-    <section id="contact" style={{ background: BG2, padding: '88px 32px', borderTop: `1px solid ${BORDER}` }}>
-      <div style={{ maxWidth: 460, margin: '0 auto', textAlign: 'center' }}>
+    <section id="contact" style={{background:BG,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
+      <div style={{maxWidth:960,margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 1fr',gap:56,alignItems:'center'}} className="alt-grid">
         <FadeUp>
-          <h2 style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontWeight: 400, fontSize: 'clamp(26px, 3.6vw, 42px)', color: INK, marginBottom: 10, letterSpacing: '-0.03em' }}>{cms.contact_h2}</h2>
-          <p style={{ fontSize: 14, color: MUTED, marginBottom: 28 }}>{cms.contact_sub}</p>
+          <Pill color={BLUE}>Contact</Pill>
+          <h2 style={{fontFamily:'Georgia,serif',fontStyle:'italic',fontWeight:400,fontSize:'clamp(26px,3.2vw,40px)',color:INK,marginTop:14,marginBottom:12,letterSpacing:'-0.03em'}}>On vous rappelle.<br/>Promis.</h2>
+          <p style={{fontSize:14,color:MUTED,lineHeight:1.75,marginBottom:28}}>Pas un bot. Pawan Kumar, co-fondateur, vous repond personnellement sous 24h ouvrees.</p>
+          <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:20}}>
+            {[['📧',EMAIL,`mailto:${EMAIL}`],['📍',PARIS_ADDRESS,'https://maps.google.com/?q=Cergy,France'],['🏛',`SIRET ${SIRET}`,'#'],['🔗','linkedin.com/company/vanivert','https://linkedin.com/company/vanivert']].map(([icon,label,href])=>(
+              <a key={label} href={href} target={href.startsWith('http')?'_blank':'_self'} rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none'}}>
+                <span style={{fontSize:16}}>{icon}</span>
+                <span style={{fontSize:13,color:MUTED}}>{label}</span>
+              </a>
+            ))}
+          </div>
         </FadeUp>
         <FadeUp delay={0.1}>
-          {sent ? <div style={{ padding: 16, borderRadius: 11, background: `${GR}10`, color: GR, fontSize: 13 }}>Recu ! On vous rappelle sous 24h.</div> : (
-            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="vous@entreprise.fr" style={{ padding: '13px 16px', borderRadius: 11, border: `1px solid ${BORDER2}`, fontSize: 14, outline: 'none' }} />
-              <input value={company} onChange={e => setCompany(e.target.value)} placeholder="Nom de votre entreprise" style={{ padding: '13px 16px', borderRadius: 11, border: `1px solid ${BORDER2}`, fontSize: 14, outline: 'none' }} />
-              <button type="submit" disabled={loading} style={{ padding: 13, borderRadius: 11, background: INK, color: '#fff', fontWeight: 600, fontSize: 14, border: 'none', cursor: 'pointer' }}>{loading ? '...' : cms.hero_cta1}</button>
+          {sent ? (
+            <div style={{padding:28,borderRadius:18,background:BLUE_LT,border:`1px solid ${BLUE}20`,textAlign:'center' as const}}>
+              <div style={{fontSize:36,marginBottom:12}}>✅</div>
+              <div style={{fontSize:16,fontWeight:600,color:INK,marginBottom:8}}>Message recu !</div>
+              <div style={{fontSize:13,color:MUTED}}>Pawan vous repond sous 24h ouvrees.</div>
+            </div>
+          ) : (
+            <form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:10}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                <input required value={name} onChange={e=>setName(e.target.value)} placeholder="Votre prenom" style={inp}/>
+                <input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email professionnel" style={inp}/>
+              </div>
+              <input value={agency} onChange={e=>setAgency(e.target.value)} placeholder="Nom de votre agence" style={inp}/>
+              <select value={agents} onChange={e=>setAgents(e.target.value)} style={{...inp,appearance:'none' as const}}>
+                <option value="">Nombre d&apos;agents</option>
+                <option value="1">1 agent</option>
+                <option value="2-5">2 a 5 agents</option>
+                <option value="6-15">6 a 15 agents</option>
+                <option value="15+">Plus de 15 agents</option>
+              </select>
+              <textarea value={message} onChange={e=>setMessage(e.target.value)} placeholder="Votre message (optionnel)" rows={3} style={{...inp,resize:'vertical' as const}}/>
+              <p style={{fontSize:11,color:SUBTLE,lineHeight:1.55}}>En soumettant ce formulaire, vous acceptez que vos donnees soient utilisees pour vous recontacter. Conforme RGPD. Voir notre <a href="/legal/confidentialite" style={{color:BLUE}}>politique de confidentialite</a>.</p>
+              <button type="submit" disabled={loading} style={{padding:'14px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,border:'none',cursor:'pointer',transition:'background 0.25s',boxShadow:`0 4px 14px ${BLUE}28`}}
+                onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
+                {loading?'...':'Demander une demo gratuite →'}
+              </button>
             </form>
           )}
         </FadeUp>
@@ -926,48 +640,32 @@ function Contact({ cms }: { cms: CMS }) {
   )
 }
 
-function FooterCTA({ cms, lang }: { cms: CMS; lang: Lang }) {
+// FOOTER CTA
+function FooterCTA() {
   return (
-    <section style={{ background: BG, padding: '0 32px 64px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <section style={{background:`linear-gradient(135deg,${BG2} 0%,${BG3} 100%)`,padding:'0 32px 72px'}}>
+      <div style={{maxWidth:1100,margin:'0 auto'}}>
         <FadeUp>
-          <div style={{
-            background: CARD,
-            border: `1px solid ${BORDER}`,
-            borderRadius: 24,
-            padding: '88px 40px',
-            textAlign: 'center' as const,
-            position: 'relative',
-            overflow: 'hidden',
-            backgroundImage: `
-              linear-gradient(${BORDER} 1px, transparent 1px),
-              linear-gradient(90deg, ${BORDER} 1px, transparent 1px)
-            `,
-            backgroundSize: '64px 64px',
-            backgroundPosition: 'center center',
-          }}>
-            {/* Soft radial fade so the grid disappears toward the edges, like Sequence's card */}
-            <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 60% 80% at center, transparent 0%, ${CARD} 75%)`, pointerEvents: 'none' as const }} />
-            {/* Tall vertical-oval ring, the signature Sequence shape */}
-            <div style={{ position: 'absolute', top: '50%', left: '50%', width: 540, height: 760, marginLeft: -270, marginTop: -380, borderRadius: '50%', border: `1px solid ${BORDER2}`, pointerEvents: 'none' as const }} />
-            <div style={{ position: 'absolute', top: '50%', left: '50%', width: 540, height: 760, marginLeft: -270, marginTop: -380, borderRadius: '50%', background: `linear-gradient(180deg, transparent 0%, ${VI}06 50%, transparent 100%)`, pointerEvents: 'none' as const }} />
-            {/* Small floating orb accents, left and right of the ring */}
-            <div style={{ position: 'absolute', top: '50%', left: 'calc(50% - 270px)', width: 16, height: 16, marginTop: -8, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #fff, ${VI}30)`, boxShadow: `0 2px 8px rgba(99,102,241,0.15)`, pointerEvents: 'none' as const }} />
-            <div style={{ position: 'absolute', top: '50%', left: 'calc(50% + 254px)', width: 16, height: 16, marginTop: -8, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #fff, ${VI}30)`, boxShadow: `0 2px 8px rgba(99,102,241,0.15)`, pointerEvents: 'none' as const }} />
-
-            <div style={{ position: 'relative', zIndex: 2 }}>
-              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px, 3.6vw, 44px)', color: INK, marginBottom: 16, letterSpacing: '-0.025em', lineHeight: 1.18, maxWidth: 620, margin: '0 auto 16px' }}>
-                {lang === 'fr' ? "Le 1er septembre ne devrait pas etre une surprise." : "September 1st shouldn't be a surprise."}
+          <div style={{background:INK,borderRadius:28,padding:'88px 40px',textAlign:'center' as const,position:'relative',overflow:'hidden'}}>
+            <div style={{position:'absolute',top:0,left:0,right:0,bottom:0,background:`radial-gradient(circle at 30% 50%,${BLUE}30 0%,transparent 55%),radial-gradient(circle at 70% 50%,${ORG}20 0%,transparent 55%)`,pointerEvents:'none'}}/>
+            <div style={{position:'relative',zIndex:2}}>
+              <Pill color={ORG}>Disponible maintenant - France entiere</Pill>
+              <h2 style={{fontFamily:'Georgia,serif',fontWeight:400,fontSize:'clamp(28px,3.8vw,48px)',color:'#fff',margin:'20px auto 16px',letterSpacing:'-0.025em',lineHeight:1.15,maxWidth:620}}>
+                L&apos;agence qui ne dort jamais.
               </h2>
-              <p style={{ fontSize: 15, color: MUTED, marginBottom: 36 }}>{lang === 'fr' ? 'On vous montre comment.' : 'Let us show you how.'}</p>
-              <div style={{ display: 'flex', gap: 24, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' as const }}>
-                <a href="/demo" style={{ padding: '13px 28px', borderRadius: 980, background: INK, color: '#fff', fontWeight: 600, fontSize: 14, textDecoration: 'none', transition: 'background 0.25s' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = VI }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = INK }}>
-                  {lang === 'fr' ? 'Demander une demo' : 'Book a demo'}
+              <p style={{fontSize:16,color:'rgba(255,255,255,0.55)',maxWidth:440,margin:'0 auto 40px'}}>
+                Rejoignez les agences qui ont automatise leur croissance avec Vanivert.
+              </p>
+              <div style={{display:'flex',gap:16,justifyContent:'center',flexWrap:'wrap' as const}}>
+                <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
+                  style={{padding:'14px 32px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${BLUE}40`}}
+                  onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
+                  Voir la demo gratuite →
                 </a>
-                <a href="/calculateur" style={{ fontSize: 14, color: MUTED, fontWeight: 500, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                  onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>
-                  {lang === 'fr' ? 'Calculer mon risque' : 'Calculate my risk'} →
+                <a href="#contact" style={{padding:'14px 32px',borderRadius:980,border:'1.5px solid rgba(255,255,255,0.2)',color:'rgba(255,255,255,0.7)',fontWeight:500,fontSize:14,textDecoration:'none',transition:'all 0.25s'}}
+                  onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor='rgba(255,255,255,0.5)';(e.currentTarget as HTMLElement).style.color='#fff'}}
+                  onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor='rgba(255,255,255,0.2)';(e.currentTarget as HTMLElement).style.color='rgba(255,255,255,0.7)'}}>
+                  Nous contacter
                 </a>
               </div>
             </div>
@@ -978,87 +676,102 @@ function FooterCTA({ cms, lang }: { cms: CMS; lang: Lang }) {
   )
 }
 
-function Footer({ cms, lang }: { cms: CMS; lang: Lang }) {
-  const cols = lang === 'fr' ? [
-    { h: 'Produit', links: [['Smart CFO', '#cfo'], ['E-facturation', '#facturation'], ['Reception vocale', '#voix'], ['Tarifs', '#tarifs'], ['Integrations', '#facturation'], ['Dashboard', '/dashboard']] },
-    { h: 'Ressources', links: [['Blog', '/blog'], ['Calculateur de risque', '/calculateur'], ['Documentation', '/blog'], ['Changelog', '/blog']] },
-    { h: 'Societe', links: [['A propos', '/'], ['Clients', '/'], ['Carrieres', '/'], ['Partenaires', '/'], ['Contact', '#contact']] },
-    { h: 'Legal', links: [['Mentions legales', '/legal/mentions-legales'], ['CGV', '/legal/cgv'], ['Confidentialite', '/legal/confidentialite'], ['Statut', '/'], ['Administration', '/admin']] },
-  ] : [
-    { h: 'Product', links: [['Smart CFO', '#cfo'], ['E-invoicing', '#facturation'], ['Voice reception', '#voix'], ['Pricing', '#tarifs'], ['Integrations', '#facturation'], ['Dashboard', '/dashboard']] },
-    { h: 'Resources', links: [['Blog', '/blog'], ['Risk calculator', '/calculateur'], ['Documentation', '/blog'], ['Changelog', '/blog']] },
-    { h: 'Company', links: [['About', '/'], ['Customers', '/'], ['Careers', '/'], ['Partners', '/'], ['Contact', '#contact']] },
-    { h: 'Legal', links: [['Legal notice', '/legal/mentions-legales'], ['Terms of service', '/legal/cgv'], ['Privacy', '/legal/confidentialite'], ['Status', '/'], ['Admin', '/admin']] },
+// FOOTER
+function Footer() {
+  const cols=[
+    {h:'Produit',links:[['Fonctionnalites','#features'],['ROI','#roi'],['Demo','https://realestate-eu-demo.vercel.app/login'],['Connexion','/login']]},
+    {h:'Ressources',links:[['Blog','/blog'],['Equipe','/equipe'],['Contact','#contact']]},
+    {h:'Legal',links:[['Mentions legales','/legal/mentions-legales'],['CGV','/legal/cgv'],['Confidentialite','/legal/confidentialite'],['Admin','/admin']]},
   ]
   return (
-    <footer style={{ background: BG2, borderTop: `1px solid ${BORDER}`, padding: '56px 32px 32px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr repeat(4, 1fr)', gap: 32, marginBottom: 48 }} className="footer-grid">
+    <footer style={{background:'#0C0E1A',borderTop:`1px solid rgba(255,255,255,0.06)`,padding:'56px 32px 32px'}}>
+      <div style={{maxWidth:1100,margin:'0 auto'}}>
+        <div style={{display:'grid',gridTemplateColumns:'1.6fr repeat(3,1fr)',gap:32,marginBottom:48}} className="footer-grid">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-              <VanivertLogo s={24} />
-              <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 16, color: INK }}>vanivert</span>
-            </div>
-            <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.6, maxWidth: 220 }}>{lang === 'fr' ? cms.footer_tagline : "We handle compliance. You handle the business."}</p>
+            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14}}><Logo s={26}/><span style={{fontFamily:'Georgia,serif',fontStyle:'italic',fontSize:16,color:'#fff'}}>vanivert</span></div>
+            <p style={{fontSize:13,color:'rgba(255,255,255,0.4)',lineHeight:1.65,maxWidth:220,marginBottom:16}}>L&apos;IA immobiliere qui ne dort jamais. Enregistre en France, deploye partout.</p>
+            <a href="https://www.linkedin.com/company/vanivert" target="_blank" rel="noopener noreferrer"
+              style={{width:32,height:32,borderRadius:8,background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.1)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,color:'#fff',textDecoration:'none'}}>in</a>
           </div>
-          {cols.map(col => (
+          {cols.map(col=>(
             <div key={col.h}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: INK, marginBottom: 14 }}>{col.h}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                {col.links.map(([l, h]) => (
-                  <a key={l} href={h} style={{ fontSize: 13, color: MUTED, textDecoration: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = INK)} onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>{l}</a>
+              <div style={{fontSize:11,fontWeight:600,color:'rgba(255,255,255,0.5)',marginBottom:14,textTransform:'uppercase' as const,letterSpacing:'0.07em'}}>{col.h}</div>
+              <div style={{display:'flex',flexDirection:'column',gap:9}}>
+                {col.links.map(([l,h])=>(
+                  <a key={l} href={h} target={h.startsWith('http')?'_blank':'_self'} rel="noopener noreferrer"
+                    style={{fontSize:13,color:'rgba(255,255,255,0.45)',textDecoration:'none',transition:'color 0.2s'}}
+                    onMouseEnter={e=>(e.currentTarget.style.color='#fff')} onMouseLeave={e=>(e.currentTarget.style.color='rgba(255,255,255,0.45)')}>{l}</a>
                 ))}
               </div>
             </div>
           ))}
         </div>
-        <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' as const, gap: 10 }}>
-          <span style={{ fontSize: 12, color: SUBTLE }}>© 2026 Vanivert. {cms.company_siret}.</span>
-          <span style={{ fontSize: 12, color: SUBTLE }}>{cms.company_address}</span>
+        <div style={{borderTop:'1px solid rgba(255,255,255,0.07)',paddingTop:20,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap' as const,gap:10}}>
+          <span style={{fontSize:12,color:'rgba(255,255,255,0.25)'}}>2026 Vanivert - SIRET {SIRET}</span>
+          <span style={{fontSize:12,color:'rgba(255,255,255,0.25)'}}>{PARIS_ADDRESS}</span>
+          <a href={`mailto:${EMAIL}`} style={{fontSize:12,color:'rgba(255,255,255,0.25)',textDecoration:'none'}}>{EMAIL}</a>
         </div>
       </div>
     </footer>
   )
 }
 
+// GDPR
+function GDPR() {
+  const [visible,setVisible]=useState(false)
+  useEffect(()=>{try{if(!localStorage.getItem('vanivert_gdpr_v4'))setVisible(true)}catch{}},[])
+  const accept=()=>{try{localStorage.setItem('vanivert_gdpr_v4','accepted')}catch{}setVisible(false)}
+  const decline=()=>{try{localStorage.setItem('vanivert_gdpr_v4','declined')}catch{}setVisible(false)}
+  if(!visible) return null
+  return (
+    <motion.div initial={{opacity:0,y:24}} animate={{opacity:1,y:0}} transition={{delay:2.5}}
+      style={{position:'fixed',bottom:20,left:20,right:20,zIndex:9990,maxWidth:480,margin:'0 auto',background:CARD,border:`1px solid ${BDR2}`,borderRadius:18,padding:'20px 22px',boxShadow:'0 8px 40px rgba(0,0,0,0.10)',display:'flex',flexDirection:'column',gap:10}}>
+      <p style={{fontSize:13,fontWeight:600,color:INK,margin:0}}>Ce site utilise des cookies</p>
+      <p style={{fontSize:12,color:MUTED,lineHeight:1.55,margin:0}}>Cookies fonctionnels uniquement. Hebergement 100% UE. Aucune donnee transmise a des tiers. <a href="/legal/confidentialite" style={{color:BLUE}}>En savoir plus</a></p>
+      <div style={{display:'flex',gap:8}}>
+        <button onClick={accept} style={{flex:1,padding:'9px 16px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:600,fontSize:12,border:'none',cursor:'pointer'}}>Accepter</button>
+        <button onClick={decline} style={{flex:1,padding:'9px 16px',borderRadius:980,background:'transparent',color:MUTED,fontWeight:500,fontSize:12,border:`1px solid ${BDR2}`,cursor:'pointer'}}>Refuser</button>
+      </div>
+    </motion.div>
+  )
+}
+
+// ROOT
 export default function Home() {
-  const cms = useCMS()
-  const [lang, setLang] = useState<Lang>('fr')
   return (
     <>
       <style>{`
         @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-33.33%)}}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
         *{box-sizing:border-box;margin:0;padding:0}
         html{scroll-behavior:smooth}
-        body{background:${BG};color:${INK};font-family:system-ui,-apple-system,sans-serif;overflow-x:hidden}
-        input::placeholder{color:rgba(13,13,15,0.3)}
+        body{background:${BG};color:${INK};font-family:Georgia,serif;overflow-x:hidden;cursor:none}
+        input,textarea,select,button{font-family:system-ui,-apple-system,sans-serif;cursor:none}
+        a{cursor:none}
+        input::placeholder,textarea::placeholder{color:rgba(12,14,26,0.3)}
+        input[type=range]{cursor:pointer}
         .nav-links{display:flex}.mob-nav{display:none}
-        @media(max-width:860px){.nav-links{display:none!important}.mob-nav{display:block!important}}
-        @media(max-width:1280px){.orbit-field{transform:scale(0.92)}.orbit-wrap{height:626px}}
-        @media(max-width:900px){.hero-grid{grid-template-columns:1fr!important}.orbit-field{transform:scale(0.72)}.orbit-wrap{height:490px}.agent-flow{transform:scale(0.82);transform-origin:top center}}
-        @media(max-width:680px){.agent-flow{flex-direction:column!important;align-items:center!important;gap:32px!important;transform:scale(1)}}
-        @media(max-width:768px){.alt-grid{grid-template-columns:1fr!important}.pricing-grid{grid-template-columns:1fr!important}.footer-grid{grid-template-columns:1fr 1fr!important}.orbit-field{transform:scale(0.56)}.orbit-wrap{height:381px}}
-        @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}.orbit-field{transform:scale(0.42)}.orbit-wrap{height:286px}}
-        @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}}
+        @media(max-width:860px){.nav-links{display:none!important}.mob-nav{display:flex!important}}
+        @media(max-width:900px){.hero-grid{grid-template-columns:1fr!important}.hero-sphere{display:none}.alt-grid{grid-template-columns:1fr!important}}
+        @media(max-width:768px){.pricing-grid{grid-template-columns:1fr!important}.footer-grid{grid-template-columns:1fr 1fr!important}.blog-feat{grid-template-columns:1fr!important}.stats-grid{grid-template-columns:1fr 1fr!important}}
+        @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}.stats-grid{grid-template-columns:1fr!important}}
+        @media(hover:none){body,a,button,input,select,textarea{cursor:auto}}
+        ::-webkit-scrollbar{display:none}
       `}</style>
-      <Nav lang={lang} setLang={setLang} />
+      <CursorDot/>
+      <ScrollBar/>
+      <Nav/>
       <main>
-        <Hero cms={cms} lang={lang} />
-        <AgentFlowSection cms={cms} />
-        <ClientLogos cms={cms} />
-        <ModulePills cms={cms} />
-        <ProductSection label={cms.s1_label} h2={cms.s1_h2} body={cms.s1_body} badge={cms.s1_badge} badgeColor={GR} anchor="facturation" mockup={<InvoiceMockup />} />
-        <ProductSection label={cms.s2_label} h2={cms.s2_h2} body={cms.s2_body} badge={cms.s2_badge} badgeColor={VI} anchor="cfo" mockup={<CfoMockup />} />
-        <ProductSection label={cms.s3_label} h2={cms.s3_h2} body={cms.s3_body} badge={cms.s3_badge} badgeColor={EM} anchor="voix" mockup={<VoiceMockup />} />
-        <IntegrationsSection cms={cms} />
-        <Pricing cms={cms} />
-        <Blog cms={cms} />
-        <Contact cms={cms} />
-        <FooterCTA cms={cms} lang={lang} />
+        <Hero/>
+        <Ticker/>
+        <ROICalc/>
+        <FeaturesSection/>
+        <SocialProof/>
+        <BlogPreview/>
+        <Contact/>
+        <FooterCTA/>
       </main>
-      <Footer cms={cms} lang={lang} />
+      <Footer/>
+      <GDPR/>
     </>
   )
 }

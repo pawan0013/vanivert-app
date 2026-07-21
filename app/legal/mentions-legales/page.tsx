@@ -1,95 +1,93 @@
 import { SITE_CONFIG as S } from '@/lib/site.config'
 
-export const metadata = {
-  title: 'Mentions Légales — Vanivert',
-  description: 'Mentions légales obligatoires du site vanivert.fr',
-}
+export const metadata = { title: 'Mentions Legales - Vanivert', description: 'Mentions legales obligatoires du site vanivert.fr' }
 
-export default function MentionsLegales() {
+const INK='#0C0E1A',BLUE='#2563EB',BG='#FFFFFF',BDR='rgba(12,14,26,0.07)'
+const MUTED='rgba(12,14,26,0.52)',SUBTLE='rgba(12,14,26,0.32)'
+
+function Logo() {
   return (
-    <div style={{ maxWidth: 760, margin: '0 auto', padding: '120px 32px 80px', fontFamily: 'Inter, sans-serif', color: '#0A090A', lineHeight: 1.7 }}>
-      <a href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 800, fontSize: 17, color: '#0A090A', textDecoration: 'none', letterSpacing: '-0.04em', marginBottom: 48 }}>
-        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#1F49B0' }} />
-        vanivert
-      </a>
-
-      <p style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6E6E73', marginBottom: 12 }}>Mentions légales</p>
-      <h1 style={{ fontFamily: 'Inter', fontWeight: 900, fontSize: 36, letterSpacing: '-0.04em', marginBottom: 48, marginTop: 0 }}>Mentions Légales</h1>
-
-      <Section title="Éditeur du site">
-        <p><strong>{S.companyName}</strong><br />
-        Forme juridique : {S.legalForm}<br />
-        Représentant légal : {S.founderName}<br />
-        Adresse : {S.address}<br />
-        SIRET : {S.siret}<br />
-        N° TVA intracommunautaire : {S.vatNumber}<br />
-        Email : <a href={`mailto:${S.email}`} style={{ color: '#1F49B0' }}>{S.email}</a><br />
-        Téléphone : {S.phone}</p>
-      </Section>
-
-      <Section title="Hébergement">
-        <p><strong>Hébergeur du site web :</strong><br />
-        {S.hostingProvider}<br />
-        Site : <a href="https://vercel.com" style={{ color: '#1F49B0' }} target="_blank" rel="noopener">vercel.com</a></p>
-        <p><strong>Hébergement des données :</strong><br />
-        {S.dataHosting}</p>
-      </Section>
-
-      <Section title="Directeur de la publication">
-        <p>{S.founderName}<br />
-        Contact : <a href={`mailto:${S.email}`} style={{ color: '#1F49B0' }}>{S.email}</a></p>
-      </Section>
-
-      <Section title="Activité de l'éditeur">
-        <p>Vanivert est un éditeur de logiciels SaaS proposant :</p>
-        <ul>
-          <li>Des services de réception vocale automatisée par intelligence artificielle</li>
-          <li>Des services de conformité à la réforme de la facturation électronique DGFiP 2026</li>
-          <li>Des services de gestion financière (Smart CFO) pour les PME françaises</li>
-        </ul>
-        <p>Le service de réception vocale est opéré dans le cadre d'une déclaration d'opérateur auprès de l'ARCEP (Autorité de Régulation des Communications Électroniques et des Postes).</p>
-      </Section>
-
-      <Section title="Propriété intellectuelle">
-        <p>L'ensemble du contenu du site {S.siteUrl} (textes, images, logos, architecture, code source) est la propriété exclusive de {S.companyName}, sauf mentions contraires.</p>
-        <p>Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite, sauf autorisation écrite préalable de {S.companyName}.</p>
-        <p>Les marques et logos figurant sur le site sont des marques déposées par leurs propriétaires respectifs.</p>
-      </Section>
-
-      <Section title="Liens hypertextes">
-        <p>Le site peut contenir des liens vers des sites tiers. {S.companyName} n'exerce aucun contrôle sur ces sites et décline toute responsabilité quant à leur contenu.</p>
-        <p>La création de liens vers le site {S.siteUrl} est autorisée sous réserve que ces liens ne portent pas atteinte à l'image de {S.companyName} et qu'ils ne s'inscrivent pas dans un cadre concurrentiel déloyal.</p>
-      </Section>
-
-      <Section title="Données personnelles">
-        <p>Conformément à la loi Informatique et Libertés du 6 janvier 1978 modifiée et au Règlement Général sur la Protection des Données (RGPD - UE 2016/679), vous disposez d'un droit d'accès, de rectification, d'effacement et de portabilité de vos données.</p>
-        <p>Pour en savoir plus : <a href="/legal/confidentialite" style={{ color: '#1F49B0' }}>Politique de confidentialité</a></p>
-        <p>Autorité de contrôle : <a href="https://www.cnil.fr" style={{ color: '#1F49B0' }} target="_blank" rel="noopener">Commission Nationale de l'Informatique et des Libertés (CNIL)</a></p>
-      </Section>
-
-      <Section title="Cookies">
-        <p>Ce site utilise Plausible Analytics, un outil de mesure d'audience ne déposant aucun cookie et ne collectant aucune donnée personnelle identifiable. Aucun consentement n'est requis.</p>
-        <p>Pour en savoir plus : <a href="/legal/confidentialite" style={{ color: '#1F49B0' }}>Politique de confidentialité</a></p>
-      </Section>
-
-      <Section title="Droit applicable">
-        <p>Le présent site et ses mentions légales sont soumis au droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
-      </Section>
-
-      <div style={{ marginTop: 48, padding: '20px 24px', background: '#F2F2F7', borderRadius: 14, fontSize: 13, color: '#6E6E73' }}>
-        <strong style={{ color: '#0A090A' }}>Pages légales connexes : </strong>
-        <a href="/legal/confidentialite" style={{ color: '#1F49B0', marginRight: 16 }}>Politique de confidentialité</a>
-        <a href="/legal/cgv" style={{ color: '#1F49B0' }}>CGV</a>
-      </div>
-    </div>
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="9" fill={BLUE}/>
+      <circle cx="16" cy="11" r="3" fill="white"/>
+      <circle cx="10" cy="21" r="2.5" fill="white" opacity="0.7"/>
+      <circle cx="22" cy="21" r="2.5" fill="white" opacity="0.7"/>
+      <line x1="16" y1="14" x2="10" y2="19" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+      <line x1="16" y1="14" x2="22" y2="19" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+    </svg>
   )
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: 40 }}>
-      <h2 style={{ fontFamily: 'Inter', fontWeight: 800, fontSize: 20, letterSpacing: '-0.03em', color: '#1F49B0', marginBottom: 14, marginTop: 0, paddingBottom: 8, borderBottom: '1px solid #E8E8ED' }}>{title}</h2>
-      <div style={{ fontSize: 15, lineHeight: 1.75, color: '#0A090A' }}>{children}</div>
+    <div style={{ marginBottom: 36 }}>
+      <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 18, fontWeight: 400, color: INK, marginBottom: 12, paddingBottom: 8, borderBottom: `1px solid ${BDR}` }}>{title}</h2>
+      <div style={{ fontSize: 14, color: MUTED, lineHeight: 1.75 }}>{children}</div>
+    </div>
+  )
+}
+
+export default function MentionsLegales() {
+  return (
+    <div style={{ minHeight: '100dvh', background: BG, fontFamily: 'system-ui, sans-serif', color: INK }}>
+      <style>{`*{box-sizing:border-box;margin:0;padding:0}body{background:${BG}}`}</style>
+      <nav style={{ padding: '16px 32px', borderBottom: `1px solid ${BDR}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 100 }}>
+        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}>
+          <Logo/>
+          <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 17, color: INK }}>vanivert</span>
+        </a>
+        <a href="/" style={{ fontSize: 13, color: MUTED, textDecoration: 'none' }}>← Retour au site</a>
+      </nav>
+      <main style={{ maxWidth: 760, margin: '0 auto', padding: '64px 32px 80px' }}>
+        <div style={{ marginBottom: 40 }}>
+          <div style={{ fontSize: 10, color: SUBTLE, letterSpacing: '0.12em', textTransform: 'uppercase' as const, marginBottom: 10 }}>Document legal</div>
+          <h1 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, fontSize: 36, color: INK, letterSpacing: '-0.025em' }}>Mentions legales</h1>
+        </div>
+
+        <Section title="Editeur du site">
+          <p><strong style={{ color: INK }}>Vanivert</strong></p>
+          <p>Forme juridique : Entrepreneur individuel (micro-entreprise)</p>
+          <p>Representant legal : Adithya Latchoumanassamy</p>
+          <p>Adresse : 1 Clos des Sylthes, 95800 Cergy, France</p>
+          <p>SIRET : 93429900900019</p>
+          <p>Code APE : 8559B</p>
+          <p>Email : <a href="mailto:contact@vanivert.fr" style={{ color: BLUE }}>contact@vanivert.fr</a></p>
+        </Section>
+
+        <Section title="Hebergement">
+          <p>Ce site est heberge par Vercel Inc., 340 Pine Street Suite 900, San Francisco CA 94104, USA.</p>
+          <p style={{ marginTop: 8 }}>Les donnees sont stockees sur des serveurs en Union Europeenne (Supabase, Dublin, Irlande).</p>
+        </Section>
+
+        <Section title="Propriete intellectuelle">
+          <p>L&apos;ensemble du contenu de ce site (textes, images, elements graphiques) est la propriete exclusive de Vanivert. Toute reproduction, meme partielle, est soumise a autorisation prealable.</p>
+        </Section>
+
+        <Section title="Donnees personnelles et RGPD">
+          <p>Conformement au Reglement General sur la Protection des Donnees (RGPD) et a la loi Informatique et Libertes, vous disposez de droits d&apos;acces, de rectification et de suppression de vos donnees. Pour exercer ces droits, contactez : <a href="mailto:contact@vanivert.fr" style={{ color: BLUE }}>contact@vanivert.fr</a></p>
+          <p style={{ marginTop: 8 }}>Voir notre <a href="/legal/confidentialite" style={{ color: BLUE }}>politique de confidentialite complete</a>.</p>
+        </Section>
+
+        <Section title="Cookies">
+          <p>Ce site utilise uniquement des cookies fonctionnels necessaires au bon fonctionnement du service. Aucune donnee n&apos;est transmise a des tiers a des fins publicitaires.</p>
+        </Section>
+
+        <Section title="Loi applicable">
+          <p>Les presentes mentions legales sont soumises au droit francais. En cas de litige, les tribunaux francais seront seuls competents.</p>
+        </Section>
+
+        <div style={{ marginTop: 48, padding: '20px 24px', borderRadius: 14, background: '#F8F9FF', border: `1px solid ${BLUE}15` }}>
+          <p style={{ fontSize: 12, color: SUBTLE }}>Derniere mise a jour : juillet 2026</p>
+        </div>
+      </main>
+      <footer style={{ borderTop: `1px solid ${BDR}`, padding: '24px 32px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' as const, gap: 10 }}>
+        <span style={{ fontSize: 12, color: SUBTLE }}>2026 Vanivert - SIRET 93429900900019</span>
+        <div style={{ display: 'flex', gap: 20 }}>
+          {[['Confidentialite','/legal/confidentialite'],['CGV','/legal/cgv'],['Accueil','/']].map(([l,h])=>(
+            <a key={l} href={h} style={{ fontSize: 12, color: SUBTLE, textDecoration: 'none' }}>{l}</a>
+          ))}
+        </div>
+      </footer>
     </div>
   )
 }

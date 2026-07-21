@@ -1,27 +1,24 @@
-// lib/site.config.ts
-// ONE FILE to rule them all. Change phone, email, prices here.
-// Everything on the site updates automatically.
+// lib/site.config.ts — SINGLE SOURCE OF TRUTH
+// Edit here. Every page, legal doc, footer, and email updates automatically.
 
 export const SITE_CONFIG = {
-  phone: '+33XXXXXXXXX',
-  whatsapp: '+33XXXXXXXXX',
-  email: 'contact@vanivert.fr',
-  address: "Lannion, Cotes d'Armor, Bretagne",
-  siret: "En cours d'enregistrement",
-  siren: 'En cours',
-  rcs: 'Lannion',
-  vatNumber: 'FR XX XXXXXXXXX',
-  companyName: 'Vanivert',
-  legalForm: 'Auto-entrepreneur',
-  founderName: 'Pawan Kumar',
-  founderEmail: 'contact@vanivert.fr',
-  siteUrl: 'https://vanivert.fr',
-  hostingProvider: 'Vercel Inc., 340 Pine Street Suite 900, San Francisco CA 94104',
-  dataHosting: 'Supabase (Dublin, Irlande) + Hetzner (Frankfurt, Allemagne)',
-  demoNumber: '+33XXXXXXXXX',
-  plans: {
-    starter:  { monthly: 19, annual: 16 },
-    business: { monthly: 29, annual: 24 },
-    premium:  { monthly: 99, annual: 82 },
-  },
+  companyName:     'Vanivert',
+  legalForm:       'SAS en cours d\'immatriculation',
+  founderName:     'Pawan Kumar',
+  founderEmail:    'pawan@vanivert.fr',
+  email:           'contact@vanivert.fr',
+  phone:           '+33 X XX XX XX XX',
+  whatsapp:        '+33 X XX XX XX XX',
+  address:         'Lannion, Côtes-d\'Armor, Bretagne, France',
+  addressFull:     '22300 Lannion, Côtes-d\'Armor, Bretagne, France',
+  siret:           '93429900900019',
+  siren:           '934299009',
+  rcs:             'Lannion',
+  vatNumber:       'FR XX 934299009',
+  siteUrl:         'https://vanivert.fr',
+  hostingProvider: 'Vercel Inc., 340 Pine Street Suite 900, San Francisco CA 94104, USA',
+  dataHosting:     'Supabase (Dublin, Irlande) + Hetzner (Frankfurt, Allemagne)',
+  dpoEmail:        'privacy@vanivert.fr',
+  linkedIn:        'https://www.linkedin.com/company/vanivert',
+  adminPassword:   'change-me-immediately-in-production',
 }
