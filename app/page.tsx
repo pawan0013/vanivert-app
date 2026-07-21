@@ -665,19 +665,35 @@ function Investors() {
 }
 
 // CONTACT
+const FREE_EMAIL_DOMAINS = ['gmail.com','yahoo.com','yahoo.fr','hotmail.com','hotmail.fr','outlook.com','outlook.fr','live.com','live.fr','icloud.com','aol.com','gmx.com','gmx.fr','laposte.net','free.fr','orange.fr','wanadoo.fr','sfr.fr','protonmail.com','mail.com','yandex.com']
+
+function isProfessionalEmail(email: string): boolean {
+  const at = email.split('@')
+  if (at.length !== 2) return false
+  const domain = at[1].toLowerCase().trim()
+  return domain.length > 0 && !FREE_EMAIL_DOMAINS.includes(domain)
+}
+
 function Contact() {
-  const [name,setName]=useState(''), [email,setEmail]=useState(''), [agency,setAgency]=useState(''), [agents,setAgents]=useState(''), [message,setMessage]=useState(''), [sent,setSent]=useState(false), [loading,setLoading]=useState(false)
+  const [prenom,setPrenom]=useState(''), [nom,setNom]=useState(''), [email,setEmail]=useState(''), [phone,setPhone]=useState(''), [agency,setAgency]=useState(''), [agents,setAgents]=useState(''), [message,setMessage]=useState(''), [sent,setSent]=useState(false), [loading,setLoading]=useState(false), [emailError,setEmailError]=useState('')
   async function submit(e:React.FormEvent) {
-    e.preventDefault(); if(!email||!name) return; setLoading(true)
+    e.preventDefault()
+    if(!email||!prenom||!nom) return
+    if (!isProfessionalEmail(email)) {
+      setEmailError('Merci d\'utiliser votre email professionnel (pas Gmail, Yahoo, Hotmail...)')
+      return
+    }
+    setEmailError('')
+    setLoading(true)
     try {
       await fetch('https://api.web3forms.com/submit', {
         method:'POST',
         headers:{ 'Content-Type':'application/json', Accept:'application/json' },
         body: JSON.stringify({
           access_key: '35166257-a70e-45c4-895c-0f32d06200f8',
-          subject: `Nouvelle demande de demo - ${agency || name}`,
+          subject: `Nouvelle demande de demo - ${agency || `${prenom} ${nom}`}`,
           from_name: 'Vanivert - Formulaire site',
-          name, email,
+          name: `${prenom} ${nom}`, email, phone,
           agency_name: agency,
           agent_count: agents,
           message: message || '(aucun message)',
@@ -686,7 +702,7 @@ function Contact() {
     } catch {}
     setSent(true); setLoading(false)
     setTimeout(() => {
-      setSent(false); setName(''); setEmail(''); setAgency(''); setAgents(''); setMessage('')
+      setSent(false); setPrenom(''); setNom(''); setEmail(''); setPhone(''); setAgency(''); setAgents(''); setMessage('')
     }, 3000)
   }
   const inp:React.CSSProperties={width:'100%',padding:'13px 16px',borderRadius:12,border:`1px solid ${BDR2}`,fontSize:14,outline:'none',color:INK,fontFamily:'system-ui,sans-serif',background:BG,boxSizing:'border-box' as const}
@@ -715,9 +731,14 @@ function Contact() {
               <motion.form key="form" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.25}}
                 onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:10}}>
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-                  <input required value={name} onChange={e=>setName(e.target.value)} placeholder="Votre prenom" style={inp}/>
-                  <input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email professionnel" style={inp}/>
+                  <input required value={prenom} onChange={e=>setPrenom(e.target.value)} placeholder="Prenom" style={inp}/>
+                  <input required value={nom} onChange={e=>setNom(e.target.value)} placeholder="Nom" style={inp}/>
                 </div>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                  <input type="email" required value={email} onChange={e=>{setEmail(e.target.value);setEmailError('')}} placeholder="Email professionnel" style={{...inp,borderColor:emailError?'#EF4444':BDR2}}/>
+                  <input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="Telephone" style={inp}/>
+                </div>
+                {emailError && <p style={{fontSize:12,color:'#EF4444',margin:0,marginTop:-4}}>{emailError}</p>}
                 <input value={agency} onChange={e=>setAgency(e.target.value)} placeholder="Nom de votre agence" style={inp}/>
                 <select value={agents} onChange={e=>setAgents(e.target.value)} style={{...inp,appearance:'none' as const}}>
                   <option value="">Nombre d&apos;agents</option>
