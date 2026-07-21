@@ -580,8 +580,11 @@ function TeamStory() {
       <div style={{maxWidth:800,margin:'0 auto'}}>
         <FadeUp>
           <div style={{marginBottom:40}}>
-            <div style={{fontSize:11,fontWeight:700,color:BLUE,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:14}}>Notre histoire</div>
-            <h2 style={{fontWeight:600,fontSize:'clamp(26px,3.2vw,42px)',color:INK,letterSpacing:'-0.03em',lineHeight:1.15,marginBottom:20}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:18}}>
+              <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${BLUE},${ORG})`}}/>
+              <span style={{fontSize:12,fontWeight:800,color:BLUE,letterSpacing:'0.14em',textTransform:'uppercase' as const}}>Notre histoire</span>
+            </div>
+            <h2 style={{fontWeight:700,fontSize:'clamp(30px,3.8vw,48px)',color:INK,letterSpacing:'-0.035em',lineHeight:1.1,marginBottom:24}}>
               On a travaille pour des entreprises<br/>qui brassent des milliards.<br/>
               <span style={{color:MUTED}}>Puis on a vu l&apos;immobilier francais.</span>
             </h2>
@@ -618,8 +621,11 @@ function Investors() {
       <div style={{position:'absolute',top:0,left:0,right:0,bottom:0,background:`radial-gradient(circle at 20% 50%,${BLUE}25 0%,transparent 50%),radial-gradient(circle at 80% 50%,${ORG}15 0%,transparent 50%)`,pointerEvents:'none'}}/>
       <div style={{maxWidth:900,margin:'0 auto',position:'relative',zIndex:2}}>
         <FadeUp>
-          <div style={{fontSize:11,fontWeight:700,color:ORG,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:16}}>Investisseurs</div>
-          <h2 style={{fontWeight:600,fontSize:'clamp(26px,3.5vw,44px)',color:'#fff',letterSpacing:'-0.03em',lineHeight:1.15,marginBottom:20}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20}}>
+            <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${ORG},${BLUE})`}}/>
+            <span style={{fontSize:12,fontWeight:800,color:ORG,letterSpacing:'0.14em',textTransform:'uppercase' as const}}>Investisseurs</span>
+          </div>
+          <h2 style={{fontWeight:700,fontSize:'clamp(30px,4vw,50px)',color:'#fff',letterSpacing:'-0.035em',lineHeight:1.1,marginBottom:24}}>
             Building the operating system<br/>for French real estate.
           </h2>
           <p style={{fontSize:16,color:'rgba(255,255,255,0.55)',lineHeight:1.75,maxWidth:620,marginBottom:40}}>
@@ -756,6 +762,48 @@ function FooterCTA() {
   )
 }
 
+
+// LOCATION / MAP
+function LocationMap() {
+  return (
+    <section style={{background:BG2,padding:'56px 32px',borderTop:`1px solid ${BDR}`}}>
+      <div style={{maxWidth:1100,margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 1.3fr',gap:32,alignItems:'center'}} className="alt-grid">
+        <FadeUp>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14}}>
+            <span style={{width:28,height:3,borderRadius:2,background:`linear-gradient(90deg,${BLUE},${ORG})`}}/>
+            <span style={{fontSize:11,fontWeight:800,color:BLUE,letterSpacing:'0.14em',textTransform:'uppercase' as const}}>Ou nous trouver</span>
+          </div>
+          <h3 style={{fontWeight:700,fontSize:'clamp(20px,2.4vw,28px)',color:INK,letterSpacing:'-0.02em',marginBottom:14,lineHeight:1.25}}>
+            Base en France.<br/>Deployes partout.
+          </h3>
+          <p style={{fontSize:14,color:MUTED,lineHeight:1.7,marginBottom:16}}>
+            Vanivert est enregistre a Cergy, en region parisienne, et deploie ses agences pilotes dans toute la France.
+          </p>
+          <div style={{fontSize:14,color:INK,fontWeight:600,marginBottom:4}}>1 Clos des Sylthes</div>
+          <div style={{fontSize:14,color:MUTED,marginBottom:12}}>95800 Cergy, France</div>
+          <a href="https://maps.google.com/?q=1+Clos+des+Sylthes,95800+Cergy,France" target="_blank" rel="noopener noreferrer"
+            style={{fontSize:13,color:BLUE,fontWeight:600,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:6}}>
+            Ouvrir dans Google Maps <span>→</span>
+          </a>
+        </FadeUp>
+        <FadeUp delay={0.1}>
+          <div style={{borderRadius:20,overflow:'hidden',border:`1px solid ${BDR}`,height:280,boxShadow:'0 4px 24px rgba(12,14,26,0.06)'}}>
+            <iframe
+              title="Vanivert location - Cergy, France"
+              width="100%"
+              height="100%"
+              style={{border:0}}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=1+Clos+des+Sylthes,95800+Cergy,France&output=embed">
+            </iframe>
+          </div>
+        </FadeUp>
+      </div>
+    </section>
+  )
+}
+
 // FOOTER
 function Footer() {
   const cols=[
@@ -851,6 +899,7 @@ export default function Home() {
         <Contact/>
         <FooterCTA/>
       </main>
+      <LocationMap/>
       <Footer/>
       <GDPR/>
     </>
