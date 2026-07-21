@@ -69,13 +69,8 @@ function FadeUp({children,delay=0,style={},className}:{children:React.ReactNode;
 }
 
 // PILL
-function Pill({children,color=BLUE}:{children:React.ReactNode;color?:string}) {
-  return (
-    <span style={{display:'inline-flex',alignItems:'center',gap:6,padding:'4px 13px',borderRadius:980,background:`${color}12`,border:`1px solid ${color}28`,fontSize:10,fontWeight:700,color,letterSpacing:'0.1em',textTransform:'uppercase' as const}}>
-      <span style={{width:5,height:5,borderRadius:'50%',background:color}}/>
-      {children}
-    </span>
-  )
+function Pill({children}:{children:React.ReactNode;color?:string}) {
+  return null
 }
 
 // LOGO
@@ -163,7 +158,7 @@ function Nav() {
             <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
               style={{fontSize:13,fontWeight:600,color:'#fff',textDecoration:'none',padding:'9px 22px',borderRadius:980,background:BLUE,display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s cubic-bezier(0.32,0.72,0,1)',boxShadow:`0 4px 14px ${BLUE}28`}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
-              Voir la demo gratuite
+              Boostez votre chiffre
               <span style={{width:20,height:20,borderRadius:'50%',background:'rgba(255,255,255,0.22)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11}}>→</span>
             </a>
           </div>
@@ -659,7 +654,7 @@ function FooterCTA() {
                 <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
                   style={{padding:'14px 32px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${BLUE}40`}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
-                  Voir la demo gratuite →
+                  Boostez votre chiffre →
                 </a>
                 <a href="#contact" style={{padding:'14px 32px',borderRadius:980,border:'1.5px solid rgba(255,255,255,0.2)',color:'rgba(255,255,255,0.7)',fontWeight:500,fontSize:14,textDecoration:'none',transition:'all 0.25s'}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor='rgba(255,255,255,0.5)';(e.currentTarget as HTMLElement).style.color='#fff'}}
