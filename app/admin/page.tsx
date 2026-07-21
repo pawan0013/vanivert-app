@@ -26,15 +26,19 @@ const DEFAULT_CMS = {
   contact_h2:      'On vous rappelle. Promis.',
   contact_sub:     'Pas un bot. Pawan Kumar, co-fondateur, vous répond personnellement sous 24h ouvrées.',
   footer_tagline:  'L\'IA immobilière qui ne dort jamais. Fait en Bretagne, déployé partout en France.',
-  company_email:   'contact@vanivert.fr',
+  company_email:   'team@vanivert.eu',
   company_siret:   '93429900900019',
   company_address: 'Lannion, Côtes-d\'Armor, Bretagne, France',
   company_phone:   '+33 X XX XX XX XX',
-  linkedin_url:    'https://www.linkedin.com/company/vanivert',
+  linkedin_company:'https://www.linkedin.com/company/vanivert',
   pilot_count:     '10+',
   response_time:   '60s',
   cta_demo:        'Réserver une démo',
-  cta_features:    'Comment ça marche',
+  cta_features:    'Comment ca marche',
+  linkedin_pawan:  'https://linkedin.com/in/pawan-kumar-iiitg',
+  investor_email:  'investors@vanivert.eu',
+  privacy_email:   'privacy@vanivert.eu',
+  team_email:      'team@vanivert.eu',
 }
 
 type CMS = typeof DEFAULT_CMS
@@ -184,7 +188,10 @@ function CMSTab() {
           <div><Label>Email de contact</Label><input value={cms.company_email} onChange={e=>setCms({...cms,company_email:e.target.value})} style={inp()}/></div>
           <div><Label>Téléphone</Label><input value={cms.company_phone} onChange={e=>setCms({...cms,company_phone:e.target.value})} style={inp()}/></div>
           <div><Label>SIRET</Label><input value={cms.company_siret} onChange={e=>setCms({...cms,company_siret:e.target.value})} style={inp()}/></div>
-          <div><Label>LinkedIn URL</Label><input value={cms.linkedin_url} onChange={e=>setCms({...cms,linkedin_url:e.target.value})} style={inp()}/></div>
+          <div><Label>LinkedIn entreprise</Label><input value={cms.linkedin_company} onChange={e=>setCms({...cms,linkedin_company:e.target.value})} style={inp()}/></div>
+          <div><Label>LinkedIn Pawan Kumar</Label><input value={cms.linkedin_pawan} onChange={e=>setCms({...cms,linkedin_pawan:e.target.value})} style={inp()}/></div>
+          <div><Label>Email investisseurs</Label><input value={cms.investor_email} onChange={e=>setCms({...cms,investor_email:e.target.value})} style={inp()}/></div>
+          <div><Label>Email privacy</Label><input value={cms.privacy_email} onChange={e=>setCms({...cms,privacy_email:e.target.value})} style={inp()}/></div>
         </div>
         <div style={{ marginTop:12 }}><Label>Adresse complète</Label><input value={cms.company_address} onChange={e=>setCms({...cms,company_address:e.target.value})} style={inp()}/></div>
         <div style={{ marginTop:12 }}><Label>Tagline footer</Label><input value={cms.footer_tagline} onChange={e=>setCms({...cms,footer_tagline:e.target.value})} style={inp()}/></div>

@@ -24,7 +24,7 @@ export default function Confidentialite() {
         <Section title="Responsable du traitement">
           <p>Vanivert, represente par Adithya Latchoumanassamy.</p>
           <p>Adresse : 1 Clos des Sylthes, 95800 Cergy, France</p>
-          <p>Email : <a href="mailto:team@vanivert.eu" style={{color:BLUE}}>team@vanivert.eu</a></p>
+          <p>Email : <a href="mailto:privacy@vanivert.eu" style={{color:BLUE}}>privacy@vanivert.eu</a></p>
         </Section>
         <Section title="Donnees collectees">
           <p>Nous collectons uniquement les donnees que vous nous communiquez via le formulaire de contact : nom, email, nom de l&apos;agence, nombre d&apos;agents, message optionnel.</p>
@@ -34,7 +34,7 @@ export default function Confidentialite() {
           <p>Toutes les donnees sont hebergees en Union Europeenne sur les serveurs Supabase (Dublin, Irlande). Aucune donnee n&apos;est transmise hors UE ni a des tiers a des fins commerciales.</p>
         </Section>
         <Section title="Vos droits">
-          <p>Conformement au RGPD, vous disposez d&apos;un droit d&apos;acces, de rectification, de suppression et de portabilite de vos donnees. Pour exercer ces droits, contactez : <a href="mailto:team@vanivert.eu" style={{color:BLUE}}>team@vanivert.eu</a></p>
+          <p>Conformement au RGPD, vous disposez d&apos;un droit d&apos;acces, de rectification, de suppression et de portabilite de vos donnees. Pour exercer ces droits, contactez : <a href="mailto:privacy@vanivert.eu" style={{color:BLUE}}>privacy@vanivert.eu</a></p>
         </Section>
         <Section title="Cookies">
           <p>Ce site utilise uniquement des cookies fonctionnels (preferences utilisateur, session d&apos;administration). Aucun cookie publicitaire ou de tracking n&apos;est utilise.</p>

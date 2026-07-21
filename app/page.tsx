@@ -137,7 +137,7 @@ function Nav() {
   const [sc,setSc]=useState(false)
   const [mob,setMob]=useState(false)
   useEffect(()=>{const h=()=>setSc(window.scrollY>30);window.addEventListener('scroll',h,{passive:true});return()=>window.removeEventListener('scroll',h)},[])
-  const links:[string,string][]=[['Fonctionnalites','#features'],['ROI','#roi'],['Blog','/blog'],['Equipe','#team']]
+  const links:[string,string][]=[['Fonctionnalites','#features'],['ROI','#roi'],['Equipe','#team'],['Investisseurs','#investors']]
   return (
     <>
       <nav style={{position:'fixed',top:3,left:0,right:0,zIndex:200,height:64,display:'flex',alignItems:'center',background:sc?'rgba(255,255,255,0.96)':'transparent',backdropFilter:sc?'blur(18px)':'none',WebkitBackdropFilter:sc?'blur(18px)':'none',borderBottom:`1px solid ${sc?BDR2:'transparent'}`,transition:'all 0.35s cubic-bezier(0.32,0.72,0,1)'}}>
@@ -573,61 +573,86 @@ function BlogPreview() {
 }
 
 
-// TEAM + STORY
+// TEAM STORY - narrative only
 function TeamStory() {
   return (
     <section id="team" style={{background:BG,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
-      <div style={{maxWidth:1000,margin:'0 auto'}}>
+      <div style={{maxWidth:800,margin:'0 auto'}}>
         <FadeUp>
-          <div style={{textAlign:'center',marginBottom:48}}>
-            <div style={{fontSize:11,fontWeight:700,color:BLUE,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:12}}>Notre histoire</div>
-            <h2 style={{fontWeight:600,fontSize:'clamp(24px,3vw,40px)',color:INK,letterSpacing:'-0.025em',marginBottom:14}}>
-              Construire ce qui n&apos;existait pas.
+          <div style={{marginBottom:40}}>
+            <div style={{fontSize:11,fontWeight:700,color:BLUE,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:14}}>Notre histoire</div>
+            <h2 style={{fontWeight:600,fontSize:'clamp(26px,3.2vw,42px)',color:INK,letterSpacing:'-0.03em',lineHeight:1.15,marginBottom:20}}>
+              On a travaille pour des entreprises<br/>qui brassent des milliards.<br/>
+              <span style={{color:MUTED}}>Puis on a vu l&apos;immobilier francais.</span>
             </h2>
           </div>
         </FadeUp>
         <FadeUp delay={0.1}>
-          <div style={{maxWidth:720,margin:'0 auto 48px',fontSize:16,color:MUTED,lineHeight:1.85,textAlign:'center' as const}}>
-            <p style={{marginBottom:16}}>Apres des annees a travailler dans la logistique internationale et la tech pour des entreprises qui brassent des milliards, nous avons pose un pied dans l&apos;immobilier francais et decouvert un constat simple : les agences perdent des clients parce que personne ne repond a 20h un samedi soir.</p>
-            <p style={{marginBottom:16}}>Pas parce qu&apos;elles manquent de talent. Pas parce que le marche est mort. Mais parce que les outils n&apos;ont pas suivi. Les leads arrivent dans 3 boites mail, les visites se confirment par telephone, les clients disparaissent apres la vente.</p>
-            <p>Nous avons construit Vanivert pour que l&apos;agence tourne en pilote automatique. Pas pour remplacer l&apos;humain, mais pour lui rendre son temps.</p>
+          <div style={{fontSize:16,color:MUTED,lineHeight:1.85}}>
+            <p style={{marginBottom:20}}>Logistique maritime internationale. Tech. Operations dans 15 pays. Des systemes ou une erreur de 30 secondes coute des millions. C&apos;est la ou on a appris a construire des choses qui tournent sans supervision.</p>
+            <p style={{marginBottom:20}}>Quand on a pose un pied dans l&apos;immobilier francais, le contraste etait brutal. Des agences avec 5 agents et 3 boites mail. Des leads qui arrivent a 21h et que personne ne rappelle. Des clients qui disparaissent apres la vente. Des visites confirmees par telephone, une par une.</p>
+            <p style={{marginBottom:20}}>Ce n&apos;est pas un probleme de talent. Les agents sont bons. C&apos;est un probleme d&apos;infrastructure. Les outils n&apos;ont pas suivi.</p>
+            <p style={{marginBottom:20,color:INK,fontWeight:600,fontSize:18}}>Alors on a construit l&apos;infrastructure.</p>
+            <p>Vanivert automatise tout ce qui peut l&apos;etre pour que l&apos;agent fasse ce qu&apos;il fait le mieux : vendre, negocier, convaincre. Le systeme fait le reste. 24h/24. Sans supervision.</p>
           </div>
         </FadeUp>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:20}} className="stats-grid">
-          {[
-            {name:'Pawan Kumar',role:'Co-fondateur, CTO',bio:'Ex-logistique maritime internationale (15+ pays, clients BP). EDHEC MiM Finance. Construit des systemes qui tournent sans supervision.',linkedin:'https://linkedin.com/in/pawan-kumar-iiitg'},
-            {name:'Adithya Latchoumanassamy',role:'Co-fondateur, CEO',bio:'Entrepreneur en France depuis 2024. Enregistre au Guichet Unique (SIRET 93429900900019). Gere les operations commerciales et la conformite.',linkedin:'https://linkedin.com/company/vanivert'},
-            {name:'Hitesh',role:'Lead Backend Engineer',bio:'Architecture distribuee, pipelines WhatsApp, integration ElevenLabs. Construit le moteur qui fait tourner Sophie 24h/24.',linkedin:'https://linkedin.com/company/vanivert'},
-          ].map((p,i) => (
-            <FadeUp key={p.name} delay={i*0.08}>
-              <div style={{padding:'28px 24px',borderRadius:16,background:BG2,border:`1px solid ${BDR}`,textAlign:'center' as const}}>
-                <div style={{width:56,height:56,borderRadius:'50%',background:i===0?BLUE:i===1?ORG:TEAL,display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 14px',fontSize:22,color:'#fff',fontWeight:700}}>{p.name[0]}</div>
-                <div style={{fontSize:15,fontWeight:600,color:INK,marginBottom:2}}>{p.name}</div>
-                <div style={{fontSize:12,fontWeight:600,color:BLUE,marginBottom:10}}>{p.role}</div>
-                <div style={{fontSize:13,color:MUTED,lineHeight:1.6,marginBottom:14}}>{p.bio}</div>
-                <a href={p.linkedin} target="_blank" rel="noopener noreferrer" style={{fontSize:12,fontWeight:600,color:BLUE,textDecoration:'none'}}>LinkedIn →</a>
+        <FadeUp delay={0.2}>
+          <div style={{display:'flex',gap:32,marginTop:40,paddingTop:32,borderTop:`1px solid ${BDR}`,flexWrap:'wrap' as const}}>
+            {[['15+','pays d\'operations'],['3','co-fondateurs'],['10+','agences pilotes'],['SIRET','93429900900019']].map(([v,l])=>(
+              <div key={l}>
+                <div style={{fontSize:22,fontWeight:700,color:INK,marginBottom:2}}>{v}</div>
+                <div style={{fontSize:12,color:SUBTLE}}>{l}</div>
               </div>
-            </FadeUp>
-          ))}
-        </div>
+            ))}
+          </div>
+        </FadeUp>
       </div>
     </section>
   )
 }
 
-// INVESTORS STRIP
-function InvestorsStrip() {
+// INVESTORS
+function Investors() {
   return (
-    <section style={{background:INK,padding:'48px 32px'}}>
-      <div style={{maxWidth:900,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap' as const,gap:20}}>
-        <div>
-          <div style={{fontSize:11,fontWeight:700,color:ORG,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:6}}>Investisseurs</div>
-          <div style={{fontSize:20,fontWeight:600,color:'#fff',marginBottom:4}}>Interessé par Vanivert ?</div>
-          <div style={{fontSize:14,color:'rgba(255,255,255,0.5)'}}>SIRET 93429900900019 - Enregistre en France - EU Sovereign</div>
-        </div>
-        <a href="mailto:investors@vanivert.eu" style={{padding:'12px 28px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:13,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 4px 14px ${BLUE}40`}}>
-          investors@vanivert.eu →
-        </a>
+    <section id="investors" style={{background:INK,padding:'96px 32px',position:'relative',overflow:'hidden'}}>
+      <div style={{position:'absolute',top:0,left:0,right:0,bottom:0,background:`radial-gradient(circle at 20% 50%,${BLUE}25 0%,transparent 50%),radial-gradient(circle at 80% 50%,${ORG}15 0%,transparent 50%)`,pointerEvents:'none'}}/>
+      <div style={{maxWidth:900,margin:'0 auto',position:'relative',zIndex:2}}>
+        <FadeUp>
+          <div style={{fontSize:11,fontWeight:700,color:ORG,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:16}}>Investisseurs</div>
+          <h2 style={{fontWeight:600,fontSize:'clamp(26px,3.5vw,44px)',color:'#fff',letterSpacing:'-0.03em',lineHeight:1.15,marginBottom:20}}>
+            Building the operating system<br/>for French real estate.
+          </h2>
+          <p style={{fontSize:16,color:'rgba(255,255,255,0.55)',lineHeight:1.75,maxWidth:620,marginBottom:40}}>
+            8 500 agences independantes paient entre 70 et 150 EUR par mois a des CRM qui ne font ni l&apos;automatisation WhatsApp, ni la centralisation des leads portails, ni la collecte d&apos;avis Google, ni la relation client post-vente. C&apos;est un marche de plus de 10 millions d&apos;euros par an rien qu&apos;en France. Nous construisons l&apos;alternative.
+          </p>
+        </FadeUp>
+        <FadeUp delay={0.1}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:48}} className="stats-grid">
+            {[
+              {n:'8 500+',l:'agences independantes en France',color:BLUE},
+              {n:'EUR 10M+',l:'marche CRM immobilier francais annuel',color:ORG},
+              {n:'10+',l:'agences pilotes actives',color:'#22C55E'},
+              {n:'0',l:'concurrent fait WhatsApp + leads + avis + CRM',color:'#A78BFA'},
+            ].map(s=>(
+              <div key={s.l} style={{padding:'20px 18px',borderRadius:14,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)'}}>
+                <div style={{fontSize:24,fontWeight:700,color:s.color,marginBottom:6}}>{s.n}</div>
+                <div style={{fontSize:12,color:'rgba(255,255,255,0.45)',lineHeight:1.5}}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+        <FadeUp delay={0.15}>
+          <div style={{display:'flex',gap:24,flexWrap:'wrap' as const,alignItems:'center',paddingTop:32,borderTop:'1px solid rgba(255,255,255,0.08)'}}>
+            <div style={{flex:1,minWidth:240}}>
+              <div style={{fontSize:14,color:'rgba(255,255,255,0.5)',marginBottom:4}}>Enregistre en France</div>
+              <div style={{fontSize:14,color:'rgba(255,255,255,0.7)'}}>SIRET 93429900900019 - Cergy, France</div>
+            </div>
+            <a href="mailto:investors@vanivert.eu" style={{padding:'14px 32px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${BLUE}40`,display:'inline-flex',alignItems:'center',gap:8}}>
+              investors@vanivert.eu
+              <span style={{fontSize:16}}>→</span>
+            </a>
+          </div>
+        </FadeUp>
       </div>
     </section>
   )
@@ -649,10 +674,10 @@ function Contact() {
       <div style={{maxWidth:960,margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 1fr',gap:56,alignItems:'center'}} className="alt-grid">
         <FadeUp>
           <Pill color={BLUE}>Contact</Pill>
-          <h2 style={{fontFamily:'system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',fontStyle:'italic',fontWeight:400,fontSize:'clamp(26px,3.2vw,40px)',color:INK,marginTop:14,marginBottom:12,letterSpacing:'-0.03em'}}>On vous rappelle.<br/>Promis.</h2>
-          <p style={{fontSize:14,color:MUTED,lineHeight:1.75,marginBottom:28}}>Pas un bot. Pawan Kumar, co-fondateur, vous repond personnellement sous 24h ouvrees.</p>
+          <h2 style={{fontFamily:'system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',fontStyle:'italic',fontWeight:400,fontSize:'clamp(26px,3.2vw,40px)',color:INK,marginTop:14,marginBottom:12,letterSpacing:'-0.03em'}}>Parlez-nous de votre agence.</h2>
+          <p style={{fontSize:14,color:MUTED,lineHeight:1.75,marginBottom:28}}>Demande de demo, question technique, partenariat - nous repondons personnellement sous 24h ouvrees.</p>
           <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:20}}>
-            {[['📧','team@vanivert.eu','mailto:team@vanivert.eu'],['📍',PARIS_ADDRESS,'https://maps.google.com/?q=Cergy,France'],['🏛',`SIRET ${SIRET}`,'#'],['🔗','linkedin.com/company/vanivert','https://linkedin.com/company/vanivert'],['💼','investors@vanivert.eu','mailto:investors@vanivert.eu']].map(([icon,label,href])=>(
+            {[['📧','team@vanivert.eu','mailto:team@vanivert.eu'],['📍',PARIS_ADDRESS,'https://maps.google.com/?q=Cergy,France'],['🏛',`SIRET ${SIRET}`,'#'],['🔗','linkedin.com/company/vanivert','https://linkedin.com/company/vanivert']].map(([icon,label,href])=>(
               <a key={label} href={href} target={href.startsWith('http')?'_blank':'_self'} rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none'}}>
                 <span style={{fontSize:16}}>{icon}</span>
                 <span style={{fontSize:13,color:MUTED}}>{label}</span>
@@ -735,7 +760,7 @@ function FooterCTA() {
 function Footer() {
   const cols=[
     {h:'Produit',links:[['Fonctionnalites','#features'],['ROI','#roi'],['Demo','https://realestate-eu-demo.vercel.app/login'],['Connexion','/login']]},
-    {h:'Ressources',links:[['Blog','/blog'],['Equipe','#team'],['Contact','#contact'],['Investisseurs','mailto:investors@vanivert.eu']]},
+    {h:'Ressources',links:[['Equipe','#team'],['Contact','#contact'],['Investisseurs','mailto:investors@vanivert.eu']]},
     {h:'Legal',links:[['Mentions legales','/legal/mentions-legales'],['CGV','/legal/cgv'],['Confidentialite','/legal/confidentialite'],['Admin','/admin']]},
   ]
   return (
@@ -782,7 +807,7 @@ function GDPR() {
     <motion.div initial={{opacity:0,y:24}} animate={{opacity:1,y:0}} transition={{delay:2.5}}
       style={{position:'fixed',bottom:20,left:20,right:20,zIndex:9990,maxWidth:480,margin:'0 auto',background:CARD,border:`1px solid ${BDR2}`,borderRadius:18,padding:'20px 22px',boxShadow:'0 8px 40px rgba(0,0,0,0.10)',display:'flex',flexDirection:'column',gap:10}}>
       <p style={{fontSize:13,fontWeight:600,color:INK,margin:0}}>Ce site utilise des cookies</p>
-      <p style={{fontSize:12,color:MUTED,lineHeight:1.55,margin:0}}>Cookies fonctionnels uniquement. Hebergement 100% UE. Aucune donnee transmise a des tiers. <a href="/legal/confidentialite" style={{color:BLUE}}>En savoir plus - privacy@vanivert.eu</a></p>
+      <p style={{fontSize:12,color:MUTED,lineHeight:1.55,margin:0}}>Cookies fonctionnels uniquement. Hebergement 100% UE. Aucune donnee transmise a des tiers. <a href="/legal/confidentialite" style={{color:BLUE}}>privacy@vanivert.eu</a></p>
       <div style={{display:'flex',gap:8}}>
         <button onClick={accept} style={{flex:1,padding:'9px 16px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:600,fontSize:12,border:'none',cursor:'pointer'}}>Accepter</button>
         <button onClick={decline} style={{flex:1,padding:'9px 16px',borderRadius:980,background:'transparent',color:MUTED,fontWeight:500,fontSize:12,border:`1px solid ${BDR2}`,cursor:'pointer'}}>Refuser</button>
@@ -822,7 +847,7 @@ export default function Home() {
         <FeaturesSection/>
         <SocialProof/>
         <TeamStory/>
-        <InvestorsStrip/>
+        <Investors/>
         <Contact/>
         <FooterCTA/>
       </main>
