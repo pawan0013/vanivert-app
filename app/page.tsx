@@ -213,8 +213,8 @@ function Hero() {
             </AnimatePresence>
           </motion.div>
           <motion.p initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} transition={{duration:0.65,delay:0.2}}
-            style={{fontSize:16,color:MUTED,lineHeight:1.72,maxWidth:490,marginBottom:36}}>
-            Chaque appel recu. Chaque lead centralise. Chaque visite planifiee. Chaque client fidelize a vie. Chaque avis Google collecte. Tout ca, pendant que vous faites votre vrai metier.
+            style={{fontSize:17,color:MUTED,lineHeight:1.7,maxWidth:490,marginBottom:36}}>
+            Vanivert gere vos appels, vos leads, vos visites et votre reputation en ligne. Vous, vous vendez.
           </motion.p>
           <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{duration:0.5,delay:0.3}} style={{display:'flex',gap:12,flexWrap:'wrap' as const,marginBottom:40}}>
             <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"

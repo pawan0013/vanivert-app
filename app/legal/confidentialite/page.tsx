@@ -6,7 +6,7 @@ function Logo() {
   return (<svg width={s} height={s} viewBox={`0 0 ${s} ${s}`} fill='none'><circle cx={cx} cy={cy} r={R} stroke='#2563EB' strokeWidth={1} fill='none' strokeOpacity='0.4'/>{pts.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r={nr} fill='#2563EB' opacity='0.65'/>)}<circle cx={cx} cy={cy} r={cr} fill='#2563EB'/></svg>)
 }
 function Section({title,children}:{title:string;children:React.ReactNode}) {
-  return (<div style={{marginBottom:36}}><h2 style={{fontFamily:'Georgia,serif',fontSize:18,fontWeight:400,color:INK,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${BDR}`}}>{title}</h2><div style={{fontSize:14,color:MUTED,lineHeight:1.75}}>{children}</div></div>)
+  return (<div style={{marginBottom:36}}><h2 style={{fontSize:20,fontWeight:700,color:INK,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${BDR}`}}>{title}</h2><div style={{fontSize:14,color:MUTED,lineHeight:1.75}}>{children}</div></div>)
 }
 export default function Confidentialite() {
   return (
@@ -19,7 +19,7 @@ export default function Confidentialite() {
       <main style={{maxWidth:760,margin:'0 auto',padding:'64px 32px 80px'}}>
         <div style={{marginBottom:40}}>
           <div style={{fontSize:10,color:SUBTLE,letterSpacing:'0.12em',textTransform:'uppercase' as const,marginBottom:10}}>Document legal</div>
-          <h1 style={{fontFamily:'Georgia,serif',fontWeight:400,fontSize:36,color:INK,letterSpacing:'-0.025em'}}>Politique de confidentialite</h1>
+          <h1 style={{fontFamily:'Georgia,serif',fontWeight:700,fontSize:44,color:INK,letterSpacing:'-0.03em'}}>Politique de confidentialite</h1>
         </div>
         <Section title="Responsable du traitement">
           <p>Vanivert, represente par Adithya Latchoumanassamy.</p>

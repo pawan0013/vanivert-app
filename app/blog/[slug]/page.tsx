@@ -39,7 +39,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
         <div style={{marginBottom:20}}>
           <span style={{display:'inline-flex',alignItems:'center',gap:5,padding:'3px 11px',borderRadius:980,background:`${article.categoryColor}12`,border:`1px solid ${article.categoryColor}25`,fontSize:10,fontWeight:600,color:article.categoryColor,textTransform:'uppercase' as const,letterSpacing:'0.1em'}}>{article.category}</span>
         </div>
-        <h1 style={{fontFamily:'Georgia,serif',fontWeight:400,fontSize:'clamp(24px,3.5vw,40px)',color:INK,lineHeight:1.18,marginBottom:16,letterSpacing:'-0.025em'}}>{article.title}</h1>
+        <h1 style={{fontWeight:700,fontSize:'clamp(28px,4vw,46px)',color:INK,lineHeight:1.18,marginBottom:16,letterSpacing:'-0.025em'}}>{article.title}</h1>
         <div style={{display:'flex',gap:16,alignItems:'center',marginBottom:32,paddingBottom:24,borderBottom:`1px solid ${BDR}`}}>
           <span style={{fontSize:13,color:MUTED}}>Par <strong style={{color:INK}}>Pawan Kumar</strong>, co-fondateur Vanivert</span>
           <span style={{color:SUBTLE}}>·</span>

@@ -42,7 +42,7 @@ export default function BlogIndex() {
           <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'4px 13px',borderRadius:980,background:`${VI}10`,border:`1px solid ${VI}25`,fontSize:10,fontWeight:600,color:VI,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:16}}>
             <span style={{width:5,height:5,borderRadius:'50%',background:VI}}/>Blog
           </div>
-          <h1 style={{fontFamily:'Georgia,serif',fontWeight:400,fontSize:'clamp(28px,4vw,48px)',color:INK,letterSpacing:'-0.03em',marginBottom:12}}>Ce que les meilleures<br/><span style={{fontStyle:'italic',color:MUTED}}>agences font déjà.</span></h1>
+          <h1 style={{fontWeight:700,fontSize:'clamp(32px,4.4vw,54px)',color:INK,letterSpacing:'-0.03em',marginBottom:12}}>Ce que les meilleures<br/><span style={{fontStyle:'italic',color:MUTED}}>agences font déjà.</span></h1>
           <p style={{fontSize:15,color:MUTED,maxWidth:440,margin:'0 auto'}}>Stratégies, outils, et données pour les agences immobilières qui veulent garder une longueur d&apos;avance.</p>
         </motion.div>
         {/* Category filter */}
