@@ -4,22 +4,22 @@ import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'fra
 import * as THREE from 'three'
 import { DEFAULT_ARTICLES } from '@/lib/articles'
 
-// TOKENS - vibrant white + blue + orange
-const BG    = '#FFFFFF'
-const BG2   = '#F8F9FF'
-const BG3   = '#FFF8F3'
-const CARD  = '#FFFFFF'
-const INK   = '#0C0E1A'
-const BLUE  = '#2563EB'
-const BLUE2 = '#1D4ED8'
-const BLUE_LT= '#EFF6FF'
-const ORG   = '#F97316'
-const ORG_LT= '#FFF7ED'
-const TEAL  = '#0D9488'
-const MUTED = 'rgba(12,14,26,0.52)'
-const SUBTLE= 'rgba(12,14,26,0.32)'
-const BDR   = 'rgba(12,14,26,0.07)'
-const BDR2  = 'rgba(12,14,26,0.13)'
+// TOKENS - cinematic dark + warm lime (redesign)
+const BG    = '#0A0A0B'
+const BG2   = '#101113'
+const BG3   = '#0D0E0F'
+const CARD  = 'rgba(255,255,255,0.045)'
+const INK   = '#F6F6F1'
+const BLUE  = '#E4EC6B'
+const BLUE2 = '#C7D23E'
+const BLUE_LT= 'rgba(228,236,107,0.12)'
+const ORG   = '#F3B37B'
+const ORG_LT= 'rgba(243,179,123,0.12)'
+const TEAL  = '#8FE3B0'
+const MUTED = 'rgba(246,246,241,0.60)'
+const SUBTLE= 'rgba(246,246,241,0.36)'
+const BDR   = 'rgba(255,255,255,0.10)'
+const BDR2  = 'rgba(255,255,255,0.16)'
 const EZ: [number,number,number,number] = [0.32,0.72,0,1]
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -29,6 +29,9 @@ const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 const PARIS_ADDRESS = '1 Clos des Sylthes, 95800 Cergy, France'
 const SIRET = '93429900900019'
 const EMAIL = 'team@vanivert.eu'
+const AI_PHONE_DISPLAY = '02 21 82 60 74'
+const AI_PHONE_INTL    = '+33 2 21 82 60 74'
+const AI_PHONE_TEL     = 'tel:+33221826074'
 
 // CURSOR DOT
 function CursorDot() {
@@ -137,10 +140,10 @@ function Nav() {
   const [sc,setSc]=useState(false)
   const [mob,setMob]=useState(false)
   useEffect(()=>{const h=()=>setSc(window.scrollY>30);window.addEventListener('scroll',h,{passive:true});return()=>window.removeEventListener('scroll',h)},[])
-  const links:[string,string][]=[['Fonctionnalites','#features'],['ROI','#roi'],['Equipe','#team'],['Investisseurs','#investors']]
+  const links:[string,string][]=[['Fonctionnalites','#features'],['ROI','#roi'],['Tester l\u2019IA','#tester-ia'],['Equipe','#team'],['Investisseurs','#investors']]
   return (
     <>
-      <nav style={{position:'fixed',top:3,left:0,right:0,zIndex:200,height:64,display:'flex',alignItems:'center',background:sc?'rgba(255,255,255,0.96)':'transparent',backdropFilter:sc?'blur(18px)':'none',WebkitBackdropFilter:sc?'blur(18px)':'none',borderBottom:`1px solid ${sc?BDR2:'transparent'}`,transition:'all 0.35s cubic-bezier(0.32,0.72,0,1)'}}>
+      <nav style={{position:'fixed',top:3,left:0,right:0,zIndex:200,height:64,display:'flex',alignItems:'center',background:sc?'rgba(10,10,11,0.92)':'transparent',backdropFilter:sc?'blur(18px)':'none',WebkitBackdropFilter:sc?'blur(18px)':'none',borderBottom:`1px solid ${sc?BDR2:'transparent'}`,transition:'all 0.35s cubic-bezier(0.32,0.72,0,1)'}}>
         <div style={{maxWidth:1240,margin:'0 auto',width:'100%',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 32px'}}>
           <a href="/" style={{display:'flex',alignItems:'center',gap:9,textDecoration:'none'}}>
             <Logo s={30}/>
@@ -155,8 +158,10 @@ function Nav() {
           <div className="nav-links" style={{display:'flex',gap:10,alignItems:'center'}}>
             <a href="/login" style={{fontSize:13,color:MUTED,textDecoration:'none',padding:'8px 14px',fontWeight:450,transition:'color 0.2s'}}
               onMouseEnter={e=>(e.currentTarget.style.color=INK)} onMouseLeave={e=>(e.currentTarget.style.color=MUTED)}>Connexion</a>
+            <a href={AI_PHONE_TEL} style={{fontSize:13,color:MUTED,textDecoration:'none',padding:'8px 14px',fontWeight:450,display:'inline-flex',alignItems:'center',gap:6,transition:'color 0.2s'}}
+              onMouseEnter={e=>(e.currentTarget.style.color=INK)} onMouseLeave={e=>(e.currentTarget.style.color=MUTED)}>📞 Appeler l&apos;IA</a>
             <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
-              style={{fontSize:13,fontWeight:600,color:'#fff',textDecoration:'none',padding:'9px 22px',borderRadius:980,background:BLUE,display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s cubic-bezier(0.32,0.72,0,1)',boxShadow:`0 4px 14px ${BLUE}28`}}
+              style={{fontSize:13,fontWeight:600,color:'#111',textDecoration:'none',padding:'9px 22px',borderRadius:980,background:BLUE,display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s cubic-bezier(0.32,0.72,0,1)',boxShadow:`0 4px 14px ${BLUE}28`}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
               Boostez votre CA
               <span style={{width:20,height:20,borderRadius:'50%',background:'rgba(255,255,255,0.22)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11}}>→</span>
@@ -171,8 +176,8 @@ function Nav() {
       </nav>
       <AnimatePresence>
         {mob&&(
-          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} style={{position:'fixed',inset:0,zIndex:250,background:'rgba(255,255,255,0.98)',backdropFilter:'blur(20px)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:4}}>
-            {[...links,['Connexion','/login'],['Voir la demo','/demo']].map(([l,h],i)=>(
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} style={{position:'fixed',inset:0,zIndex:250,background:'rgba(10,10,11,0.98)',backdropFilter:'blur(20px)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:4}}>
+            {[...links,['Connexion','/login'],['Voir la demo','/demo'],['📞 Appeler l\u2019IA',AI_PHONE_TEL]].map(([l,h],i)=>(
               <motion.a key={l} href={h} initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:i*0.06}} onClick={()=>setMob(false)}
                 style={{fontSize:22,fontFamily:'system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',fontStyle:'italic',color:INK,textDecoration:'none',padding:'12px 32px',textAlign:'center'}}>{l}</motion.a>
             ))}
@@ -218,7 +223,7 @@ function Hero() {
           </motion.p>
           <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{duration:0.5,delay:0.3}} style={{display:'flex',gap:12,flexWrap:'wrap' as const,marginBottom:40}}>
             <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
-              style={{padding:'14px 28px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:10,transition:'background 0.25s cubic-bezier(0.32,0.72,0,1)',boxShadow:`0 8px 24px ${BLUE}28`}}
+              style={{padding:'14px 28px',borderRadius:980,background:BLUE,color:'#111',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:10,transition:'background 0.25s cubic-bezier(0.32,0.72,0,1)',boxShadow:`0 8px 24px ${BLUE}28`}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
               Demander une demo gratuite
               <span style={{width:22,height:22,borderRadius:'50%',background:'rgba(255,255,255,0.22)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12}}>→</span>
@@ -242,7 +247,7 @@ function Hero() {
           <div style={{position:'absolute',inset:0,borderRadius:28,overflow:'hidden',border:`1px solid ${BDR}`}}><Globe/></div>
           {[
             {top:28,right:-18,delay:0,bg:`${BLUE_LT}`,bdrc:BLUE,children:<><div style={{fontSize:11,color:BLUE,fontWeight:600,marginBottom:4}}>Appel entrant</div><div style={{display:'flex',alignItems:'center',gap:8}}><motion.span animate={{opacity:[1,0.3,1]}} transition={{duration:1.2,repeat:Infinity}} style={{width:8,height:8,borderRadius:'50%',background:'#22C55E',boxShadow:'0 0 0 3px rgba(34,197,94,0.2)'}}/><span style={{fontSize:13,fontWeight:600,color:INK}}>Sophie repond - 0s</span></div></>},
-            {bottom:110,left:-18,delay:0.8,bg:'#fff',bdrc:BDR2,children:<><div style={{fontSize:11,color:MUTED,marginBottom:4}}>Visite planifiee</div><div style={{fontSize:13,fontWeight:600,color:INK}}>Mercredi 10h - Agenda ✓</div></>},
+            {bottom:110,left:-18,delay:0.8,bg:'rgba(20,21,23,0.92)',bdrc:BDR2,children:<><div style={{fontSize:11,color:MUTED,marginBottom:4}}>Visite planifiee</div><div style={{fontSize:13,fontWeight:600,color:INK}}>Mercredi 10h - Agenda ✓</div></>},
             {bottom:28,right:14,delay:1.4,bg:ORG_LT,bdrc:ORG,children:<><div style={{fontSize:11,color:ORG,fontWeight:600,marginBottom:2}}>Avis Google recu</div><div style={{fontSize:13,color:ORG,fontWeight:700}}>★★★★★  Nouveau</div></>},
           ].map(({top,bottom,left,right,delay,bg,bdrc,children},i)=>(
             <motion.div key={i} animate={{y:[0,i%2===0?-7:7,0]}} transition={{duration:3.5+i*0.5,repeat:Infinity,ease:'easeInOut',delay}}
@@ -273,6 +278,78 @@ function Ticker() {
             ))}
           </div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+// WAVEFORM (decorative, for the call-test section)
+function Waveform() {
+  const bars = 28
+  return (
+    <div style={{display:'flex',alignItems:'center',gap:3,height:34}}>
+      {Array.from({length:bars}).map((_,i)=>(
+        <motion.span key={i} animate={{scaleY:[0.25,1,0.35,0.8,0.25]}} transition={{duration:1.1+((i%5)*0.15),repeat:Infinity,ease:'easeInOut',delay:i*0.04}}
+          style={{width:3,height:'100%',borderRadius:2,background:BLUE,transformOrigin:'center',display:'inline-block'}}/>
+      ))}
+    </div>
+  )
+}
+
+// TEST THE AI BY PHONE
+function TestCallSection() {
+  const [copied,setCopied]=useState(false)
+  const copy=()=>{
+    try{navigator.clipboard.writeText(AI_PHONE_INTL)}catch{}
+    setCopied(true); setTimeout(()=>setCopied(false),2000)
+  }
+  return (
+    <section id="tester-ia" style={{background:`radial-gradient(ellipse 80% 60% at 50% 0%,${BLUE}12,transparent),${BG}`,padding:'110px 32px',borderTop:`1px solid ${BDR}`,position:'relative',overflow:'hidden'}}>
+      <div style={{maxWidth:880,margin:'0 auto',textAlign:'center' as const,position:'relative',zIndex:2}}>
+        <FadeUp>
+          <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'6px 14px 6px 10px',borderRadius:980,background:'rgba(255,255,255,0.04)',border:`1px solid ${BDR}`,marginBottom:20}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:BLUE,boxShadow:`0 0 10px ${BLUE}`}}/>
+            <span style={{fontSize:11,fontWeight:600,letterSpacing:'0.09em',textTransform:'uppercase' as const,color:MUTED}}>Essai en direct — gratuit</span>
+          </div>
+          <h2 style={{fontFamily:'system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',fontWeight:500,fontSize:'clamp(28px,4vw,48px)',color:INK,margin:'0 0 16px',letterSpacing:'-0.03em',lineHeight:1.1}}>
+            Appelez notre IA.<br/><span style={{color:BLUE}}>Maintenant.</span>
+          </h2>
+          <p style={{fontSize:16,color:MUTED,lineHeight:1.75,maxWidth:560,margin:'0 auto 44px'}}>
+            Composez ce numero, jouez le role d&apos;un client qui cherche un bien — comme s&apos;il appelait votre agence un dimanche soir — et laissez Sophie, notre agent vocal, vous repondre comme elle repondrait a vos clients.
+          </p>
+        </FadeUp>
+        <FadeUp delay={0.1}>
+          <div style={{background:CARD,border:`1.5px solid ${BDR2}`,borderRadius:28,padding:'44px 36px',backdropFilter:'blur(16px)',maxWidth:520,margin:'0 auto'}}>
+            <div style={{display:'flex',justifyContent:'center',marginBottom:18}}><Waveform/></div>
+            <div style={{fontSize:12,color:SUBTLE,letterSpacing:'0.1em',textTransform:'uppercase' as const,marginBottom:10}}>Numero a composer</div>
+            <div style={{fontSize:'clamp(30px,4vw,42px)',fontWeight:700,color:INK,fontFamily:'system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',letterSpacing:'-0.01em',marginBottom:26}}>{AI_PHONE_DISPLAY}</div>
+            <div style={{display:'flex',gap:12,flexWrap:'wrap' as const,justifyContent:'center'}}>
+              <a href={AI_PHONE_TEL} style={{padding:'15px 30px',borderRadius:980,background:BLUE,color:'#111',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:9,boxShadow:`0 10px 30px ${BLUE}40`,transition:'background 0.2s'}}
+                onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
+                📞 Appeler {AI_PHONE_INTL}
+              </a>
+              <button onClick={copy} style={{padding:'15px 24px',borderRadius:980,border:`1.5px solid ${BDR2}`,background:'transparent',color:INK,fontWeight:500,fontSize:14,cursor:'pointer',transition:'all 0.2s'}}
+                onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor=BLUE}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=BDR2}}>
+                {copied?'Copie ✓':'Copier le numero'}
+              </button>
+            </div>
+            <p style={{fontSize:11.5,color:SUBTLE,marginTop:22,lineHeight:1.6}}>Ligne de demonstration disponible 24h/24. Aucune donnee personnelle n&apos;est requise pour tester — parlez simplement d&apos;un projet immobilier fictif.</p>
+          </div>
+        </FadeUp>
+        <FadeUp delay={0.18}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,marginTop:36,maxWidth:640,margin:'36px auto 0'}} className="stats-grid">
+            {[
+              ['1','Composez le numero ci-dessus depuis votre telephone'],
+              ['2','Jouez un client : « Bonjour, je cherche un T3 dans le quartier... »'],
+              ['3','Ecoutez Sophie qualifier, repondre et proposer un creneau'],
+            ].map(([n,t])=>(
+              <div key={n} style={{padding:'18px 16px',borderRadius:14,background:'rgba(255,255,255,0.03)',border:`1px solid ${BDR}`,textAlign:'left' as const}}>
+                <div style={{width:24,height:24,borderRadius:'50%',background:BLUE_LT,color:BLUE,fontSize:12,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',marginBottom:10}}>{n}</div>
+                <div style={{fontSize:12.5,color:MUTED,lineHeight:1.55}}>{t}</div>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
       </div>
     </section>
   )
@@ -324,7 +401,7 @@ function ROICalc() {
             </div>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <div style={{background:INK,borderRadius:20,padding:'32px 28px',color:'#fff',display:'flex',flexDirection:'column',justifyContent:'space-between',minHeight:340}}>
+            <div style={{background:'#050506',border:'1px solid rgba(255,255,255,0.08)',borderRadius:20,padding:'32px 28px',color:'#fff',display:'flex',flexDirection:'column',justifyContent:'space-between',minHeight:340}}>
               <div style={{fontSize:13,fontWeight:600,color:'rgba(255,255,255,0.6)',marginBottom:24}}>Votre gain avec Vanivert</div>
               <div>
                 {[
@@ -342,7 +419,7 @@ function ROICalc() {
                 <div style={{fontSize:12,color:'rgba(255,255,255,0.5)',marginBottom:4}}>Gain annuel estime</div>
                 <div style={{fontSize:36,fontWeight:700,fontFamily:'system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',color:'#fff'}}>{(total*12).toLocaleString('fr-FR')} EUR</div>
                 <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
-                  style={{display:'block',marginTop:20,padding:'12px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:13,textDecoration:'none',textAlign:'center' as const,transition:'background 0.25s'}}
+                  style={{display:'block',marginTop:20,padding:'12px',borderRadius:980,background:BLUE,color:'#111',fontWeight:700,fontSize:13,textDecoration:'none',textAlign:'center' as const,transition:'background 0.25s'}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
                   Voir ma demo - gratuit →
                 </a>
@@ -489,7 +566,7 @@ function SocialProof() {
     {n:'<60s',label:'de l\'appel entrant au WhatsApp agent',color:BLUE},
   ]
   return (
-    <section style={{background:INK,padding:'64px 32px'}}>
+    <section style={{background:'#050506',borderTop:'1px solid rgba(255,255,255,0.06)',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'64px 32px'}}>
       <div style={{maxWidth:1100,margin:'0 auto'}}>
         <div style={{textAlign:'center',marginBottom:40}}>
           <p style={{fontSize:11,color:'rgba(255,255,255,0.4)',letterSpacing:'0.12em',textTransform:'uppercase' as const}}>Resultats constates sur nos agences pilotes</p>
@@ -617,7 +694,7 @@ function TeamStory() {
 // INVESTORS
 function Investors() {
   return (
-    <section id="investors" style={{background:INK,padding:'96px 32px',position:'relative',overflow:'hidden'}}>
+    <section id="investors" style={{background:'#050506',padding:'96px 32px',position:'relative',overflow:'hidden'}}>
       <div style={{position:'absolute',top:0,left:0,right:0,bottom:0,background:`radial-gradient(circle at 20% 50%,${BLUE}25 0%,transparent 50%),radial-gradient(circle at 80% 50%,${ORG}15 0%,transparent 50%)`,pointerEvents:'none'}}/>
       <div style={{maxWidth:900,margin:'0 auto',position:'relative',zIndex:2}}>
         <FadeUp>
@@ -653,7 +730,7 @@ function Investors() {
               <div style={{fontSize:14,color:'rgba(255,255,255,0.5)',marginBottom:4}}>Enregistre en France</div>
               <div style={{fontSize:14,color:'rgba(255,255,255,0.7)'}}>SIRET 93429900900019 - Cergy, France</div>
             </div>
-            <a href="mailto:investors@vanivert.eu" style={{padding:'14px 32px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${BLUE}40`,display:'inline-flex',alignItems:'center',gap:8}}>
+            <a href="mailto:investors@vanivert.eu" style={{padding:'14px 32px',borderRadius:980,background:BLUE,color:'#111',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${BLUE}40`,display:'inline-flex',alignItems:'center',gap:8}}>
               investors@vanivert.eu
               <span style={{fontSize:16}}>→</span>
             </a>
@@ -749,7 +826,7 @@ function Contact() {
                 </select>
                 <textarea value={message} onChange={e=>setMessage(e.target.value)} placeholder="Votre message (optionnel)" rows={3} style={{...inp,resize:'vertical' as const}}/>
                 <p style={{fontSize:11,color:SUBTLE,lineHeight:1.55,textAlign:'center' as const}}>En soumettant ce formulaire, vous acceptez que vos donnees soient utilisees pour vous recontacter. Conforme RGPD. Voir notre <a href="/legal/confidentialite" style={{color:BLUE}}>politique de confidentialite</a>.</p>
-                <button type="submit" disabled={loading} style={{padding:'14px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,border:'none',cursor:'pointer',transition:'background 0.25s',boxShadow:`0 4px 14px ${BLUE}28`}}
+                <button type="submit" disabled={loading} style={{padding:'14px',borderRadius:980,background:BLUE,color:'#111',fontWeight:700,fontSize:14,border:'none',cursor:'pointer',transition:'background 0.25s',boxShadow:`0 4px 14px ${BLUE}28`}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
                   {loading?'Envoi...':'Demander une demo gratuite →'}
                 </button>
@@ -768,7 +845,7 @@ function FooterCTA() {
     <section style={{background:`linear-gradient(135deg,${BG2} 0%,${BG3} 100%)`,padding:'0 32px 72px'}}>
       <div style={{maxWidth:1100,margin:'0 auto'}}>
         <FadeUp>
-          <div style={{background:INK,borderRadius:28,padding:'88px 40px',textAlign:'center' as const,position:'relative',overflow:'hidden'}}>
+          <div style={{background:'#050506',border:'1px solid rgba(255,255,255,0.08)',borderRadius:28,padding:'88px 40px',textAlign:'center' as const,position:'relative',overflow:'hidden'}}>
             <div style={{position:'absolute',top:0,left:0,right:0,bottom:0,background:`radial-gradient(circle at 30% 50%,${BLUE}30 0%,transparent 55%),radial-gradient(circle at 70% 50%,${ORG}20 0%,transparent 55%)`,pointerEvents:'none'}}/>
             <div style={{position:'relative',zIndex:2}}>
               <Pill color={ORG}>Disponible maintenant - France entiere</Pill>
@@ -780,7 +857,7 @@ function FooterCTA() {
               </p>
               <div style={{display:'flex',gap:16,justifyContent:'center',flexWrap:'wrap' as const}}>
                 <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer"
-                  style={{padding:'14px 32px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${BLUE}40`}}
+                  style={{padding:'14px 32px',borderRadius:980,background:BLUE,color:'#111',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${BLUE}40`}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=BLUE2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=BLUE}}>
                   Boostez votre CA →
                 </a>
@@ -843,17 +920,18 @@ function LocationMap() {
 // FOOTER
 function Footer() {
   const cols=[
-    {h:'Produit',links:[['Fonctionnalites','#features'],['ROI','#roi'],['Demo','https://realestate-eu-demo.vercel.app/login'],['Connexion','/login']]},
+    {h:'Produit',links:[['Fonctionnalites','#features'],['ROI','#roi'],['Tester l\u2019IA','#tester-ia'],['Demo','https://realestate-eu-demo.vercel.app/login'],['Connexion','/login']]},
     {h:'Ressources',links:[['Equipe','#team'],['Contact','#contact'],['Investisseurs','mailto:investors@vanivert.eu']]},
     {h:'Legal',links:[['Mentions legales','/legal/mentions-legales'],['CGV','/legal/cgv'],['Confidentialite','/legal/confidentialite'],['Admin','/admin']]},
   ]
   return (
-    <footer style={{background:'#0C0E1A',borderTop:`1px solid rgba(255,255,255,0.06)`,padding:'56px 32px 32px'}}>
+    <footer style={{background:'#050506',borderTop:`1px solid rgba(255,255,255,0.06)`,padding:'56px 32px 32px'}}>
       <div style={{maxWidth:1100,margin:'0 auto'}}>
         <div style={{display:'grid',gridTemplateColumns:'1.6fr repeat(3,1fr)',gap:32,marginBottom:48}} className="footer-grid">
           <div>
             <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14}}><Logo s={26}/><span style={{fontFamily:'system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',fontStyle:'italic',fontSize:16,color:'#fff'}}>vanivert</span></div>
             <p style={{fontSize:13,color:'rgba(255,255,255,0.4)',lineHeight:1.65,maxWidth:220,marginBottom:16}}>L&apos;IA immobiliere qui ne dort jamais. Enregistre en France, deploye partout.</p>
+            <a href={AI_PHONE_TEL} style={{fontSize:13,color:BLUE,textDecoration:'none',display:'block',marginBottom:16}}>📞 {AI_PHONE_INTL}</a>
             <a href="https://www.linkedin.com/company/vanivert" target="_blank" rel="noopener noreferrer"
               style={{width:32,height:32,borderRadius:8,background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.1)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,color:'#fff',textDecoration:'none'}}>in</a>
           </div>
@@ -893,7 +971,7 @@ function GDPR() {
       <p style={{fontSize:13,fontWeight:600,color:INK,margin:0}}>Ce site utilise des cookies</p>
       <p style={{fontSize:12,color:MUTED,lineHeight:1.55,margin:0}}>Cookies fonctionnels uniquement. Hebergement 100% UE. Aucune donnee transmise a des tiers. <a href="/legal/confidentialite" style={{color:BLUE}}>privacy@vanivert.eu</a></p>
       <div style={{display:'flex',gap:8}}>
-        <button onClick={accept} style={{flex:1,padding:'9px 16px',borderRadius:980,background:BLUE,color:'#fff',fontWeight:600,fontSize:12,border:'none',cursor:'pointer'}}>Accepter</button>
+        <button onClick={accept} style={{flex:1,padding:'9px 16px',borderRadius:980,background:BLUE,color:'#111',fontWeight:600,fontSize:12,border:'none',cursor:'pointer'}}>Accepter</button>
         <button onClick={decline} style={{flex:1,padding:'9px 16px',borderRadius:980,background:'transparent',color:MUTED,fontWeight:500,fontSize:12,border:`1px solid ${BDR2}`,cursor:'pointer'}}>Refuser</button>
       </div>
     </motion.div>
@@ -927,6 +1005,7 @@ export default function Home() {
       <main>
         <Hero/>
         <Ticker/>
+        <TestCallSection/>
         <ROICalc/>
         <FeaturesSection/>
         <SocialProof/>
