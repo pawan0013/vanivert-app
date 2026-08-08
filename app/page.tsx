@@ -76,7 +76,7 @@ function Nav() {
   const [sc,setSc]=useState(false)
   const [mob,setMob]=useState(false)
   useEffect(()=>{const h=()=>setSc(window.scrollY>30);window.addEventListener('scroll',h,{passive:true});return()=>window.removeEventListener('scroll',h)},[])
-  const links:[string,string][]=[['Fonctionnalités','#features'],['ROI','#roi'],["Tester l'IA",'#tester-ia'],['Équipe','#team'],['Investisseurs','#investors']]
+  const links:[string,string][]=[['Fonctionnalités','#features'],['ROI','#roi'],["Tester l'IA",'#tester-ia'],['Équipe','#team'],['Investisseurs','/investisseurs']]
   return (
     <>
       <nav style={{position:'fixed',top:0,left:0,right:0,zIndex:200,height:64,display:'flex',alignItems:'center',background:sc?'rgba(8,30,44,0.96)':'transparent',backdropFilter:sc?'blur(20px)':'none',WebkitBackdropFilter:sc?'blur(20px)':'none',borderBottom:`1px solid ${sc?BDR2:'transparent'}`,transition:'all 0.35s cubic-bezier(0.32,0.72,0,1)'}}>
@@ -671,65 +671,36 @@ function TeamStory() {
   )
 }
 
-// ── INVESTORS (reads from CMS localStorage) ───────────────────────────────────
-const DEFAULT_INVESTOR = {
-  h2_line1:"Nous bâtissons le socle",
-  h2_line2:"de l'immobilier français.",
-  body:"8 500 agences indépendantes paient entre 70 et 150 € par mois à des CRM qui ne font ni la gestion des leads WhatsApp, ni la centralisation des portails, ni la collecte d'avis Google. C'est un marché de plus de 10 millions d'euros par an, rien qu'en France.",
-  stat1_n:"8 500+", stat1_l:"agences indépendantes en France",
-  stat2_n:"10 M€+", stat2_l:"marché CRM immobilier annuel",
-  stat3_n:"10+",    stat3_l:"agences pilotes actives",
-  stat4_n:"0",      stat4_l:"concurrent offrant WhatsApp + leads + avis + CRM",
-  investor_email:"investors@vanivert.eu",
-  siret_line:"SIRET 93429900900019, Cergy, France",
-}
-
+// ── INVESTOR TEASER (links to /investisseurs) ────────────────────────────────
 function Investors() {
-  const [d,setD]=useState(DEFAULT_INVESTOR)
-  useEffect(()=>{
-    try{
-      const s=localStorage.getItem(CMS_KEY)
-      if(s){const p=JSON.parse(s);setD({...DEFAULT_INVESTOR,...p})}
-    }catch{}
-  },[])
-  const stats=[
-    {n:d.stat1_n,l:d.stat1_l,c:LIME},{n:d.stat2_n,l:d.stat2_l,c:TEAL},
-    {n:d.stat3_n,l:d.stat3_l,c:'#22C55E'},{n:d.stat4_n,l:d.stat4_l,c:PURPLE},
-  ]
   return (
-    <section id="investors" style={{background:BG_DEEP,padding:'96px 32px',position:'relative',overflow:'hidden'}}>
-      <div style={{position:'absolute',top:0,left:0,right:0,bottom:0,background:`radial-gradient(circle at 20% 50%,rgba(132,204,22,0.07) 0%,transparent 50%),radial-gradient(circle at 80% 50%,rgba(45,212,191,0.05) 0%,transparent 50%)`,pointerEvents:'none'}}/>
-      <div style={{maxWidth:900,margin:'0 auto',position:'relative',zIndex:2}}>
+    <section id="investors" style={{background:BG_DEEP,padding:'72px 32px',borderTop:`1px solid ${BDR}`}}>
+      <div style={{maxWidth:860,margin:'0 auto'}}>
         <FadeUp>
-          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20}}>
-            <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${TEAL},${LIME})`}}/>
-            <span style={{fontSize:12,fontWeight:800,color:TEAL,letterSpacing:'0.14em',textTransform:'uppercase' as const,fontFamily:FB}}>Investisseurs</span>
-          </div>
-          <h2 style={{fontWeight:700,fontSize:'clamp(28px,4vw,50px)',color:WHITE,letterSpacing:'-0.035em',lineHeight:1.1,marginBottom:24,fontFamily:FH}}>
-            {d.h2_line1}<br/><span style={{color:LIME}}>{d.h2_line2}</span>
-          </h2>
-          <p style={{fontSize:16,color:MUTED,lineHeight:1.75,maxWidth:620,marginBottom:40,fontFamily:FB}}>{d.body}</p>
-        </FadeUp>
-        <FadeUp delay={0.1}>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:48}} className="stats-grid">
-            {stats.map(s=>(
-              <div key={s.l} style={{padding:'20px 18px',borderRadius:14,background:BG_CARD,border:`1px solid ${BDR}`}}>
-                <div style={{fontSize:24,fontWeight:700,color:s.c,marginBottom:6,fontFamily:FH}}>{s.n}</div>
-                <div style={{fontSize:12,color:MUTED,lineHeight:1.5,fontFamily:FB}}>{s.l}</div>
+          <div style={{borderRadius:24,padding:'52px 48px',background:'rgba(30,41,59,0.45)',border:`1px solid ${BDR}`,position:'relative',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'space-between',gap:40,flexWrap:'wrap' as const}}>
+            <div style={{position:'absolute',top:0,left:0,right:0,bottom:0,background:`radial-gradient(ellipse 70% 80% at 0% 50%,rgba(132,204,22,0.06) 0%,transparent 60%)`,pointerEvents:'none'}}/>
+            <div style={{position:'relative',zIndex:1,maxWidth:500}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14}}>
+                <span style={{width:24,height:3,borderRadius:2,background:`linear-gradient(90deg,${TEAL},${LIME})`}}/>
+                <span style={{fontSize:11,fontWeight:700,color:TEAL,letterSpacing:'0.12em',textTransform:'uppercase' as const,fontFamily:FB}}>Investisseurs</span>
               </div>
-            ))}
-          </div>
-        </FadeUp>
-        <FadeUp delay={0.15}>
-          <div style={{display:'flex',gap:24,flexWrap:'wrap' as const,alignItems:'center',paddingTop:32,borderTop:`1px solid ${BDR}`}}>
-            <div style={{flex:1,minWidth:240}}>
-              <div style={{fontSize:14,color:MUTED,marginBottom:4,fontFamily:FB}}>Enregistré en France</div>
-              <div style={{fontSize:14,color:OFF,fontFamily:FB}}>{d.siret_line}</div>
+              <h2 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(22px,3vw,34px)',color:WHITE,letterSpacing:'-0.025em',lineHeight:1.2,marginBottom:12}}>
+                104 M€ de marché adressable.<br/><span style={{color:LIME}}>Zéro concurrent full-stack.</span>
+              </h2>
+              <p style={{fontSize:14,color:MUTED,lineHeight:1.7,fontFamily:FB}}>
+                30 000 agences en France, ARPU 239 €/mois, ARR 14,3 M€ à 5 ans. TAM/SAM/SOM, modèle de revenus et trajectoire détaillés dans notre dossier investisseur.
+              </p>
             </div>
-            <a href={`mailto:${d.investor_email}`} style={{padding:'14px 32px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${LIME_GL}`,display:'inline-flex',alignItems:'center',gap:8,fontFamily:FH}}
-              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
-              {d.investor_email} →
-            </a>
+            <div style={{position:'relative',zIndex:1,display:'flex',flexDirection:'column',gap:12,flexShrink:0}}>
+              <a href="/investisseurs" style={{padding:'14px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8,boxShadow:`0 8px 24px ${LIME_GL}`,fontFamily:FH,whiteSpace:'nowrap' as const}}
+                onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
+                Voir le dossier investisseur →
+              </a>
+              <a href="mailto:investors@vanivert.eu" style={{padding:'12px 24px',borderRadius:980,border:`1.5px solid ${BDR2}`,color:MUTED,fontWeight:500,fontSize:13,textDecoration:'none',textAlign:'center' as const,fontFamily:FB,transition:'all 0.2s'}}
+                onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor=LIME;(e.currentTarget as HTMLElement).style.color=LIME}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=BDR2;(e.currentTarget as HTMLElement).style.color=MUTED}}>
+                investors@vanivert.eu
+              </a>
+            </div>
           </div>
         </FadeUp>
       </div>
@@ -737,7 +708,7 @@ function Investors() {
   )
 }
 
-// ── CONTACT FORM (phone with +33 prefix, pro email detector) ──────────────────
+// ── CONTACT FORM// ── CONTACT FORM (phone with +33 prefix, pro email detector) ──────────────────
 const COUNTRY_CODES=[
   {code:'+33',flag:'🇫🇷',label:'France'},
   {code:'+32',flag:'🇧🇪',label:'Belgique'},
@@ -892,7 +863,7 @@ function FooterCTA() {
 function Footer() {
   const cols=[
     {h:'Produit',links:[['Fonctionnalités','#features'],['ROI','#roi'],["Tester l'IA",'#tester-ia'],['Connexion','/login']]},
-    {h:'Entreprise',links:[['Équipe','#team'],['Contact','#contact'],['Investisseurs','#investors']]},
+    {h:'Entreprise',links:[['Équipe','#team'],['Contact','#contact'],['Investisseurs','/investisseurs']]},
     {h:'Légal',links:[['Mentions légales','/legal/mentions-legales'],['CGV','/legal/cgv'],['Confidentialité','/legal/confidentialite'],['Admin','/admin']]},
   ]
   return (
