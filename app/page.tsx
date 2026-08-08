@@ -671,36 +671,37 @@ function TeamStory() {
   )
 }
 
-// ── INVESTOR TEASER (links to /investisseurs) ────────────────────────────────
+// ── INVESTOR TEASER ──────────────────────────────────────────────────────────
 function Investors() {
   return (
-    <section id="investors" style={{background:BG_DEEP,padding:'72px 32px',borderTop:`1px solid ${BDR}`}}>
-      <div style={{maxWidth:860,margin:'0 auto'}}>
+    <section id="investors" style={{background:BG_DEEP,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
+      <div style={{maxWidth:900,margin:'0 auto'}}>
         <FadeUp>
-          <div style={{borderRadius:24,padding:'52px 48px',background:'rgba(30,41,59,0.45)',border:`1px solid ${BDR}`,position:'relative',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'space-between',gap:40,flexWrap:'wrap' as const}}>
-            <div style={{position:'absolute',top:0,left:0,right:0,bottom:0,background:`radial-gradient(ellipse 70% 80% at 0% 50%,rgba(132,204,22,0.06) 0%,transparent 60%)`,pointerEvents:'none'}}/>
-            <div style={{position:'relative',zIndex:1,maxWidth:500}}>
-              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14}}>
-                <span style={{width:24,height:3,borderRadius:2,background:`linear-gradient(90deg,${TEAL},${LIME})`}}/>
-                <span style={{fontSize:11,fontWeight:700,color:TEAL,letterSpacing:'0.12em',textTransform:'uppercase' as const,fontFamily:FB}}>Investisseurs</span>
-              </div>
-              <h2 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(22px,3vw,34px)',color:WHITE,letterSpacing:'-0.025em',lineHeight:1.2,marginBottom:12}}>
-                104 M€ de marché adressable.<br/><span style={{color:LIME}}>Zéro concurrent full-stack.</span>
-              </h2>
-              <p style={{fontSize:14,color:MUTED,lineHeight:1.7,fontFamily:FB}}>
-                30 000 agences en France, ARPU 239 €/mois, ARR 14,3 M€ à 5 ans. TAM/SAM/SOM, modèle de revenus et trajectoire détaillés dans notre dossier investisseur.
-              </p>
-            </div>
-            <div style={{position:'relative',zIndex:1,display:'flex',flexDirection:'column',gap:12,flexShrink:0}}>
-              <a href="/investisseurs" style={{padding:'14px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8,boxShadow:`0 8px 24px ${LIME_GL}`,fontFamily:FH,whiteSpace:'nowrap' as const}}
-                onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
-                Voir le dossier investisseur →
-              </a>
-              <a href="mailto:investors@vanivert.eu" style={{padding:'12px 24px',borderRadius:980,border:`1.5px solid ${BDR2}`,color:MUTED,fontWeight:500,fontSize:13,textDecoration:'none',textAlign:'center' as const,fontFamily:FB,transition:'all 0.2s'}}
-                onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor=LIME;(e.currentTarget as HTMLElement).style.color=LIME}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=BDR2;(e.currentTarget as HTMLElement).style.color=MUTED}}>
-                investors@vanivert.eu
-              </a>
-            </div>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20}}>
+            <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${TEAL},${LIME})`}}/>
+            <span style={{fontSize:12,fontWeight:800,color:TEAL,letterSpacing:'0.14em',textTransform:'uppercase' as const,fontFamily:FB}}>Investisseurs</span>
+          </div>
+          <h2 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(28px,4vw,50px)',color:WHITE,letterSpacing:'-0.035em',lineHeight:1.1,marginBottom:20}}>
+            104 M€ de marché adressable.<br/><span style={{color:LIME}}>Zéro concurrent full-stack.</span>
+          </h2>
+          <p style={{fontSize:16,color:MUTED,lineHeight:1.75,maxWidth:580,marginBottom:40,fontFamily:FB}}>
+            30 000 agences en France. Aucune solution ne couvre aujourd&apos;hui la chaîne complète : leads, voix IA, WhatsApp, avis Google et conformité dans un seul produit. C&apos;est ce que Vanivert fait.
+          </p>
+        </FadeUp>
+        <FadeUp delay={0.1}>
+          <div style={{display:'flex',gap:14,flexWrap:'wrap' as const}}>
+            <a href="/investisseurs"
+              style={{padding:'14px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8,boxShadow:`0 8px 24px ${LIME_GL}`,fontFamily:FH,transition:'background 0.25s'}}
+              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}}
+              onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
+              Voir le dossier investisseur →
+            </a>
+            <a href="mailto:investors@vanivert.eu"
+              style={{padding:'14px 24px',borderRadius:980,border:`1.5px solid ${BDR2}`,color:MUTED,fontWeight:500,fontSize:14,textDecoration:'none',fontFamily:FB,transition:'all 0.25s'}}
+              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor=LIME;(e.currentTarget as HTMLElement).style.color=LIME}}
+              onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=BDR2;(e.currentTarget as HTMLElement).style.color=MUTED}}>
+              investors@vanivert.eu
+            </a>
           </div>
         </FadeUp>
       </div>
