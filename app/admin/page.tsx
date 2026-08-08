@@ -42,6 +42,15 @@ const DEFAULT_CMS = {
   pilot_count:'10+',response_time:'60s',cta_demo:'Réserver une démo',cta_features:'Comment ça marche',
   linkedin_pawan:'https://linkedin.com/in/pawan-kumar-iiitg',
   investor_email:'investors@vanivert.eu',privacy_email:'privacy@vanivert.eu',team_email:'team@vanivert.eu',
+  // Investor section (editable from admin)
+  h2_line1:'Nous bâtissons le socle',
+  h2_line2:"de l'immobilier français.",
+  investor_body:"8 500 agences indépendantes paient entre 70 et 150 € par mois à des CRM qui ne font ni la gestion des leads WhatsApp, ni la centralisation des portails, ni la collecte d'avis Google. C'est un marché de plus de 10 millions d'euros par an, rien qu'en France.",
+  stat1_n:'8 500+',stat1_l:'agences indépendantes en France',
+  stat2_n:'10 M€+',stat2_l:'marché CRM immobilier annuel',
+  stat3_n:'10+',stat3_l:'agences pilotes actives',
+  stat4_n:'0',stat4_l:'concurrent offrant WhatsApp + leads + avis + CRM',
+  siret_line:'SIRET 93429900900019, Cergy, France',
 }
 type CMS = typeof DEFAULT_CMS
 
@@ -146,6 +155,27 @@ function CMSTab() {
       </div>
       <Section title="Hero : section d'accueil"><Field label="Titre principal" field="hero_h1"/><Field label="Sous-titre" field="hero_sub" multiline/><Field label="Bouton CTA 1" field="hero_cta1"/><Field label="Bouton CTA 2" field="hero_cta2"/></Section>
       <Section title="Contact"><Field label="Titre section contact" field="contact_h2"/><Field label="Sous-titre contact" field="contact_sub" multiline/></Section>
+      <Section title="Section investisseurs">
+        <Field label="Titre ligne 1" field="h2_line1"/>
+        <Field label="Titre ligne 2 (en vert)" field="h2_line2"/>
+        <Field label="Corps du texte" field="investor_body" multiline/>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <div><Label>Stat 1 — chiffre</Label><input value={cms.stat1_n} onChange={e=>setCms({...cms,stat1_n:e.target.value})} style={inp()}/></div>
+          <div><Label>Stat 1 — libellé</Label><input value={cms.stat1_l} onChange={e=>setCms({...cms,stat1_l:e.target.value})} style={inp()}/></div>
+          <div><Label>Stat 2 — chiffre</Label><input value={cms.stat2_n} onChange={e=>setCms({...cms,stat2_n:e.target.value})} style={inp()}/></div>
+          <div><Label>Stat 2 — libellé</Label><input value={cms.stat2_l} onChange={e=>setCms({...cms,stat2_l:e.target.value})} style={inp()}/></div>
+          <div><Label>Stat 3 — chiffre</Label><input value={cms.stat3_n} onChange={e=>setCms({...cms,stat3_n:e.target.value})} style={inp()}/></div>
+          <div><Label>Stat 3 — libellé</Label><input value={cms.stat3_l} onChange={e=>setCms({...cms,stat3_l:e.target.value})} style={inp()}/></div>
+          <div><Label>Stat 4 — chiffre</Label><input value={cms.stat4_n} onChange={e=>setCms({...cms,stat4_n:e.target.value})} style={inp()}/></div>
+          <div><Label>Stat 4 — libellé</Label><input value={cms.stat4_l} onChange={e=>setCms({...cms,stat4_l:e.target.value})} style={inp()}/></div>
+        </div>
+        <div style={{marginTop:12}}>
+          <Label>Email investisseurs</Label><input value={cms.investor_email} onChange={e=>setCms({...cms,investor_email:e.target.value})} style={inp()}/>
+        </div>
+        <div style={{marginTop:12}}>
+          <Label>Ligne SIRET / ville</Label><input value={cms.siret_line} onChange={e=>setCms({...cms,siret_line:e.target.value})} style={inp()}/>
+        </div>
+      </Section>
       <Section title="Entreprise et footer">
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
           <div><Label>Email de contact</Label><input value={cms.company_email} onChange={e=>setCms({...cms,company_email:e.target.value})} style={inp()}/></div>
