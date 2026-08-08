@@ -96,7 +96,7 @@ function Nav() {
               onMouseEnter={e=>(e.currentTarget.style.color=WHITE)} onMouseLeave={e=>(e.currentTarget.style.color=MUTED)}>Connexion</a>
             <a href={AI_PHONE_TEL} style={{fontSize:13,color:MUTED,textDecoration:'none',padding:'8px 14px',fontWeight:450,display:'inline-flex',alignItems:'center',gap:6,transition:'color 0.2s',fontFamily:FB}}
               onMouseEnter={e=>(e.currentTarget.style.color=LIME)} onMouseLeave={e=>(e.currentTarget.style.color=MUTED)}>📞 Appeler l&apos;IA</a>
-            <a href="#contact" style={{fontSize:13,fontWeight:700,color:'#000',textDecoration:'none',padding:'9px 22px',borderRadius:980,background:LIME,display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s',boxShadow:`0 4px 18px ${LIME_GL}`,fontFamily:FH}}
+            <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer" style={{fontSize:13,fontWeight:700,color:'#000',textDecoration:'none',padding:'9px 22px',borderRadius:980,background:LIME,display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s',boxShadow:`0 4px 18px ${LIME_GL}`,fontFamily:FH}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
               Demander une démo
             </a>
@@ -111,7 +111,7 @@ function Nav() {
       <AnimatePresence>
         {mob&&(
           <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} style={{position:'fixed',inset:0,zIndex:250,background:'rgba(6,22,32,0.98)',backdropFilter:'blur(20px)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:4}}>
-            {[...links,['Connexion','/login'],['Démo','#contact'],['📞 Appeler',AI_PHONE_TEL]].map(([l,h],i)=>(
+            {[...links,['Connexion','/login'],['Démo','https://realestate-eu-demo.vercel.app/login'],['📞 Appeler',AI_PHONE_TEL]].map(([l,h],i)=>(
               <motion.a key={l} href={h} initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:i*0.06}} onClick={()=>setMob(false)}
                 style={{fontSize:22,fontFamily:FH,fontStyle:'italic',color:WHITE,textDecoration:'none',padding:'12px 32px',textAlign:'center'}}>{l}</motion.a>
             ))}
@@ -328,7 +328,7 @@ function Hero() {
               <p style={{fontSize:17,color:MUTED,lineHeight:1.75,maxWidth:460,marginBottom:36,fontFamily:FB}}>{s.sub}</p>
 
               <div style={{display:'flex',gap:12,flexWrap:'wrap' as const}}>
-                <a href="#contact" style={{padding:'14px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s',boxShadow:`0 8px 24px ${LIME_GL}`,fontFamily:FH}}
+                <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer" style={{padding:'14px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s',boxShadow:`0 8px 24px ${LIME_GL}`,fontFamily:FH}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
                   Demander une démo gratuite →
                 </a>
@@ -478,7 +478,7 @@ function FeaturesSection() {
               </div>
               <div style={{display:'flex',flexDirection:'column',gap:12}}>
                 <div style={{padding:'28px',borderRadius:16,background:BG_CARD,border:`1px solid ${BDR}`,textAlign:'center' as const,fontSize:52}}>{f.icon}</div>
-                <a href="#contact" style={{padding:'14px',borderRadius:980,background:f.color,color:'#000',fontWeight:700,fontSize:13,textDecoration:'none',textAlign:'center' as const,transition:'opacity 0.2s',display:'block',fontFamily:FH}}
+                <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer" style={{padding:'14px',borderRadius:980,background:f.color,color:'#000',fontWeight:700,fontSize:13,textDecoration:'none',textAlign:'center' as const,transition:'opacity 0.2s',display:'block',fontFamily:FH}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.opacity='0.85'}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.opacity='1'}}>
                   Voir cette fonctionnalité en action →
                 </a>
@@ -594,7 +594,7 @@ function ROICalc() {
                 <div style={{fontSize:52,fontWeight:700,fontFamily:FH,color:LIME,letterSpacing:'-0.03em'}}>{(total/1000).toFixed(0)}K €</div>
                 <div style={{fontSize:13,color:MUTED,fontFamily:FB}}>soit {Math.round(total/12).toLocaleString('fr-FR')} € par mois</div>
               </div>
-              <a href="#contact" style={{display:'block',marginTop:24,padding:'13px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:13,textDecoration:'none',textAlign:'center' as const,transition:'background 0.25s',fontFamily:FH}}
+              <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer" style={{display:'block',marginTop:24,padding:'13px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:13,textDecoration:'none',textAlign:'center' as const,transition:'background 0.25s',fontFamily:FH}}
                 onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
                 Demander ma démo gratuite →
               </a>
@@ -842,7 +842,7 @@ function FooterCTA() {
               </h2>
               <p style={{fontSize:16,color:MUTED,maxWidth:420,margin:'0 auto 36px',fontFamily:FB}}>Rejoignez les agences qui ont automatisé leur croissance.</p>
               <div style={{display:'flex',gap:16,justifyContent:'center',flexWrap:'wrap' as const}}>
-                <a href="#contact" style={{padding:'14px 32px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${LIME_GL}`,fontFamily:FH}}
+                <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer" style={{padding:'14px 32px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',transition:'background 0.25s',boxShadow:`0 8px 24px ${LIME_GL}`,fontFamily:FH}}
                   onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
                   Demander une démo gratuite →
                 </a>
