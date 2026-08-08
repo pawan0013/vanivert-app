@@ -396,36 +396,36 @@ function Ticker() {
 
 // ── FEATURES (full tab section) ───────────────────────────────────────────────
 const FEATURES_FULL = [
-  {id:'leads',icon:'📥',color:LIME,tag:'Capture des leads',
-   headline:'Le lead arrive. La fiche est créée avant même que vous l\'ayez lu.',
-   body:'SeLoger, LeBonCoin, BienIci ou WhatsApp : Vanivert scanne votre boîte en continu, extrait le nom, le téléphone, le type de bien et la source, crée la fiche dans le CRM et notifie l\'agent par WhatsApp. Cycle complet en moins de 60 secondes, sans aucun geste humain.',
-   steps:['Email de lead reçu de SeLoger / LeBonCoin / BienIci / WhatsApp','Vanivert extrait : nom, téléphone, type, localisation, source','Fiche prospect créée dans le CRM, statut = Nouveau','Agent notifié par WhatsApp + email en moins de 60 s'],
-   metrics:['< 60 s de l\'email à la notification','4 sources supportées','Zéro double saisie']},
-  {id:'bot',icon:'💬',color:TEAL,tag:'Bot WhatsApp 24h/24',
-   headline:'Un prospect écrit le dimanche à 19h. Le bot qualifie, matche et planifie.',
-   body:'Le bot salue le prospect par son prénom, collecte 4 critères clés (achat/location, type, budget, secteur), lui envoie 2 biens réels en cartes WhatsApp, et propose un créneau de visite, tout ça sans intervention humaine. C\'est exactement ce qui s\'est passé lors de notre démo Century 21, un dimanche soir.',
-   steps:['Prospect écrit au numéro WhatsApp de l\'agence','Bot collecte les 4 critères de recherche','2 biens réels envoyés en cartes WhatsApp','Créneau de visite proposé et confirmé'],
-   metrics:['0 intervention humaine','4 critères en 12 minutes','Fonctionne 24h/24, 7j/7']},
-  {id:'visits',icon:'📅',color:TEAL,tag:'Coordination 3 parties',
-   headline:'Acheteur, vendeur, agent. Le bot gère les trois. L\'agent valide en un clic.',
-   body:'Quand le prospect confirme son intérêt, le système ouvre simultanément WhatsApp avec le vendeur. Il croise les disponibilités, identifie un créneau commun et présente la proposition finale à l\'agent. Rappels J-1 à 18h et H-2 envoyés aux trois parties. Taux de no-show attendu : moins de 8 %.',
-   steps:['Acheteur confirme un créneau au bot','Bot contacte le vendeur et récupère ses disponibilités','Créneau commun identifié, proposition envoyée à l\'agent','Confirmations + lien Maps envoyés aux 3 parties'],
-   metrics:['No-show < 8 % (vs 23 % sans rappels)','Rappels J-1 et H-2 automatiques','Email récap + Maps aux 3 parties']},
-  {id:'voice',icon:'🎙️',color:LIME,tag:'IA vocale Sophie',
-   headline:'Sophie répond à chaque appel manqué. En français. En moins de 60 secondes.',
-   body:'Sophie qualifie l\'appelant, récupère ses critères de recherche et envoie un résumé structuré à l\'agent par WhatsApp. Même cerveau IA que le bot WhatsApp : quand on améliore la compréhension de Sophie, les deux s\'améliorent. Hébergé en UE, aucune donnée transmise à un tiers.',
-   steps:['Appel manqué détecté','Sophie rappelle en moins de 60 secondes','Critères collectés : type, budget, secteur, délai','Résumé structuré envoyé à l\'agent par WhatsApp'],
-   metrics:['< 60 s de délai de rappel','Résumé WhatsApp à l\'agent','Hébergé en UE, 100 % RGPD']},
-  {id:'client',icon:'🎂',color:ORANGE,tag:'Client à vie',
-   headline:'La relation ne s\'arrête pas chez le notaire.',
-   body:'Anniversaire d\'acquisition, estimation trimestrielle DVF, voeux de Noël et 14 juillet, tout est envoyé automatiquement depuis le nom de l\'agent. Quand un client est prêt à revendre, Vanivert le détecte et crée une opportunité de mandat. Coût d\'acquisition d\'un mandat referral : 0 €.',
-   steps:['Signature détectée dans le CRM','Demande d\'avis Google envoyée J+1','Contacts personnalisés tout au long de l\'année','Opportunité de mandat créée automatiquement'],
-   metrics:['4+ contacts personnalisés par an','0 € de coût d\'acquisition referral','12 000–20 000 € de CA réactivé / an']},
-  {id:'compliance',icon:'🔒',color:PURPLE,tag:'Conformité & mandats',
-   headline:'Registre Loi Hoguet. Diagnostics. LCB-FT. Un seul écran.',
-   body:'Chaque mandat reçoit un numéro séquentiel horodaté, conforme Loi Hoguet, exportable en PDF pour inspection T-GCA. Les 5 diagnostics obligatoires (DPE, amiante, plomb, électricité, gaz) sont suivis avec alertes J-60, J-30 et J-7. Chaque dossier LCB-FT suspect est signalé automatiquement.',
-   steps:['Mandat créé avec numéro séquentiel Loi Hoguet','Diagnostics suivis avec alertes J-60, J-30, J-7','Dossier LCB-FT suspect signalé automatiquement','Export PDF T-GCA en 30 secondes'],
-   metrics:['Registre mandats conforme Loi Hoguet','Alertes diagnostics J-60 / J-30 / J-7','Export PDF inspection en 30 s']},
+  {id:'leads',icon:'📥',color:LIME,tag:'Centralisation des leads',
+   headline:'Un lead manqué, c\'est une vente qui part chez le concurrent.',
+   body:'Dès qu\'un prospect dépose une demande sur SeLoger, LeBonCoin, BienIci ou WhatsApp, Vanivert crée sa fiche dans le CRM et prévient l\'agent par WhatsApp. Moins de 60 secondes, de bout en bout, sans que personne n\'ait rien touché.',
+   steps:['Demande reçue depuis n\'importe quel portail','Fiche créée automatiquement dans le CRM','Agent averti par WhatsApp en moins de 60 s','Source tracée, aucune saisie manuelle'],
+   metrics:['Moins de 60 s de bout en bout','SeLoger, LBCo, BienIci, WhatsApp','Aucune double saisie']},
+  {id:'bot',icon:'💬',color:TEAL,tag:'Bot WhatsApp',
+   headline:'Votre agence répond, même quand elle est fermée.',
+   body:'Un particulier écrit à votre numéro WhatsApp le soir ou le week-end. Le bot le salue, lui pose les bonnes questions, lui envoie des biens qui correspondent et lui propose directement un créneau de visite. Rien à faire de votre côté.',
+   steps:['Le prospect écrit à votre numéro WhatsApp','Le bot lui pose 4 questions clés','Deux biens correspondants lui sont envoyés','Un créneau de visite est proposé et confirmé'],
+   metrics:['Aucune intervention humaine','Opérationnel 7j/7, 24h/24','Déjà testé en conditions réelles']},
+  {id:'visits',icon:'📅',color:TEAL,tag:'Organisation des visites',
+   headline:'Plus jamais à jongler entre l\'acheteur, le vendeur et votre agenda.',
+   body:'Une fois que l\'acheteur dit oui, le système contacte le vendeur pour vérifier ses disponibilités, trouve un créneau qui convient aux deux, et envoie une confirmation à tout le monde avec l\'adresse et le lien Maps. La veille et deux heures avant, chacun reçoit un rappel.',
+   steps:['L\'acheteur confirme son intérêt','Le vendeur est contacté pour ses créneaux','Un horaire convenant aux trois est retenu','Confirmation et rappels envoyés automatiquement'],
+   metrics:['Moins de 8 % d\'absences (contre 23 %)', 'Rappels automatiques J-1 et H-2','Confirmation par écrit aux trois parties']},
+  {id:'voice',icon:'🎙️',color:LIME,tag:'Sophie — IA vocale',
+   headline:'Chaque appel reçoit une réponse. Même à 22h un dimanche.',
+   body:'Sophie rappelle les appels manqués en moins d\'une minute, pose les questions utiles en français courant et envoie un résumé à l\'agent par WhatsApp. Vos prospects ont toujours quelqu\'un à qui parler, vos agents ne ratent plus rien.',
+   steps:['Appel manqué sur la ligne de l\'agence','Sophie rappelle en moins de 60 secondes','Elle collecte les critères de recherche','L\'agent reçoit un résumé complet sur WhatsApp'],
+   metrics:['Rappel en moins d\'une minute','Résumé envoyé à l\'agent','Données hébergées en Europe']},
+  {id:'client',icon:'🎂',color:ORANGE,tag:'Fidélisation client',
+   headline:'Un client qu\'on garde, c\'est un mandat qu\'on n\'a pas à chercher.',
+   body:'Après la signature, Vanivert maintient le lien : message d\'anniversaire d\'installation, estimation du bien tous les trois mois, message de voeux à Noël. Tout part au nom de l\'agent. Quand le client est prêt à revendre, une opportunité de mandat s\'ouvre toute seule dans le CRM.',
+   steps:['Signature enregistrée dans le CRM','Demande d\'avis Google envoyée le lendemain','Messages de suivi envoyés tout au long de l\'année','Opportunité de mandat créée dès que le client bouge'],
+   metrics:['Plus de 4 contacts personnalisés par an','Aucun frais d\'acquisition sur le referral','Entre 12 000 et 20 000 € de CA retrouvé par an']},
+  {id:'compliance',icon:'🔒',color:PURPLE,tag:'Conformité réglementaire',
+   headline:'Inspections, mandats, diagnostics. Rien ne vous échappe.',
+   body:'Chaque mandat reçoit un numéro de registre conforme à la loi Hoguet. Les cinq diagnostics obligatoires (DPE, amiante, plomb, électricité, gaz) sont suivis avec des alertes à J-60, J-30 et J-7. En cas de contrôle, l\'export PDF est prêt en trente secondes.',
+   steps:['Mandat créé avec numéro de registre automatique','Diagnostics suivis avec alertes à J-60, J-30 et J-7','Signalement automatique des dossiers LCB-FT suspects','Export PDF pour contrôle en trente secondes'],
+   metrics:['Registre conforme loi Hoguet','Alertes diagnostics automatiques','PDF de contrôle en 30 secondes']},
 ]
 
 function FeaturesSection() {
@@ -444,7 +444,7 @@ function FeaturesSection() {
           </h2>
         </FadeUp>
         {/* Tab bar */}
-        <div style={{display:'flex',gap:8,marginBottom:32,overflowX:'auto' as const,paddingBottom:4,scrollbarWidth:'none' as const}}>
+        <div style={{display:'flex',gap:8,marginBottom:32,overflowX:'auto' as const,paddingBottom:8,scrollbarWidth:'none' as const,WebkitOverflowScrolling:'touch'}}>
           {FEATURES_FULL.map((feat,i)=>(
             <button key={feat.id} onClick={()=>setActive(i)} style={{display:'flex',alignItems:'center',gap:7,padding:'9px 18px',borderRadius:980,background:active===i?feat.color:BG_CARD,color:active===i?'#000':MUTED,fontWeight:active===i?700:450,fontSize:12,border:`1.5px solid ${active===i?feat.color:BDR}`,cursor:'pointer',transition:'all 0.25s',whiteSpace:'nowrap' as const,fontFamily:FB,flexShrink:0}}>
               <span>{feat.icon}</span>{feat.tag}
@@ -681,12 +681,9 @@ function Investors() {
             <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${TEAL},${LIME})`}}/>
             <span style={{fontSize:12,fontWeight:800,color:TEAL,letterSpacing:'0.14em',textTransform:'uppercase' as const,fontFamily:FB}}>Investisseurs</span>
           </div>
-          <h2 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(28px,4vw,50px)',color:WHITE,letterSpacing:'-0.035em',lineHeight:1.1,marginBottom:20}}>
+          <h2 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(28px,4vw,50px)',color:WHITE,letterSpacing:'-0.035em',lineHeight:1.1,marginBottom:40}}>
             104 M€ de marché adressable.<br/><span style={{color:LIME}}>Zéro concurrent full-stack.</span>
           </h2>
-          <p style={{fontSize:16,color:MUTED,lineHeight:1.75,maxWidth:580,marginBottom:40,fontFamily:FB}}>
-            30 000 agences en France. Aucune solution ne couvre aujourd&apos;hui la chaîne complète : leads, voix IA, WhatsApp, avis Google et conformité dans un seul produit. C&apos;est ce que Vanivert fait.
-          </p>
         </FadeUp>
         <FadeUp delay={0.1}>
           <div style={{display:'flex',gap:14,flexWrap:'wrap' as const}}>
@@ -938,6 +935,7 @@ export default function Home() {
         input[type=range]{cursor:pointer}
         .nav-links{display:flex}.mob-nav{display:none}
         @media(max-width:860px){.nav-links{display:none!important}.mob-nav{display:flex!important}}
+        @media(max-width:860px){.hero-grid{grid-template-columns:1fr!important}.hero-sphere{display:none!important}}
         @media(max-width:768px){.alt-grid{grid-template-columns:1fr!important}.pricing-grid{grid-template-columns:1fr!important}.footer-grid{grid-template-columns:1fr 1fr!important}.stats-grid{grid-template-columns:1fr 1fr!important}}
         @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}.stats-grid{grid-template-columns:1fr!important}}
         ::-webkit-scrollbar{display:none}
