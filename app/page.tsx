@@ -122,89 +122,253 @@ function Nav() {
   )
 }
 
-// ── HERO (clean, centered, no globe, no AI boxes) ─────────────────────────────
-const FEATURES_QUICK = [
-  {icon:'📥',label:'Leads centralisés',sub:'Tous vos portails en un seul endroit'},
-  {icon:'🎙️',label:'IA vocale 24h/24',sub:'Sophie répond à votre place'},
-  {icon:'📅',label:'Visites planifiées',sub:'Confirmation automatique des 3 parties'},
-  {icon:'⭐',label:'Avis Google auto',sub:'Chaque vente génère un avis'},
-  {icon:'🎂',label:'Client à vie',sub:'Anniversaires et relances automatiques'},
-  {icon:'🔒',label:'Conformité LCB-FT',sub:'Traçabilité et export PDF en 30 s'},
+// ── HERO — auto-sliding pain point panels ────────────────────────────────────
+const SLIDES = [
+  {
+    id:'leads',
+    tag:'Le problème n°1 des agences',
+    headline:'Vous perdez des leads\npendant votre déjeuner.',
+    sub:'SeLoger, LeBonCoin, BienIci, WhatsApp : les prospects arrivent de partout. Sans réponse en moins de 5 minutes, 35 % disparaissent.',
+    accent:LIME,
+    visual:'leads',
+  },
+  {
+    id:'bot',
+    tag:'La solution WhatsApp',
+    headline:'Le bot répond.\nMême un dimanche à 19h.',
+    sub:"Un prospect écrit. Le bot le salue, collecte ses critères, lui propose des biens et planifie la visite. Zéro intervention humaine.",
+    accent:TEAL,
+    visual:'bot',
+  },
+  {
+    id:'voice',
+    tag:'IA vocale Sophie',
+    headline:'Chaque appel manqué\nest une commission perdue.',
+    sub:"Sophie répond en français en moins de 60 secondes, qualifie l'appelant et envoie un résumé à l'agent par WhatsApp.",
+    accent:LIME,
+    visual:'voice',
+  },
+  {
+    id:'visits',
+    tag:'Coordination automatique',
+    headline:'Fini les appels\npour caler une visite.',
+    sub:'Acheteur, vendeur, agent : le système cale les trois disponibilités et envoie les confirmations. Rappels J-1 et H-2 automatiques.',
+    accent:TEAL,
+    visual:'visits',
+  },
 ]
 
+function LeadsVisual() {
+  const portals = [
+    {name:'SeLoger',color:'#E4002B',bg:'rgba(228,0,43,0.12)'},
+    {name:'LeBonCoin',color:'#FF6E14',bg:'rgba(255,110,20,0.12)'},
+    {name:'BienIci',color:'#00C4B3',bg:'rgba(0,196,179,0.12)'},
+    {name:'WhatsApp',color:'#25D366',bg:'rgba(37,211,102,0.12)'},
+  ]
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:12,alignItems:'center'}}>
+      <div style={{display:'flex',gap:10,flexWrap:'wrap' as const,justifyContent:'center'}}>
+        {portals.map((p,i)=>(
+          <motion.div key={p.name} initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} transition={{delay:i*0.12,duration:0.5}}
+            style={{padding:'10px 18px',borderRadius:10,background:p.bg,border:`1px solid ${p.color}40`,color:p.color,fontWeight:700,fontSize:14,fontFamily:FH}}>
+            {p.name}
+          </motion.div>
+        ))}
+      </div>
+      <motion.div initial={{scaleY:0}} animate={{scaleY:1}} transition={{delay:0.6,duration:0.4}}
+        style={{width:2,height:28,background:`linear-gradient(to bottom,${LIME},transparent)`,borderRadius:2}}/>
+      <motion.div initial={{opacity:0,scale:0.9}} animate={{opacity:1,scale:1}} transition={{delay:0.85,duration:0.4}}
+        style={{padding:'14px 24px',borderRadius:14,background:LIME_LT,border:`1px solid ${BDR_LIME}`,textAlign:'center' as const}}>
+        <div style={{fontSize:11,color:LIME,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase' as const,fontFamily:FB,marginBottom:4}}>Fiche créée en</div>
+        <div style={{fontSize:32,fontWeight:800,color:LIME,fontFamily:FH}}>{'< 60 s'}</div>
+        <div style={{fontSize:11,color:MUTED,fontFamily:FB,marginTop:2}}>Agent notifié par WhatsApp</div>
+      </motion.div>
+    </div>
+  )
+}
+
+function BotVisual() {
+  const msgs = [
+    {side:'bot',text:'Bonjour ! Je cherche un bien à acheter ou à louer ?',delay:0.1},
+    {side:'user',text:'À acheter, un T3 sur Lannion.',delay:0.6},
+    {side:'bot',text:'Budget approximatif ?',delay:1.1},
+    {side:'user',text:'300 000 €',delay:1.6},
+    {side:'bot',text:"J'ai 2 biens qui correspondent. Je vous les envoie maintenant.",delay:2.1},
+  ]
+  return (
+    <div style={{maxWidth:320,margin:'0 auto'}}>
+      <div style={{background:'rgba(30,41,59,0.70)',borderRadius:18,overflow:'hidden',border:`1px solid ${BDR2}`}}>
+        <div style={{padding:'12px 16px',background:'rgba(0,0,0,0.30)',display:'flex',alignItems:'center',gap:10,borderBottom:`1px solid ${BDR}`}}>
+          <span style={{fontSize:18}}>💬</span>
+          <span style={{fontSize:13,fontWeight:600,color:WHITE,fontFamily:FH}}>Vanivert WhatsApp Bot</span>
+          <span style={{marginLeft:'auto',width:8,height:8,borderRadius:'50%',background:'#22C55E'}}/>
+        </div>
+        <div style={{padding:'14px 12px',display:'flex',flexDirection:'column',gap:8,minHeight:160}}>
+          {msgs.map((m,i)=>(
+            <motion.div key={i} initial={{opacity:0,x:m.side==='bot'?-12:12}} animate={{opacity:1,x:0}} transition={{delay:m.delay,duration:0.35}}
+              style={{alignSelf:m.side==='bot'?'flex-start':'flex-end',maxWidth:'82%',padding:'8px 12px',borderRadius:m.side==='bot'?'4px 12px 12px 12px':'12px 4px 12px 12px',background:m.side==='bot'?'rgba(45,212,191,0.15)':'rgba(132,204,22,0.15)',border:`1px solid ${m.side==='bot'?'rgba(45,212,191,0.25)':'rgba(132,204,22,0.25)'}`}}>
+              <span style={{fontSize:12,color:OFF,fontFamily:FB,lineHeight:1.45}}>{m.text}</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+      <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.5}} style={{marginTop:10,textAlign:'center' as const}}>
+        <span style={{fontSize:11,color:TEAL,fontFamily:FB,fontWeight:600}}>0 intervention humaine · réponse en 12 minutes</span>
+      </motion.div>
+    </div>
+  )
+}
+
+function VoiceVisual() {
+  return (
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
+      <motion.div animate={{scale:[1,1.06,1]}} transition={{duration:2,repeat:Infinity,ease:'easeInOut'}}
+        style={{width:80,height:80,borderRadius:'50%',background:`radial-gradient(circle,${LIME_LT},rgba(132,204,22,0.04))`,border:`2px solid ${LIME}60`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:36}}>
+        🎙️
+      </motion.div>
+      <div style={{display:'flex',alignItems:'center',gap:4,height:40}}>
+        {Array.from({length:20}).map((_,i)=>(
+          <motion.span key={i} animate={{scaleY:[0.2,1,0.3,0.8,0.2]}} transition={{duration:0.9+((i%4)*0.15),repeat:Infinity,ease:'easeInOut',delay:i*0.05}}
+            style={{width:4,height:'100%',borderRadius:3,background:LIME,transformOrigin:'center',display:'inline-block'}}/>
+        ))}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,width:'100%',maxWidth:300}}>
+        {[
+          {label:'Délai de réponse',val:'< 60 s'},
+          {label:'Langue','val':'Français natif'},
+          {label:'Disponible','val':'24h/24'},
+          {label:'Résumé agent','val':'WhatsApp auto'},
+        ].map(r=>(
+          <div key={r.label} style={{padding:'10px 14px',borderRadius:10,background:'rgba(30,41,59,0.60)',border:`1px solid ${BDR}`}}>
+            <div style={{fontSize:10,color:SUBTLE,fontFamily:FB,marginBottom:3}}>{r.label}</div>
+            <div style={{fontSize:14,fontWeight:700,color:LIME,fontFamily:FH}}>{r.val}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function VisitsVisual() {
+  const steps = [
+    {icon:'👤',label:'Acheteur',sub:'Propose mercredi soir',ok:true},
+    {icon:'🏠',label:'Vendeur',sub:'Disponible mercredi 18h',ok:true},
+    {icon:'🧑‍💼',label:'Agent',sub:'Valide en 1 clic',ok:true},
+  ]
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:12,alignItems:'center'}}>
+      <div style={{display:'flex',gap:8,alignItems:'center'}}>
+        {steps.map((s,i)=>(
+          <div key={s.icon} style={{display:'flex',alignItems:'center',gap:8}}>
+            <motion.div initial={{opacity:0,scale:0.8}} animate={{opacity:1,scale:1}} transition={{delay:i*0.3,duration:0.4}}
+              style={{padding:'12px 14px',borderRadius:14,background:'rgba(30,41,59,0.70)',border:`1px solid ${s.ok?TEAL+'40':BDR}`,textAlign:'center' as const}}>
+              <div style={{fontSize:22}}>{s.icon}</div>
+              <div style={{fontSize:11,fontWeight:700,color:WHITE,fontFamily:FH,marginTop:4}}>{s.label}</div>
+              <div style={{fontSize:10,color:MUTED,fontFamily:FB,marginTop:2,maxWidth:80}}>{s.sub}</div>
+              <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay:0.5+i*0.3}}
+                style={{marginTop:6,fontSize:14,color:'#22C55E'}}>✓</motion.div>
+            </motion.div>
+            {i<steps.length-1&&<motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay:0.8+i*0.2}}
+              style={{fontSize:20,color:TEAL}}>→</motion.div>}
+          </div>
+        ))}
+      </div>
+      <motion.div initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} transition={{delay:1.2}}
+        style={{padding:'12px 24px',borderRadius:12,background:'rgba(45,212,191,0.12)',border:`1px solid ${TEAL}40`,textAlign:'center' as const}}>
+        <div style={{fontSize:12,color:TEAL,fontWeight:600,fontFamily:FH}}>Confirmation envoyée aux 3 parties + lien Maps</div>
+        <div style={{fontSize:11,color:MUTED,fontFamily:FB,marginTop:3}}>Rappel automatique J-1 à 18h et H-2</div>
+      </motion.div>
+    </div>
+  )
+}
+
 function Hero() {
-  const [active,setActive]=useState(0)
+  const [slide,setSlide]=useState(0)
+  const [paused,setPaused]=useState(false)
   const {scrollY}=useScroll()
   const bgY=useTransform(scrollY,[0,600],[0,60])
 
   useEffect(()=>{
-    const id=setInterval(()=>setActive(a=>(a+1)%FEATURES_QUICK.length),2800)
+    if(paused) return
+    const id=setInterval(()=>setSlide(s=>(s+1)%SLIDES.length),5000)
     return()=>clearInterval(id)
-  },[])
+  },[paused])
+
+  const s=SLIDES[slide]
 
   return (
-    <section style={{minHeight:'100dvh',background:BG_PAGE,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'120px 24px 80px',position:'relative',overflow:'hidden',textAlign:'center' as const}}>
-      {/* ambient glows */}
-      <motion.div style={{y:bgY,position:'absolute',top:'-15%',left:'20%',width:'60vw',height:'60vw',maxWidth:700,borderRadius:'50%',background:`radial-gradient(circle,rgba(132,204,22,0.06) 0%,transparent 65%)`,pointerEvents:'none'}}/>
-      <motion.div style={{y:bgY,position:'absolute',bottom:'-10%',right:'15%',width:'45vw',height:'45vw',maxWidth:500,borderRadius:'50%',background:`radial-gradient(circle,rgba(45,212,191,0.05) 0%,transparent 65%)`,pointerEvents:'none'}}/>
+    <section style={{minHeight:'100dvh',background:BG_PAGE,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'100px 24px 64px',position:'relative',overflow:'hidden'}}>
+      {/* glows */}
+      <motion.div style={{y:bgY,position:'absolute',top:'-15%',left:'15%',width:'60vw',height:'60vw',maxWidth:700,borderRadius:'50%',background:`radial-gradient(circle,rgba(132,204,22,0.06) 0%,transparent 65%)`,pointerEvents:'none'}}/>
+      <motion.div style={{y:bgY,position:'absolute',bottom:'-10%',right:'10%',width:'45vw',height:'45vw',maxWidth:500,borderRadius:'50%',background:`radial-gradient(circle,rgba(45,212,191,0.05) 0%,transparent 65%)`,pointerEvents:'none'}}/>
 
-      <div style={{maxWidth:860,width:'100%',position:'relative',zIndex:2}}>
-        {/* Badge */}
-        <motion.div initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} transition={{duration:0.5,delay:0.05}} style={{marginBottom:28}}>
-          <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'6px 16px 6px 12px',borderRadius:980,background:'rgba(45,212,191,0.10)',border:`1px solid ${BDR2}`}}>
-            <span style={{width:6,height:6,borderRadius:'50%',background:LIME,boxShadow:`0 0 8px ${LIME}`}}/>
-            <span style={{fontSize:11,fontWeight:600,letterSpacing:'0.10em',textTransform:'uppercase' as const,color:TEAL,fontFamily:FB}}>IA immobilière · France · RGPD</span>
-          </div>
-        </motion.div>
+      <div style={{maxWidth:1100,width:'100%',position:'relative',zIndex:2}}>
+        {/* Slide progress dots */}
+        <div style={{display:'flex',justifyContent:'center',gap:8,marginBottom:40}}>
+          {SLIDES.map((_,i)=>(
+            <button key={i} onClick={()=>{setSlide(i);setPaused(true)}}
+              style={{width:slide===i?28:8,height:8,borderRadius:4,background:slide===i?s.accent:'rgba(255,255,255,0.15)',border:'none',cursor:'pointer',transition:'all 0.4s',padding:0}}/>
+          ))}
+        </div>
 
-        {/* H1 */}
-        <motion.h1 initial={{opacity:0,y:22}} animate={{opacity:1,y:0}} transition={{duration:0.75,ease:EZ,delay:0.1}}
-          style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(40px,5.5vw,72px)',color:WHITE,lineHeight:1.04,marginBottom:20,letterSpacing:'-0.035em'}}>
-          Votre agence tourne.<br/>
-          <span style={{color:LIME}}>Même quand vous dormez.</span>
-        </motion.h1>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:56,alignItems:'center'}} className="hero-grid">
+          {/* Left — text */}
+          <AnimatePresence mode="wait">
+            <motion.div key={slide} initial={{opacity:0,x:-24}} animate={{opacity:1,x:0}} exit={{opacity:0,x:24}} transition={{duration:0.45,ease:EZ}}>
+              {/* Tag line */}
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:20}}>
+                <span style={{width:28,height:3,borderRadius:2,background:`linear-gradient(90deg,${s.accent},transparent)`}}/>
+                <span style={{fontSize:11,fontWeight:700,color:s.accent,letterSpacing:'0.12em',textTransform:'uppercase' as const,fontFamily:FB}}>{s.tag}</span>
+              </div>
 
-        {/* Subtitle */}
-        <motion.p initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} transition={{duration:0.65,delay:0.2}}
-          style={{fontSize:18,color:MUTED,lineHeight:1.7,maxWidth:580,margin:'0 auto 40px',fontFamily:FB}}>
-          Vanivert prend en charge vos appels, vos leads, vos visites et votre réputation. Vous, vous vous concentrez sur la vente.
-        </motion.p>
+              <h1 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(34px,4.5vw,58px)',color:WHITE,lineHeight:1.06,marginBottom:20,letterSpacing:'-0.03em',whiteSpace:'pre-line' as const}}>
+                {s.headline.split('\n').map((line,i)=>i===1?<span key={i} style={{color:s.accent}}>{line}</span>:<span key={i}>{line}<br/></span>)}
+              </h1>
 
-        {/* CTAs */}
-        <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{duration:0.5,delay:0.3}} style={{display:'flex',gap:14,flexWrap:'wrap' as const,justifyContent:'center',marginBottom:56}}>
-          <a href="#contact" style={{padding:'15px 32px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:15,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:10,transition:'background 0.25s',boxShadow:`0 8px 28px ${LIME_GL}`,fontFamily:FH}}
-            onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
-            Demander une démo gratuite
-            <span style={{width:22,height:22,borderRadius:'50%',background:'rgba(0,0,0,0.15)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12}}>→</span>
-          </a>
-          <a href={AI_PHONE_TEL} style={{padding:'15px 32px',borderRadius:980,border:`1.5px solid ${BDR2}`,color:OFF,fontWeight:500,fontSize:15,textDecoration:'none',transition:'all 0.25s',fontFamily:FB}}
-            onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor=LIME;(e.currentTarget as HTMLElement).style.color=LIME}}
-            onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=BDR2;(e.currentTarget as HTMLElement).style.color=OFF}}>
-            📞 Appeler l&apos;IA maintenant
-          </a>
-        </motion.div>
+              <p style={{fontSize:17,color:MUTED,lineHeight:1.75,maxWidth:460,marginBottom:36,fontFamily:FB}}>{s.sub}</p>
 
-        {/* Auto-sliding feature pills */}
-        <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay:0.55}}>
-          <div style={{marginBottom:16,fontSize:11,color:SUBTLE,letterSpacing:'0.10em',textTransform:'uppercase' as const,fontFamily:FB}}>Ce que Vanivert fait pour vous</div>
-          <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap' as const}}>
-            {FEATURES_QUICK.map((f,i)=>(
-              <motion.div key={f.label} animate={{
-                background:active===i?LIME_LT:'rgba(255,255,255,0.04)',
-                borderColor:active===i?BDR_LIME:BDR,
-                scale:active===i?1.04:1
-              }} transition={{duration:0.4}}
-                style={{display:'flex',alignItems:'center',gap:8,padding:'10px 16px',borderRadius:12,border:`1px solid ${BDR}`,cursor:'pointer'}}
-                onClick={()=>setActive(i)}>
-                <span style={{fontSize:16}}>{f.icon}</span>
-                <div style={{textAlign:'left' as const}}>
-                  <div style={{fontSize:12,fontWeight:600,color:active===i?LIME:OFF,fontFamily:FH,transition:'color 0.3s'}}>{f.label}</div>
-                  <div style={{fontSize:11,color:SUBTLE,fontFamily:FB}}>{f.sub}</div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+              <div style={{display:'flex',gap:12,flexWrap:'wrap' as const}}>
+                <a href="#contact" style={{padding:'14px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s',boxShadow:`0 8px 24px ${LIME_GL}`,fontFamily:FH}}
+                  onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
+                  Demander une démo gratuite →
+                </a>
+                <a href={AI_PHONE_TEL} style={{padding:'14px 22px',borderRadius:980,border:`1.5px solid ${BDR2}`,color:MUTED,fontWeight:500,fontSize:14,textDecoration:'none',transition:'all 0.25s',fontFamily:FB}}
+                  onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor=LIME;(e.currentTarget as HTMLElement).style.color=LIME}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=BDR2;(e.currentTarget as HTMLElement).style.color=MUTED}}>
+                  📞 Appeler Sophie
+                </a>
+              </div>
+
+              {/* Quick stats */}
+              <div style={{display:'flex',gap:24,marginTop:36,paddingTop:24,borderTop:`1px solid ${BDR}`,flexWrap:'wrap' as const}}>
+                {[['10+','agences pilotes'],['< 60 s','réponse lead'],['24/7','IA vocale'],['RGPD','hébergé UE']].map(([v,l])=>(
+                  <div key={l}>
+                    <div style={{fontSize:18,fontWeight:700,color:WHITE,fontFamily:FH,letterSpacing:'-0.02em'}}>{v}</div>
+                    <div style={{fontSize:11,color:SUBTLE,fontFamily:FB}}>{l}</div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Right — visual */}
+          <AnimatePresence mode="wait">
+            <motion.div key={slide+'-vis'} initial={{opacity:0,scale:0.95}} animate={{opacity:1,scale:1}} exit={{opacity:0,scale:1.02}} transition={{duration:0.45,ease:EZ}}
+              style={{padding:'36px',borderRadius:24,background:'rgba(30,41,59,0.45)',border:`1px solid ${s.accent}25`,backdropFilter:'blur(12px)',minHeight:280,display:'flex',alignItems:'center',justifyContent:'center'}} className="hero-sphere">
+              {slide===0&&<LeadsVisual/>}
+              {slide===1&&<BotVisual/>}
+              {slide===2&&<VoiceVisual/>}
+              {slide===3&&<VisitsVisual/>}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Navigation arrows */}
+        <div style={{display:'flex',justifyContent:'center',gap:12,marginTop:36}}>
+          <button onClick={()=>{setSlide(s=>(s-1+SLIDES.length)%SLIDES.length);setPaused(true)}}
+            style={{width:40,height:40,borderRadius:'50%',background:'rgba(255,255,255,0.06)',border:`1px solid ${BDR2}`,color:MUTED,fontSize:18,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>←</button>
+          <button onClick={()=>{setSlide(s=>(s+1)%SLIDES.length);setPaused(true)}}
+            style={{width:40,height:40,borderRadius:'50%',background:'rgba(255,255,255,0.06)',border:`1px solid ${BDR2}`,color:MUTED,fontSize:18,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>→</button>
+        </div>
       </div>
     </section>
   )
@@ -233,29 +397,35 @@ function Ticker() {
 // ── FEATURES (full tab section) ───────────────────────────────────────────────
 const FEATURES_FULL = [
   {id:'leads',icon:'📥',color:LIME,tag:'Capture des leads',
-   headline:'Chaque appel manqué, c\'est une commission perdue.',
-   body:'Tous vos portails (SeLoger, LeBonCoin, BienIci, WhatsApp) centralisés en une seule interface. Sophie répond en 0 seconde, 24h/24, qualifie le prospect et crée la fiche automatiquement.',
-   metrics:['+35 % de leads traités','Réponse en moins de 60 s','Zéro double saisie']},
-  {id:'visits',icon:'📅',color:TEAL,tag:'Planification des visites',
-   headline:'Fini les allers-retours pour confirmer une visite.',
-   body:'Coordination automatique entre acheteur, vendeur et agent. Confirmation WhatsApp simultanée pour les trois parties, rappel la veille et deux heures avant.',
-   metrics:['3 confirmations simultanées','Rappel J-1 et H-2','Lien Maps intégré']},
+   headline:'Le lead arrive. La fiche est créée avant même que vous l\'ayez lu.',
+   body:'SeLoger, LeBonCoin, BienIci ou WhatsApp : Vanivert scanne votre boîte en continu, extrait le nom, le téléphone, le type de bien et la source, crée la fiche dans le CRM et notifie l\'agent par WhatsApp. Cycle complet en moins de 60 secondes, sans aucun geste humain.',
+   steps:['Email de lead reçu de SeLoger / LeBonCoin / BienIci / WhatsApp','Vanivert extrait : nom, téléphone, type, localisation, source','Fiche prospect créée dans le CRM, statut = Nouveau','Agent notifié par WhatsApp + email en moins de 60 s'],
+   metrics:['< 60 s de l\'email à la notification','4 sources supportées','Zéro double saisie']},
+  {id:'bot',icon:'💬',color:TEAL,tag:'Bot WhatsApp 24h/24',
+   headline:'Un prospect écrit le dimanche à 19h. Le bot qualifie, matche et planifie.',
+   body:'Le bot salue le prospect par son prénom, collecte 4 critères clés (achat/location, type, budget, secteur), lui envoie 2 biens réels en cartes WhatsApp, et propose un créneau de visite, tout ça sans intervention humaine. C\'est exactement ce qui s\'est passé lors de notre démo Century 21, un dimanche soir.',
+   steps:['Prospect écrit au numéro WhatsApp de l\'agence','Bot collecte les 4 critères de recherche','2 biens réels envoyés en cartes WhatsApp','Créneau de visite proposé et confirmé'],
+   metrics:['0 intervention humaine','4 critères en 12 minutes','Fonctionne 24h/24, 7j/7']},
+  {id:'visits',icon:'📅',color:TEAL,tag:'Coordination 3 parties',
+   headline:'Acheteur, vendeur, agent. Le bot gère les trois. L\'agent valide en un clic.',
+   body:'Quand le prospect confirme son intérêt, le système ouvre simultanément WhatsApp avec le vendeur. Il croise les disponibilités, identifie un créneau commun et présente la proposition finale à l\'agent. Rappels J-1 à 18h et H-2 envoyés aux trois parties. Taux de no-show attendu : moins de 8 %.',
+   steps:['Acheteur confirme un créneau au bot','Bot contacte le vendeur et récupère ses disponibilités','Créneau commun identifié, proposition envoyée à l\'agent','Confirmations + lien Maps envoyés aux 3 parties'],
+   metrics:['No-show < 8 % (vs 23 % sans rappels)','Rappels J-1 et H-2 automatiques','Email récap + Maps aux 3 parties']},
+  {id:'voice',icon:'🎙️',color:LIME,tag:'IA vocale Sophie',
+   headline:'Sophie répond à chaque appel manqué. En français. En moins de 60 secondes.',
+   body:'Sophie qualifie l\'appelant, récupère ses critères de recherche et envoie un résumé structuré à l\'agent par WhatsApp. Même cerveau IA que le bot WhatsApp : quand on améliore la compréhension de Sophie, les deux s\'améliorent. Hébergé en UE, aucune donnée transmise à un tiers.',
+   steps:['Appel manqué détecté','Sophie rappelle en moins de 60 secondes','Critères collectés : type, budget, secteur, délai','Résumé structuré envoyé à l\'agent par WhatsApp'],
+   metrics:['< 60 s de délai de rappel','Résumé WhatsApp à l\'agent','Hébergé en UE, 100 % RGPD']},
   {id:'client',icon:'🎂',color:ORANGE,tag:'Client à vie',
-   headline:'Vos anciens clients sont votre meilleure source de mandats.',
-   body:'Anniversaires d\'acquisition, estimations trimestrielles, voeux personnalisés : tout est envoyé automatiquement depuis le nom de l\'agent. Vanivert détecte quand un client est prêt à revendre.',
-   metrics:['Messages personnalisés auto','Estimations trimestrielles','Ré-engagement sur 3 ans']},
-  {id:'reviews',icon:'⭐',color:ORANGE,tag:'Réputation Google',
-   headline:'Une étoile de plus sur Google = 18 % de leads supplémentaires.',
-   body:'24 heures après chaque vente, acheteur et vendeur reçoivent un WhatsApp personnalisé. Les avis arrivent dans votre tableau de bord avec une réponse IA prête en un clic.',
-   metrics:['Demande auto 24h après la vente','Réponse IA validable en 1 clic','Draft Instagram généré']},
-  {id:'compliance',icon:'🔒',color:PURPLE,tag:'Conformité LCB-FT',
-   headline:'Une inspection DGCCRF peut vous coûter votre carte professionnelle.',
-   body:'Chaque dossier suspect est signalé automatiquement. L\'agent est guidé étape par étape. Export PDF pour inspection en 30 secondes.',
-   metrics:['Traçabilité automatique','Export PDF instantané','Zéro non-conformité']},
-  {id:'data',icon:'📊',color:TEAL,tag:'Intelligence du bien',
-   headline:'Le vendeur a consulté DVF avant votre visite. Vous aussi ?',
-   body:'Rapport DVF, Géorisques et Cadastre agrégé automatiquement, envoyé sur WhatsApp 30 minutes avant chaque visite vendeur.',
-   metrics:['DVF data.gouv.fr','Géorisques officiel','Surface Cadastre exacte']},
+   headline:'La relation ne s\'arrête pas chez le notaire.',
+   body:'Anniversaire d\'acquisition, estimation trimestrielle DVF, voeux de Noël et 14 juillet, tout est envoyé automatiquement depuis le nom de l\'agent. Quand un client est prêt à revendre, Vanivert le détecte et crée une opportunité de mandat. Coût d\'acquisition d\'un mandat referral : 0 €.',
+   steps:['Signature détectée dans le CRM','Demande d\'avis Google envoyée J+1','Contacts personnalisés tout au long de l\'année','Opportunité de mandat créée automatiquement'],
+   metrics:['4+ contacts personnalisés par an','0 € de coût d\'acquisition referral','12 000–20 000 € de CA réactivé / an']},
+  {id:'compliance',icon:'🔒',color:PURPLE,tag:'Conformité & mandats',
+   headline:'Registre Loi Hoguet. Diagnostics. LCB-FT. Un seul écran.',
+   body:'Chaque mandat reçoit un numéro séquentiel horodaté, conforme Loi Hoguet, exportable en PDF pour inspection T-GCA. Les 5 diagnostics obligatoires (DPE, amiante, plomb, électricité, gaz) sont suivis avec alertes J-60, J-30 et J-7. Chaque dossier LCB-FT suspect est signalé automatiquement.',
+   steps:['Mandat créé avec numéro séquentiel Loi Hoguet','Diagnostics suivis avec alertes J-60, J-30, J-7','Dossier LCB-FT suspect signalé automatiquement','Export PDF T-GCA en 30 secondes'],
+   metrics:['Registre mandats conforme Loi Hoguet','Alertes diagnostics J-60 / J-30 / J-7','Export PDF inspection en 30 s']},
 ]
 
 function FeaturesSection() {
@@ -265,10 +435,11 @@ function FeaturesSection() {
     <section id="features" style={{background:BG_SEC,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
       <div style={{maxWidth:1100,margin:'0 auto'}}>
         <FadeUp style={{textAlign:'center',marginBottom:48}}>
-          <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'5px 14px',borderRadius:980,background:LIME_LT,border:`1px solid ${BDR_LIME}`,marginBottom:16}}>
-            <span style={{fontSize:11,fontWeight:600,color:LIME,letterSpacing:'0.08em',textTransform:'uppercase' as const,fontFamily:FB}}>Fonctionnalités</span>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+            <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${LIME},${TEAL})`}}/>
+            <span style={{fontSize:12,fontWeight:800,color:LIME,letterSpacing:'0.14em',textTransform:'uppercase' as const,fontFamily:FB}}>Fonctionnalités</span>
           </div>
-          <h2 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(26px,3.2vw,42px)',color:WHITE,marginTop:8,marginBottom:10,letterSpacing:'-0.03em'}}>
+          <h2 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(26px,3.2vw,42px)',color:WHITE,marginTop:12,marginBottom:10,letterSpacing:'-0.03em'}}>
             Tout ce qu&apos;une agence fait à la main,<br/><span style={{color:LIME}}>Vanivert le fait à votre place.</span>
           </h2>
         </FadeUp>
@@ -286,8 +457,19 @@ function FeaturesSection() {
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:28}} className="alt-grid">
               <div style={{padding:'36px 32px',borderRadius:20,background:'rgba(30,41,59,0.40)',border:`1.5px solid ${BDR}`}}>
                 <div style={{fontSize:11,fontWeight:700,color:f.color,textTransform:'uppercase' as const,letterSpacing:'0.1em',marginBottom:14,fontFamily:FB}}>{f.tag}</div>
-                <h3 style={{fontFamily:FH,fontSize:'clamp(18px,2vw,24px)',color:WHITE,lineHeight:1.3,marginBottom:16,fontWeight:600}}>{f.headline}</h3>
-                <p style={{fontSize:14,color:MUTED,lineHeight:1.75,marginBottom:24,fontFamily:FB}}>{f.body}</p>
+                <h3 style={{fontFamily:FH,fontSize:'clamp(17px,2vw,22px)',color:WHITE,lineHeight:1.3,marginBottom:14,fontWeight:600}}>{f.headline}</h3>
+                <p style={{fontSize:13,color:MUTED,lineHeight:1.7,marginBottom:18,fontFamily:FB}}>{f.body}</p>
+                {(f as {steps?:string[]}).steps && (
+                  <div style={{marginBottom:18}}>
+                    <div style={{fontSize:10,fontWeight:700,color:f.color,letterSpacing:'0.10em',textTransform:'uppercase' as const,marginBottom:10,fontFamily:FB}}>Comment ça marche</div>
+                    {((f as {steps?:string[]}).steps||[]).map((step,i)=>(
+                      <div key={i} style={{display:'flex',alignItems:'flex-start',gap:10,marginBottom:8}}>
+                        <span style={{width:20,height:20,borderRadius:'50%',background:`${f.color}20`,color:f.color,fontSize:10,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1,fontFamily:FH}}>{i+1}</span>
+                        <span style={{fontSize:12,color:MUTED,lineHeight:1.55,fontFamily:FB}}>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div style={{display:'flex',gap:8,flexWrap:'wrap' as const}}>
                   {f.metrics.map(m=>(
                     <span key={m} style={{fontSize:11,fontWeight:600,color:f.color,background:`rgba(30,41,59,0.60)`,padding:'4px 12px',borderRadius:980,border:`1px solid ${BDR}`,fontFamily:FB}}>{m}</span>
@@ -331,9 +513,10 @@ function TestCallSection() {
     <section id="tester-ia" style={{background:`radial-gradient(ellipse 80% 60% at 50% 0%,rgba(132,204,22,0.10),transparent 60%),${BG_SEC.replace('linear-gradient(160deg,','').slice(0,-1).split(',')[0]}`,backgroundImage:`radial-gradient(ellipse 80% 60% at 50% 0%,rgba(132,204,22,0.10),transparent 60%),${BG_SEC}`,padding:'100px 32px',borderTop:`1px solid ${BDR}`}}>
       <div style={{maxWidth:680,margin:'0 auto',textAlign:'center' as const}}>
         <FadeUp>
-          <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'6px 14px 6px 10px',borderRadius:980,background:LIME_LT,border:`1px solid ${BDR_LIME}`,marginBottom:20}}>
-            <span style={{width:6,height:6,borderRadius:'50%',background:LIME,boxShadow:`0 0 10px ${LIME}`}}/>
-            <span style={{fontSize:11,fontWeight:600,letterSpacing:'0.09em',textTransform:'uppercase' as const,color:LIME,fontFamily:FB}}>Essai en direct, gratuit</span>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16,justifyContent:'center'}}>
+            <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${LIME},${TEAL})`}}/>
+            <span style={{fontSize:12,fontWeight:800,color:LIME,letterSpacing:'0.14em',textTransform:'uppercase' as const,fontFamily:FB}}>Tester l&apos;IA</span>
+            <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${TEAL},${LIME})`}}/>
           </div>
           <h2 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(28px,4vw,46px)',color:WHITE,margin:'0 0 14px',letterSpacing:'-0.03em',lineHeight:1.1}}>
             Appelez Sophie.<br/><span style={{color:LIME}}>Maintenant.</span>
@@ -375,8 +558,10 @@ function ROICalc() {
     <section id="roi" style={{background:BG_DEEP,padding:'88px 32px',borderTop:`1px solid ${BDR}`}}>
       <div style={{maxWidth:960,margin:'0 auto'}}>
         <FadeUp style={{textAlign:'center',marginBottom:48}}>
-          <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'5px 14px',borderRadius:980,background:'rgba(45,212,191,0.10)',border:`1px solid ${BDR2}`,marginBottom:14}}>
-            <span style={{fontSize:11,fontWeight:600,color:TEAL,letterSpacing:'0.08em',textTransform:'uppercase' as const,fontFamily:FB}}>Calculateur ROI</span>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,justifyContent:'center'}}>
+            <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${TEAL},${LIME})`}}/>
+            <span style={{fontSize:12,fontWeight:800,color:TEAL,letterSpacing:'0.14em',textTransform:'uppercase' as const,fontFamily:FB}}>Calculateur ROI</span>
+            <span style={{width:32,height:3,borderRadius:2,background:`linear-gradient(90deg,${LIME},${TEAL})`}}/>
           </div>
           <h2 style={{fontFamily:FH,fontWeight:700,fontSize:'clamp(24px,3vw,40px)',color:WHITE,marginTop:8,marginBottom:10,letterSpacing:'-0.025em'}}>Combien Vanivert peut vous rapporter ?</h2>
           <p style={{fontSize:15,color:MUTED,maxWidth:460,margin:'0 auto',fontFamily:FB}}>Les agences perdent en moyenne 35 % de leurs leads sans réponse rapide.</p>
