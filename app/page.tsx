@@ -1,5 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { enableAnalytics, trackCTA } from '@/lib/analytics'
+import AnalyticsTracker from './AnalyticsTracker'
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion'
 import { DEFAULT_ARTICLES } from '@/lib/articles'
 
@@ -900,21 +902,82 @@ function Footer() {
   )
 }
 
-// ── GDPR ──────────────────────────────────────────────────────────────────────
+// ── GDPR CONSENT BANNER (detailed, RGPD + EU AI Act compliant) ───────────────
 function GDPR() {
   const [v,setV]=useState(false)
+  const [detail,setDetail]=useState(false)
   useEffect(()=>{try{if(!localStorage.getItem('vanivert_gdpr_v4'))setV(true)}catch{}},[])
-  const accept=()=>{try{localStorage.setItem('vanivert_gdpr_v4','accepted')}catch{};setV(false)}
-  const decline=()=>{try{localStorage.setItem('vanivert_gdpr_v4','declined')}catch{};setV(false)}
+
+  const accept=()=>{
+    try{localStorage.setItem('vanivert_gdpr_v4','accepted')}catch{}
+    enableAnalytics()
+    setV(false)
+  }
+  const decline=()=>{
+    try{localStorage.setItem('vanivert_gdpr_v4','declined')}catch{}
+    setV(false)
+  }
+
   if(!v) return null
   return (
-    <motion.div initial={{opacity:0,y:24}} animate={{opacity:1,y:0}} transition={{delay:2.5}}
-      style={{position:'fixed',bottom:20,left:20,right:20,zIndex:9990,maxWidth:460,margin:'0 auto',background:BG_CARD,border:`1px solid ${BDR2}`,borderRadius:18,padding:'20px 22px',backdropFilter:'blur(16px)',display:'flex',flexDirection:'column',gap:10}}>
-      <p style={{fontSize:13,fontWeight:600,color:WHITE,margin:0,fontFamily:FH}}>Ce site utilise des cookies</p>
-      <p style={{fontSize:12,color:MUTED,lineHeight:1.55,margin:0,fontFamily:FB}}>Cookies fonctionnels uniquement. Hébergement 100 % UE. Aucune donnée transmise à des tiers.</p>
-      <div style={{display:'flex',gap:8}}>
-        <button onClick={accept} style={{flex:1,padding:'9px 16px',borderRadius:980,background:LIME,color:'#000',fontWeight:600,fontSize:12,border:'none',cursor:'pointer',fontFamily:FH}}>Accepter</button>
-        <button onClick={decline} style={{flex:1,padding:'9px 16px',borderRadius:980,background:'transparent',color:MUTED,fontWeight:500,fontSize:12,border:`1px solid ${BDR2}`,cursor:'pointer',fontFamily:FB}}>Refuser</button>
+    <motion.div initial={{opacity:0,y:24}} animate={{opacity:1,y:0}} transition={{delay:1.8}}
+      style={{position:'fixed',bottom:20,left:20,right:20,zIndex:9990,maxWidth:480,margin:'0 auto',background:'rgba(11,29,40,0.97)',border:`1px solid ${BDR2}`,borderRadius:20,padding:'22px 24px',backdropFilter:'blur(20px)',display:'flex',flexDirection:'column',gap:12,boxShadow:'0 16px 48px rgba(0,0,0,0.50)'}}>
+      {/* Header */}
+      <div style={{display:'flex',alignItems:'center',gap:10}}>
+        <span style={{fontSize:20}}>🍪</span>
+        <p style={{fontSize:14,fontWeight:700,color:WHITE,margin:0,fontFamily:FH}}>Ce site utilise des cookies</p>
+      </div>
+
+      {/* Summary */}
+      <p style={{fontSize:12,color:MUTED,lineHeight:1.6,margin:0,fontFamily:FB}}>
+        Nous collectons des données anonymisées sur votre navigation (sections visitées, durée, appareil) pour améliorer le site. <strong style={{color:WHITE}}>Aucune donnée personnelle. Aucun traceur tiers.</strong> Hébergé sur nos serveurs en Europe.
+      </p>
+
+      {/* Detail toggle */}
+      {detail && (
+        <motion.div initial={{opacity:0,height:0}} animate={{opacity:1,height:'auto'}} style={{fontSize:11,color:SUBTLE,lineHeight:1.65,borderTop:`1px solid ${BDR}`,paddingTop:12,fontFamily:FB}}>
+          <strong style={{color:MUTED,display:'block',marginBottom:6}}>Ce que nous enregistrons si vous acceptez :</strong>
+          {[
+            'Identifiant de session aléatoire (UUID, non lié à votre identité)',
+            'Pages visitées et heure de visite',
+            'Sections consultées et temps passé sur chacune',
+            'Profondeur de défilement (25 %, 50 %, 75 %, 100 %)',
+            "Clic sur les boutons d'action (CTA)",
+            "Type d'appareil (mobile / tablette / ordinateur)",
+            'Page de provenance (referrer)',
+          ].map((item,i)=>(
+            <div key={i} style={{display:'flex',gap:8,marginBottom:4}}>
+              <span style={{color:LIME,fontSize:10,marginTop:2,flexShrink:0}}>✓</span>
+              <span>{item}</span>
+            </div>
+          ))}
+          <strong style={{color:MUTED,display:'block',marginTop:8,marginBottom:6}}>Ce que nous ne collectons pas :</strong>
+          {[
+            'Nom, email, téléphone (sauf si vous remplissez le formulaire)',
+            'Adresse IP complète',
+            'Empreinte numérique (fingerprinting)',
+            'Données transmises à Google, Meta ou tout tiers',
+          ].map((item,i)=>(
+            <div key={i} style={{display:'flex',gap:8,marginBottom:4}}>
+              <span style={{color:'#F87171',fontSize:10,marginTop:2,flexShrink:0}}>✗</span>
+              <span>{item}</span>
+            </div>
+          ))}
+          <p style={{marginTop:8,color:SUBTLE}}>Conforme RGPD et EU AI Act. Données stockées sur Supabase (Dublin, Irlande). <a href="/legal/confidentialite" style={{color:LIME}}>Politique complète →</a></p>
+        </motion.div>
+      )}
+
+      {/* Actions */}
+      <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap' as const}}>
+        <button onClick={accept} style={{flex:1,minWidth:120,padding:'11px 16px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:13,border:'none',cursor:'pointer',fontFamily:FH}}>
+          Accepter
+        </button>
+        <button onClick={decline} style={{flex:1,minWidth:100,padding:'11px 16px',borderRadius:980,background:'transparent',color:MUTED,fontWeight:500,fontSize:13,border:`1px solid ${BDR2}`,cursor:'pointer',fontFamily:FB}}>
+          Refuser
+        </button>
+        <button onClick={()=>setDetail(!detail)} style={{padding:'11px 14px',borderRadius:980,background:'transparent',color:SUBTLE,fontWeight:400,fontSize:11,border:`1px solid ${BDR}`,cursor:'pointer',fontFamily:FB,whiteSpace:'nowrap' as const}}>
+          {detail ? 'Masquer ▲' : 'Détails ▼'}
+        </button>
       </div>
     </motion.div>
   )
@@ -957,6 +1020,7 @@ export default function Home() {
       </main>
       <Footer/>
       <GDPR/>
+      <AnalyticsTracker/>
     </>
   )
 }

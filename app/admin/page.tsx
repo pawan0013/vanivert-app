@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { fetchAnalytics, SECTIONS } from '@/lib/analytics'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DEFAULT_ARTICLES, type Article } from '@/lib/articles'
 
@@ -84,8 +85,8 @@ function Btn({children,onClick,color=LIME,disabled=false}:{children:React.ReactN
   )
 }
 
-type Tab='dashboard'|'cms'|'blog'|'leads'|'settings'
-const TABS:[Tab,string,string][]=[['dashboard','📊','Tableau de bord'],['cms','✏️','Contenu site'],['blog','📝','Blog'],['leads','👤','Leads'],['settings','⚙️','Paramètres']]
+type Tab='dashboard'|'cms'|'blog'|'leads'|'analytics'|'settings'
+const TABS:[Tab,string,string][]=[['dashboard','📊','Tableau de bord'],['analytics','📈','Analytique'],['cms','✏️','Contenu site'],['blog','📝','Blog'],['leads','👤','Leads'],['settings','⚙️','Paramètres']]
 
 function DashboardTab() {
   const [leads,setLeads]=useState<{email:string;name:string;agency_name:string;created_at:string}[]>([])
@@ -274,6 +275,219 @@ function LeadsTab() {
   )
 }
 
+// ── SECTION COLORS ───────────────────────────────────────────────────────────
+const SEC_COLORS: Record<string,string> = {
+  'hero':'#84CC16','features':'#2DD4BF','tester-ia':'#84CC16',
+  'roi':'#2DD4BF','team':'#FB923C','investors':'#A78BFA','contact':'#84CC16'
+}
+
+function AnalyticsTab() {
+  const [data,setData]=useState<{
+    pageviews:{session_id:string;path:string;device:string;ts:string;referrer:string|null}[];
+    sections:{session_id:string;section_id:string;section_label:string;duration_ms:number;ts:string}[];
+    cta:{session_id:string;label:string;destination:string;ts:string}[];
+    scroll:{session_id:string;depth_pct:number;ts:string}[];
+  }|null>(null)
+  const [loading,setLoading]=useState(true)
+  const [days,setDays]=useState(7)
+  const [noSB,setNoSB]=useState(false)
+
+  useEffect(()=>{
+    if(!process.env.NEXT_PUBLIC_SUPABASE_URL){setNoSB(true);setLoading(false);return}
+    setLoading(true)
+    fetchAnalytics(days).then(d=>{setData(d as typeof data);setLoading(false)})
+  },[days])
+
+  if(noSB) return (
+    <div>
+      <div style={{fontFamily:FH,fontSize:22,fontWeight:700,color:WHITE,marginBottom:24}}>Analytique</div>
+      <div style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:16,padding:'32px 28px'}}>
+        <div style={{fontSize:28,marginBottom:12}}>🔌</div>
+        <div style={{fontSize:15,fontWeight:700,color:WHITE,marginBottom:8,fontFamily:FH}}>Supabase requis</div>
+        <p style={{fontSize:13,color:MUTED,lineHeight:1.7,marginBottom:20,fontFamily:FB}}>
+          Pour activer l&apos;analytique, configurez les variables d&apos;environnement Supabase dans Vercel, puis exécutez le script SQL de création des tables.
+        </p>
+        <div style={{background:'rgba(255,255,255,0.04)',borderRadius:10,padding:'14px 16px',fontFamily:'monospace',fontSize:11,color:OFF,lineHeight:2,marginBottom:16}}>
+          <div>NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co</div>
+          <div>NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJh...</div>
+        </div>
+        <p style={{fontSize:12,color:SUBTLE,fontFamily:FB}}>Le fichier SQL de création des tables se trouve dans <code style={{color:LIME}}>lib/analytics-setup.sql</code></p>
+      </div>
+    </div>
+  )
+
+  // ── Derived stats ───────────────────────────────────────────────────────────
+  const sessions     = new Set(data?.pageviews.map(p=>p.session_id)||[]).size
+  const pageviews    = data?.pageviews.length||0
+  const ctaClicks    = data?.cta.length||0
+  const avgScroll    = data?.scroll.length
+    ? Math.round(data.scroll.reduce((a,s)=>a+s.depth_pct,0)/data.scroll.length)
+    : 0
+
+  // Section time aggregation
+  const sectionTime: Record<string,{total:number;count:number}> = {}
+  data?.sections.forEach(s=>{
+    if(!sectionTime[s.section_id]) sectionTime[s.section_id]={total:0,count:0}
+    sectionTime[s.section_id].total  += s.duration_ms
+    sectionTime[s.section_id].count  += 1
+  })
+  const sectionRanked = Object.entries(sectionTime)
+    .map(([id,v])=>({id,label:SECTIONS[id]||id,avgSec:Math.round(v.total/v.count/1000),visits:v.count}))
+    .sort((a,b)=>b.avgSec-a.avgSec)
+
+  const maxAvg = Math.max(...sectionRanked.map(s=>s.avgSec),1)
+
+  // Device breakdown
+  const devices: Record<string,number> = {}
+  data?.pageviews.forEach(p=>{ devices[p.device||'unknown']=(devices[p.device||'unknown']||0)+1 })
+
+  // CTA breakdown
+  const ctaBreakdown: Record<string,number> = {}
+  data?.cta.forEach(c=>{ ctaBreakdown[c.label]=(ctaBreakdown[c.label]||0)+1 })
+
+  // Timeline: visits per day
+  const byDay: Record<string,number> = {}
+  data?.pageviews.forEach(p=>{
+    const day = p.ts.slice(0,10)
+    byDay[day]=(byDay[day]||0)+1
+  })
+  const timeline = Object.entries(byDay).sort(([a],[b])=>a.localeCompare(b)).slice(-days)
+  const maxDay   = Math.max(...timeline.map(([,n])=>n),1)
+
+  // Recent visitors
+  const recent = (data?.pageviews||[]).slice(0,12)
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
+        <div style={{fontFamily:FH,fontSize:22,fontWeight:700,color:WHITE}}>Analytique visiteurs</div>
+        <div style={{display:'flex',gap:8}}>
+          {[7,14,30].map(d=>(
+            <button key={d} onClick={()=>setDays(d)}
+              style={{padding:'7px 14px',borderRadius:980,background:days===d?LIME:'transparent',color:days===d?'#000':MUTED,border:`1px solid ${days===d?LIME:BDR}`,fontSize:12,cursor:'pointer',fontFamily:FB,fontWeight:days===d?700:400}}>
+              {d}j
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div style={{textAlign:'center',padding:60,color:MUTED,fontFamily:FB}}>Chargement des données...</div>
+      ) : (
+        <>
+          {/* KPI Row */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
+            {[
+              {label:'Sessions uniques',value:sessions,color:LIME,icon:'👤'},
+              {label:'Pages vues',value:pageviews,color:TEAL,icon:'👁️'},
+              {label:'Clics CTA',value:ctaClicks,color:GR,icon:'🖱️'},
+              {label:'Profondeur moy.',value:`${avgScroll}%`,color:'#A78BFA',icon:'📏'},
+            ].map(k=>(
+              <div key={k.label} style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:14,padding:'18px 16px',backdropFilter:'blur(12px)'}}>
+                <div style={{fontSize:20,marginBottom:6}}>{k.icon}</div>
+                <div style={{fontSize:26,fontWeight:800,color:k.color,fontFamily:FH,marginBottom:2}}>{k.value}</div>
+                <div style={{fontSize:11,color:MUTED,fontFamily:FB}}>{k.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Timeline chart */}
+          <div style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:16,padding:'22px 20px',marginBottom:16,backdropFilter:'blur(12px)'}}>
+            <div style={{fontSize:12,fontWeight:700,color:WHITE,marginBottom:16,fontFamily:FH}}>Visites par jour</div>
+            {timeline.length===0 ? (
+              <p style={{fontSize:13,color:MUTED,fontFamily:FB}}>Aucune donnée sur cette période.</p>
+            ) : (
+              <div style={{display:'flex',alignItems:'flex-end',gap:6,height:80}}>
+                {timeline.map(([day,n])=>(
+                  <div key={day} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                    <div style={{fontSize:10,color:LIME,fontFamily:FH,fontWeight:700}}>{n}</div>
+                    <div style={{width:'100%',borderRadius:4,background:LIME,opacity:0.7+(n/maxDay)*0.3,minHeight:4,height:`${Math.max((n/maxDay)*60,4)}px`,transition:'height 0.3s'}}/>
+                    <div style={{fontSize:8,color:SUBTLE,fontFamily:FB,whiteSpace:'nowrap'}}>{day.slice(5)}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Section heatmap */}
+          <div style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:16,padding:'22px 20px',marginBottom:16,backdropFilter:'blur(12px)'}}>
+            <div style={{fontSize:12,fontWeight:700,color:WHITE,marginBottom:4,fontFamily:FH}}>Temps passé par section</div>
+            <div style={{fontSize:11,color:SUBTLE,fontFamily:FB,marginBottom:16}}>Durée moyenne en secondes — indique l&apos;intérêt réel par section</div>
+            {sectionRanked.length===0 ? (
+              <p style={{fontSize:13,color:MUTED,fontFamily:FB}}>Aucune donnée de section. Vérifiez que les IDs HTML correspondent.</p>
+            ) : sectionRanked.map(s=>(
+              <div key={s.id} style={{marginBottom:12}}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
+                  <span style={{fontSize:12,color:OFF,fontFamily:FB}}>{s.label}</span>
+                  <span style={{fontSize:12,fontWeight:700,color:SEC_COLORS[s.id]||LIME,fontFamily:FH}}>{s.avgSec}s moy · {s.visits} vues</span>
+                </div>
+                <div style={{height:8,borderRadius:4,background:'rgba(255,255,255,0.06)',overflow:'hidden'}}>
+                  <div style={{height:'100%',borderRadius:4,background:SEC_COLORS[s.id]||LIME,width:`${(s.avgSec/maxAvg)*100}%`,opacity:0.85,transition:'width 0.5s'}}/>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Device + CTA side by side */}
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
+            <div style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:16,padding:'20px 18px',backdropFilter:'blur(12px)'}}>
+              <div style={{fontSize:12,fontWeight:700,color:WHITE,marginBottom:14,fontFamily:FH}}>Appareils</div>
+              {Object.entries(devices).length===0 ? (
+                <p style={{fontSize:12,color:MUTED,fontFamily:FB}}>Aucune donnée.</p>
+              ) : Object.entries(devices).map(([dev,n])=>(
+                <div key={dev} style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+                  <span style={{fontSize:13,color:MUTED,fontFamily:FB,display:'flex',alignItems:'center',gap:8}}>
+                    <span>{dev==='mobile'?'📱':dev==='tablet'?'📱':'💻'}</span>{dev}
+                  </span>
+                  <div style={{display:'flex',alignItems:'center',gap:8}}>
+                    <div style={{width:60,height:6,borderRadius:3,background:'rgba(255,255,255,0.06)',overflow:'hidden'}}>
+                      <div style={{height:'100%',borderRadius:3,background:LIME,width:`${(n/pageviews)*100}%`}}/>
+                    </div>
+                    <span style={{fontSize:12,fontWeight:700,color:WHITE,fontFamily:FH,minWidth:24}}>{n}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:16,padding:'20px 18px',backdropFilter:'blur(12px)'}}>
+              <div style={{fontSize:12,fontWeight:700,color:WHITE,marginBottom:14,fontFamily:FH}}>Clics CTA</div>
+              {Object.entries(ctaBreakdown).length===0 ? (
+                <p style={{fontSize:12,color:MUTED,fontFamily:FB}}>Aucun clic enregistré.</p>
+              ) : Object.entries(ctaBreakdown).sort(([,a],[,b])=>b-a).slice(0,6).map(([label,n])=>(
+                <div key={label} style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+                  <span style={{fontSize:12,color:MUTED,fontFamily:FB,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:160}}>{label}</span>
+                  <span style={{fontSize:12,fontWeight:700,color:TEAL,fontFamily:FH,flexShrink:0}}>{n}×</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Recent visitor timeline */}
+          <div style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:16,padding:'22px 20px',backdropFilter:'blur(12px)'}}>
+            <div style={{fontSize:12,fontWeight:700,color:WHITE,marginBottom:16,fontFamily:FH}}>Derniers visiteurs</div>
+            {recent.length===0 ? (
+              <p style={{fontSize:13,color:MUTED,fontFamily:FB}}>Aucune visite enregistrée.</p>
+            ) : recent.map((p,i)=>(
+              <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 12px',borderRadius:10,background:'rgba(255,255,255,0.03)',marginBottom:6,border:`1px solid ${BDR}`}}>
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <span style={{fontSize:16}}>{p.device==='mobile'?'📱':'💻'}</span>
+                  <div>
+                    <div style={{fontSize:12,fontWeight:600,color:OFF,fontFamily:FH}}>{p.path}</div>
+                    <div style={{fontSize:10,color:SUBTLE,fontFamily:FB}}>{p.referrer||'Accès direct'}</div>
+                  </div>
+                </div>
+                <div style={{fontSize:10,color:SUBTLE,fontFamily:FB,textAlign:'right' as const}}>
+                  {new Date(p.ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 function SettingsTab({onLogout}:{onLogout:()=>void}) {
   const [newPass,setNewPass]=useState(''); const [saved,setSaved]=useState(false)
   function savePass(){if(!newPass||newPass.length<8){alert('Mot de passe trop court (8 caractères minimum)');return}try{localStorage.setItem('vanivert_admin_pass',newPass);setSaved(true);setTimeout(()=>setSaved(false),2000)}catch{}}
@@ -363,6 +577,7 @@ export default function AdminPage() {
             {tab==='cms'&&<CMSTab/>}
             {tab==='blog'&&<BlogTab/>}
             {tab==='leads'&&<LeadsTab/>}
+            {tab==='analytics'&&<AnalyticsTab/>}
             {tab==='settings'&&<SettingsTab onLogout={logout}/>}
           </motion.div>
         </AnimatePresence>
