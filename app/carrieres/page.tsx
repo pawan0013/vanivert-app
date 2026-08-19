@@ -31,14 +31,14 @@ const JOBS_KEY = 'vanivert_jobs_v1'
 export const DEFAULT_JOBS = [
   {
     id: 'bde-paris',
-    title: 'Business Developer — Agences immobilières',
+    title: 'Business Developer, Agences immobilières',
     type: 'Stage / Alternance',
-    location: 'Paris ou Île-de-France — Hybride',
+    location: 'Paris ou Île-de-France, hybride',
     duration: 'Dès septembre 2026 · 4 à 6 mois',
     color: LIME,
     published: true,
     tags: ['BDE','Vente B2B','Immobilier','Stage'],
-    mission: "Vanivert entre en phase de déploiement commercial actif. On cherche quelqu'un qui aime décrocher son téléphone, qui comprend les agences immobilières et qui veut voir son travail se transformer en contrats signés — pas en slides.",
+    mission: "Vanivert entre en phase de déploiement commercial actif. On cherche quelqu'un qui aime décrocher son téléphone, qui comprend les agences immobilières et qui veut voir son travail se transformer en contrats signés, pas en slides.",
     responsibilities: [
       'Prospecter les directeurs d\'agences indépendantes en Île-de-France (téléphone, email, LinkedIn)',
       'Qualifier les besoins, organiser les démos produit avec le co-fondateur',
@@ -49,30 +49,31 @@ export const DEFAULT_JOBS = [
     ],
     profile: [
       'Formation commerce, école de management, IAE ou équivalent (Bac+3 minimum)',
-      'Un vrai goût pour la vente — pas de la théorie, de la pratique',
+      'Un vrai goût pour la vente : de la pratique, pas de la théorie',
       'À l\'aise au téléphone, persévérant sans être lourd',
       'Connaissance du secteur immobilier appréciée (famille dans l\'immo, stage précédent...)',
       'Autonome, capable de s\'organiser sans qu\'on te tienne la main',
-      'Français courant indispensable, anglais opérationnel',
+      'Français courant natif ou bilingue obligatoire, anglais conversationnel',
     ],
     offer: [
-      'Gratification légale + prime sur objectifs (deals signés)',
-      'Vrai terrain d\'action dès le premier jour — pas de photocopies',
-      'Accès complet à tous nos outils IA',
-      'Mentorat direct avec les fondateurs',
-      'Possibilité de CDI / poste permanent selon les résultats',
+      "Rémunération 100 % à la commission : jusqu'à 1 000 € par contrat signé les 2 premiers mois",
+      'Pas de plafond : plus tu signes, plus tu gagnes',
+      'Modèle revu ensemble dès le 3e mois selon les résultats obtenus',
+      'Accès complet à tous nos outils IA dès le premier jour',
+      'Mentorat direct avec les fondateurs, zéro hiérarchie inutile',
+      'Poste long terme envisagé si les résultats sont là',
     ],
   },
   {
     id: 'voice-ai-trainer',
-    title: 'Entraîneur IA vocale — Français immobilier',
+    title: 'Entraîneur IA vocale, Immobilier français',
     type: 'Freelance / Mission',
-    location: 'Full remote — France',
+    location: 'Full remote, France',
     duration: 'Dès août 2026 · Mission de 2 à 4 semaines',
     color: TEAL,
     published: true,
     tags: ['IA','Voice AI','NLP','Freelance'],
-    mission: 'Sophie, notre agent vocal IA, doit parler comme un vrai conseiller immobilier français — pas comme un robot traduit de l\'anglais. On cherche quelqu\'un qui comprend à la fois les conversations immobilières et comment entraîner un modèle de langage.',
+    mission: 'Sophie, notre agent vocal IA, doit parler comme un vrai conseiller immobilier français, et non comme un robot traduit de l\'anglais. On cherche quelqu\'un qui comprend à la fois les conversations immobilières et comment entraîner un modèle de langage.',
     responsibilities: [
       'Écouter et annoter des centaines d\'appels réels (décrochés ou manqués) pour identifier les patterns',
       'Rédiger des scripts de conversation naturels pour les scénarios d\'achat, de vente et de location',
@@ -83,14 +84,14 @@ export const DEFAULT_JOBS = [
     ],
     profile: [
       'Expérience en NLP, prompt engineering ou annotation de données conversationnelles',
-      'Excellente maîtrise du français courant, y compris les tournures orales naturelles',
+      "Français natif ou niveau bilingue obligatoire : tu dois entendre quand une formulation sonne faux à l'oreille d'un Français",
       'Connaissance du vocabulaire immobilier français (mandat, DPE, compromis, acte authentique...)',
-      'Sens du détail linguistique — vous entendez quand une phrase sonne faux',
+      'Sens du détail linguistique : vous entendez quand une phrase sonne faux',
       'Expérience avec des outils LLM (OpenAI, Mistral, ElevenLabs ou équivalent) appréciée',
       'Capacité à livrer de façon autonome sur une mission courte et dense',
     ],
     offer: [
-      'Tarif journalier compétitif — à discuter selon profil et expérience',
+      'Tarif journalier compétitif, à discuter selon profil et expérience',
       'Mission 100 % remote, organisation flexible',
       'Accès à notre infrastructure IA complète pour les tests',
       'Possibilité de mission récurrente sur les prochains mois',
@@ -212,7 +213,7 @@ function ApplyForm({job,onClose}:{job:Job;onClose:()=>void}) {
               <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" style={{display:'none'}} onChange={handleFile}/>
               <button type="button" onClick={()=>fileRef.current?.click()}
                 style={{width:'100%',padding:'12px',borderRadius:12,border:`1.5px dashed ${cvName?LIME:BDR2}`,background:cvName?LIME_LT:'transparent',color:cvName?LIME:MUTED,fontSize:13,cursor:'pointer',fontFamily:FB,transition:'all 0.2s'}}>
-                {cvName ? `✓ ${cvName}` : '📎 Joindre votre CV (PDF, max 5 Mo — optionnel)'}
+                {cvName ? `✓ ${cvName}` : '📎 Joindre votre CV (PDF, max 5 Mo, optionnel)'}
               </button>
             </div>
             {error&&<p style={{fontSize:12,color:RED,fontFamily:FB,margin:0}}>{error}</p>}
@@ -351,7 +352,7 @@ export default function Carrieres() {
           <span style={{fontSize:11,color:SUBTLE,fontFamily:FB,marginLeft:4}}>/ Carrières</span>
         </a>
         <div style={{display:'flex',gap:14,alignItems:'center'}}>
-          <a href="/" style={{fontSize:13,color:MUTED,textDecoration:'none',fontFamily:FB}}>← Retour au site</a>
+          <a href="/" style={{fontSize:13,color:MUTED,textDecoration:'none',fontFamily:FB}}>Retour au site</a>
           <a href="mailto:team@vanivert.eu" style={{padding:'9px 18px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:13,textDecoration:'none',fontFamily:FH}}>
             Candidature spontanée
           </a>
@@ -365,7 +366,7 @@ export default function Carrieres() {
           <motion.div initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} transition={{duration:0.5}}>
             <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:20}}>
               <span style={{width:6,height:6,borderRadius:'50%',background:GR,boxShadow:`0 0 10px ${GR}`}}/>
-              <span style={{fontSize:11,fontWeight:600,color:GR,letterSpacing:'0.10em',textTransform:'uppercase' as const,fontFamily:FB}}>{published.length} poste{published.length>1?'s':''} ouvert{published.length>1?'s':''} — recrutement actif</span>
+              <span style={{fontSize:11,fontWeight:600,color:GR,letterSpacing:'0.10em',textTransform:'uppercase' as const,fontFamily:FB}}>{published.length} poste{published.length>1?'s':''} ouvert{published.length>1?'s':''} · recrutement actif</span>
             </div>
           </motion.div>
           <motion.h1 initial={{opacity:0,y:22}} animate={{opacity:1,y:0}} transition={{duration:0.7,ease:EZ,delay:0.08}}
@@ -391,8 +392,8 @@ export default function Carrieres() {
         <div style={{maxWidth:900,margin:'0 auto'}}>
           <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}} className="job-grid">
             {[
-              {icon:'🎯',title:'Vrai terrain dès le premier jour',body:'Pas de stage de 6 mois où tu apportes des cafés. Chez nous, tu as des vrais clients, un vrai produit et de vraies responsabilités.'},
-              {icon:'🧠',title:'Vous travaillez avec l\'IA, vraiment',body:'On utilise nos propres outils au quotidien. Vanivert, Sophie, le bot WhatsApp — vous aurez accès à tout et vous contribuerez à les améliorer.'},
+              {icon:'🎯',title:'Vrai terrain dès le premier jour',body:'Pas de stage de 6 mois à apporter des cafés. Dès le premier jour, vrais clients, vrai produit, vraies responsabilités.'},
+              {icon:'🧠',title:'Vous travaillez avec l\'IA, vraiment',body:'On utilise nos propres outils au quotidien. Vanivert, Sophie, le bot WhatsApp : vous aurez accès à tout et vous contribuerez à les améliorer.'},
               {icon:'📈',title:'Perspective de long terme',body:'On cherche des gens avec qui on a envie de continuer. Les stages se transforment en postes quand ça colle.'},
             ].map(v=>(
               <FadeUp key={v.title}>
@@ -436,7 +437,7 @@ export default function Carrieres() {
             <p style={{fontSize:15,color:MUTED,lineHeight:1.75,marginBottom:28,fontFamily:FB}}>
               On est ouverts aux profils atypiques. Si vous pensez pouvoir apporter quelque chose à Vanivert, écrivez-nous directement.
             </p>
-            <a href="mailto:team@vanivert.eu?subject=Candidature spontanée — Vanivert"
+            <a href="mailto:team@vanivert.eu?subject=Candidature spontanée Vanivert"
               style={{padding:'14px 32px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8,boxShadow:`0 8px 24px ${LIME_GL}`,fontFamily:FH}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>

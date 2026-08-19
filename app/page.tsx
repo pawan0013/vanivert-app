@@ -78,7 +78,7 @@ function Nav() {
   const [sc,setSc]=useState(false)
   const [mob,setMob]=useState(false)
   useEffect(()=>{const h=()=>setSc(window.scrollY>30);window.addEventListener('scroll',h,{passive:true});return()=>window.removeEventListener('scroll',h)},[])
-  const links:[string,string][]=[['Fonctionnalités','#features'],['ROI','#roi'],["Tester l'IA",'#tester-ia'],['Équipe','#team'],['Investisseurs','/investisseurs']]
+  const links:[string,string][]=[['Fonctionnalités','#features'],['ROI','#roi'],["Tester l'IA",'#tester-ia'],['Équipe','#team'],['Investisseurs','/investisseurs'],['Carrières','/carrieres']]
   return (
     <>
       <nav style={{position:'fixed',top:0,left:0,right:0,zIndex:200,height:64,display:'flex',alignItems:'center',background:sc?'rgba(8,30,44,0.96)':'transparent',backdropFilter:sc?'blur(20px)':'none',WebkitBackdropFilter:sc?'blur(20px)':'none',borderBottom:`1px solid ${sc?BDR2:'transparent'}`,transition:'all 0.35s cubic-bezier(0.32,0.72,0,1)'}}>
@@ -89,16 +89,16 @@ function Nav() {
           </a>
           <div className="nav-links" style={{display:'flex',gap:2}}>
             {links.map(([l,h])=>(
-              <a key={l} href={h} style={{fontSize:13,color:MUTED,textDecoration:'none',padding:'7px 13px',borderRadius:8,fontWeight:450,transition:'color 0.2s',fontFamily:FB}}
+              <a key={l} href={h} style={{fontSize:12,color:MUTED,textDecoration:'none',padding:'6px 10px',borderRadius:8,fontWeight:450,transition:'color 0.2s',fontFamily:FB}}
                 onMouseEnter={e=>(e.currentTarget.style.color=WHITE)} onMouseLeave={e=>(e.currentTarget.style.color=MUTED)}>{l}</a>
             ))}
           </div>
-          <div className="nav-links" style={{display:'flex',gap:10,alignItems:'center'}}>
+          <div className="nav-links" style={{display:'flex',gap:6,alignItems:'center'}}>
             <a href="/login" style={{fontSize:13,color:MUTED,textDecoration:'none',padding:'8px 14px',fontWeight:450,transition:'color 0.2s',fontFamily:FB}}
               onMouseEnter={e=>(e.currentTarget.style.color=WHITE)} onMouseLeave={e=>(e.currentTarget.style.color=MUTED)}>Connexion</a>
             <a href={AI_PHONE_TEL} style={{fontSize:13,color:MUTED,textDecoration:'none',padding:'8px 14px',fontWeight:450,display:'inline-flex',alignItems:'center',gap:6,transition:'color 0.2s',fontFamily:FB}}
               onMouseEnter={e=>(e.currentTarget.style.color=LIME)} onMouseLeave={e=>(e.currentTarget.style.color=MUTED)}>📞 Appeler l&apos;IA</a>
-            <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer" style={{fontSize:13,fontWeight:700,color:'#000',textDecoration:'none',padding:'9px 22px',borderRadius:980,background:LIME,display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s',boxShadow:`0 4px 18px ${LIME_GL}`,fontFamily:FH}}
+            <a href="https://realestate-eu-demo.vercel.app/login" target="_blank" rel="noopener noreferrer" style={{fontSize:12,fontWeight:700,color:'#000',textDecoration:'none',padding:'8px 18px',borderRadius:980,background:LIME,display:'inline-flex',alignItems:'center',gap:8,transition:'background 0.25s',boxShadow:`0 4px 18px ${LIME_GL}`,fontFamily:FH}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=LIME2}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=LIME}}>
               Demander une démo
             </a>
@@ -997,8 +997,8 @@ export default function Home() {
         input::placeholder,textarea::placeholder{color:#64748B}
         input[type=range]{cursor:pointer}
         .nav-links{display:flex}.mob-nav{display:none}
-        @media(max-width:860px){.nav-links{display:none!important}.mob-nav{display:flex!important}}
-        @media(max-width:860px){.hero-grid{grid-template-columns:1fr!important}.hero-sphere{display:none!important}}
+        @media(max-width:1080px){.nav-links{display:none!important}.mob-nav{display:flex!important}}
+        @media(max-width:1080px){.hero-grid{grid-template-columns:1fr!important}.hero-sphere{display:none!important}}
         @media(max-width:768px){.alt-grid{grid-template-columns:1fr!important}.pricing-grid{grid-template-columns:1fr!important}.footer-grid{grid-template-columns:1fr 1fr!important}.stats-grid{grid-template-columns:1fr 1fr!important}}
         @media(max-width:480px){.footer-grid{grid-template-columns:1fr!important}.stats-grid{grid-template-columns:1fr!important}}
         ::-webkit-scrollbar{display:none}
