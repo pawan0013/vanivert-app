@@ -864,7 +864,7 @@ function Footer() {
   const cols=[
     {h:'Produit',links:[['Fonctionnalités','#features'],['ROI','#roi'],["Tester l'IA",'#tester-ia'],['Connexion','/login']]},
     {h:'Entreprise',links:[['Équipe','#team'],['Contact','#contact'],['Investisseurs','/investisseurs']]},
-    {h:'Légal',links:[['Mentions légales','/legal/mentions-legales'],['CGV','/legal/cgv'],['Confidentialité','/legal/confidentialite'],['Admin','/admin']]},
+    {h:'Légal',links:[['Mentions légales','/legal/mentions-legales'],['CGV','/legal/cgv'],['Confidentialité','/legal/confidentialite'],['Carrières','/carrieres'],['Admin','/admin']]},
   ]
   return (
     <footer style={{background:BG_DEEP,borderTop:`1px solid ${BDR}`,padding:'52px 32px 28px'}}>

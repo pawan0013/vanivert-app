@@ -62,3 +62,28 @@ create index if not exists idx_pv_ts        on analytics_pageviews (ts desc);
 create index if not exists idx_sec_ts       on analytics_sections  (ts desc);
 create index if not exists idx_sec_section  on analytics_sections  (section_id);
 create index if not exists idx_cta_ts       on analytics_cta       (ts desc);
+
+-- ── CANDIDATURES TABLE ────────────────────────────────────────────────────────
+create table if not exists candidatures (
+  id         bigserial primary key,
+  job_id     text not null,
+  job_title  text,
+  prenom     text,
+  nom        text,
+  email      text not null,
+  phone      text,
+  linkedin   text,
+  portfolio  text,
+  message    text,
+  cv_filename text,
+  status     text default 'nouvelle',
+  notes      text,
+  ts         timestamptz not null default now()
+);
+
+alter table candidatures enable row level security;
+create policy "anon insert candidatures" on candidatures for insert to anon with check (true);
+create policy "service read candidatures" on candidatures for select to service_role using (true);
+create policy "service update candidatures" on candidatures for update to service_role using (true);
+create index if not exists idx_cand_ts on candidatures (ts desc);
+create index if not exists idx_cand_job on candidatures (job_id);

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { fetchAnalytics, SECTIONS } from '@/lib/analytics'
+import { DEFAULT_JOBS } from '@/app/carrieres/page'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DEFAULT_ARTICLES, type Article } from '@/lib/articles'
 
@@ -85,8 +86,8 @@ function Btn({children,onClick,color=LIME,disabled=false}:{children:React.ReactN
   )
 }
 
-type Tab='dashboard'|'cms'|'blog'|'leads'|'analytics'|'settings'
-const TABS:[Tab,string,string][]=[['dashboard','📊','Tableau de bord'],['analytics','📈','Analytique'],['cms','✏️','Contenu site'],['blog','📝','Blog'],['leads','👤','Leads'],['settings','⚙️','Paramètres']]
+type Tab='dashboard'|'cms'|'blog'|'leads'|'analytics'|'carrieres'|'settings'
+const TABS:[Tab,string,string][]=[['dashboard','📊','Tableau de bord'],['analytics','📈','Analytique'],['cms','✏️','Contenu site'],['blog','📝','Blog'],['leads','👤','Leads'],['carrieres','💼','Carrières'],['settings','⚙️','Paramètres']]
 
 function DashboardTab() {
   const [leads,setLeads]=useState<{email:string;name:string;agency_name:string;created_at:string}[]>([])
@@ -488,6 +489,172 @@ function AnalyticsTab() {
   )
 }
 
+// ── JOBS KEY ─────────────────────────────────────────────────────────────────
+const JOBS_KEY = 'vanivert_jobs_v1'
+const CAND_KEY = 'vanivert_candidatures_cache'
+
+type Job = {id:string;title:string;type:string;location:string;duration:string;color:string;published:boolean;tags:string[];mission:string;responsibilities:string[];profile:string[];offer:string[]}
+type Candidature = {id?:number;job_id:string;job_title:string;prenom:string;nom:string;email:string;phone:string;linkedin:string;portfolio:string;message:string;cv_filename:string;status:string;notes:string;ts:string}
+
+function CarrieresTab() {
+  const [jobs,setJobs]=useState<Job[]>([])
+  const [cands,setCands]=useState<Candidature[]>([])
+  const [editJob,setEditJob]=useState<Job|null>(null)
+  const [activeView,setActiveView]=useState<'jobs'|'candidatures'>('candidatures')
+  const [saved,setSaved]=useState(false)
+  const [loadingCands,setLoadingCands]=useState(false)
+  const SB_URL=process.env.NEXT_PUBLIC_SUPABASE_URL||''
+  const SB_KEY=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY||''
+
+  useEffect(()=>{
+    try{const s=localStorage.getItem(JOBS_KEY);setJobs(s?JSON.parse(s):DEFAULT_JOBS)}catch{setJobs(DEFAULT_JOBS)}
+  },[])
+
+  useEffect(()=>{
+    if(activeView!=='candidatures') return
+    // Try Supabase first, fall back to cache
+    if(SB_URL&&SB_KEY){
+      setLoadingCands(true)
+      fetch(`${SB_URL}/rest/v1/candidatures?order=ts.desc&limit=100`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}})
+        .then(r=>r.json()).then(d=>{if(Array.isArray(d)){setCands(d);try{localStorage.setItem(CAND_KEY,JSON.stringify(d))}catch{}}})
+        .catch(()=>{try{const c=localStorage.getItem(CAND_KEY);if(c)setCands(JSON.parse(c))}catch{}})
+        .finally(()=>setLoadingCands(false))
+    } else {
+      try{const c=localStorage.getItem(CAND_KEY);if(c)setCands(JSON.parse(c))}catch{}
+    }
+  },[activeView,SB_URL,SB_KEY])
+
+  function saveJobs(list:Job[]){
+    setJobs(list)
+    try{localStorage.setItem(JOBS_KEY,JSON.stringify(list))}catch{}
+    setSaved(true);setTimeout(()=>setSaved(false),2000)
+  }
+  function togglePublish(id:string){saveJobs(jobs.map(j=>j.id===id?{...j,published:!j.published}:j))}
+  function saveEdit(){if(!editJob)return;saveJobs(jobs.map(j=>j.id===editJob.id?editJob:j));setEditJob(null)}
+
+  async function updateStatus(id:number,status:string){
+    setCands(cands.map(c=>c.id===id?{...c,status}:c))
+    if(SB_URL&&SB_KEY){
+      await fetch(`${SB_URL}/rest/v1/candidatures?id=eq.${id}`,{method:'PATCH',headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({status})})
+    }
+  }
+
+  const statusColors:Record<string,string>={'nouvelle':TEAL,'en_cours':LIME,'entretien':'#A78BFA','refusé':RED,'accepté':GR}
+  const statusLabels:Record<string,string>={'nouvelle':'Nouvelle','en_cours':'En cours','entretien':'Entretien','refusé':'Refusée','accepté':'Acceptée'}
+
+  if(editJob) return (
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
+        <div style={{fontFamily:FH,fontSize:18,fontWeight:700,color:WHITE}}>Modifier : {editJob.title}</div>
+        <div style={{display:'flex',gap:10}}>
+          <Btn onClick={()=>setEditJob(null)} color={MUTED}>Annuler</Btn>
+          <Btn onClick={saveEdit} color={saved?GR:LIME}>{saved?'✓ Sauvegardé':'Sauvegarder'}</Btn>
+        </div>
+      </div>
+      <Section title="Informations générales">
+        <div style={{marginBottom:12}}><Label>Titre du poste</Label><input value={editJob.title} onChange={e=>setEditJob({...editJob,title:e.target.value})} style={inp()}/></div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+          <div><Label>Type</Label><input value={editJob.type} onChange={e=>setEditJob({...editJob,type:e.target.value})} style={inp()}/></div>
+          <div><Label>Localisation</Label><input value={editJob.location} onChange={e=>setEditJob({...editJob,location:e.target.value})} style={inp()}/></div>
+          <div><Label>Durée / Début</Label><input value={editJob.duration} onChange={e=>setEditJob({...editJob,duration:e.target.value})} style={inp()}/></div>
+          <div style={{display:'flex',alignItems:'center',gap:10,paddingTop:18}}><Label>Publié</Label><input type="checkbox" checked={editJob.published} onChange={e=>setEditJob({...editJob,published:e.target.checked})} style={{width:16,height:16,accentColor:LIME}}/></div>
+        </div>
+        <div><Label>Mission (accroche)</Label><textarea value={editJob.mission} onChange={e=>setEditJob({...editJob,mission:e.target.value})} rows={3} style={inp({resize:'vertical' as const})}/></div>
+      </Section>
+      <Section title="Responsabilités (une par ligne)">
+        <textarea value={editJob.responsibilities.join(String.fromCharCode(10))} onChange={e=>setEditJob({...editJob,responsibilities:e.target.value.split(String.fromCharCode(10))})} rows={7} style={inp({resize:'vertical' as const,fontFamily:'monospace',fontSize:12})}/>
+      </Section>
+      <Section title="Profil recherché (une par ligne)">
+        <textarea value={editJob.profile.join(String.fromCharCode(10))} onChange={e=>setEditJob({...editJob,profile:e.target.value.split(String.fromCharCode(10))})} rows={6} style={inp({resize:'vertical' as const,fontFamily:'monospace',fontSize:12})}/>
+      </Section>
+      <Section title="Ce qu'on offre (une par ligne)">
+        <textarea value={editJob.offer.join(String.fromCharCode(10))} onChange={e=>setEditJob({...editJob,offer:e.target.value.split(String.fromCharCode(10))})} rows={5} style={inp({resize:'vertical' as const,fontFamily:'monospace',fontSize:12})}/>
+      </Section>
+    </div>
+  )
+
+  return (
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
+        <div style={{fontFamily:FH,fontSize:22,fontWeight:700,color:WHITE}}>Carrières</div>
+        <div style={{display:'flex',gap:8}}>
+          {(['candidatures','jobs'] as const).map(v=>(
+            <button key={v} onClick={()=>setActiveView(v)}
+              style={{padding:'8px 16px',borderRadius:980,background:activeView===v?LIME:'transparent',color:activeView===v?'#000':MUTED,border:`1px solid ${activeView===v?LIME:BDR}`,fontSize:12,cursor:'pointer',fontFamily:FB,fontWeight:activeView===v?700:400}}>
+              {v==='candidatures'?`Candidatures (${cands.length})`:'Gérer les postes'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {activeView==='jobs' && (
+        <div>
+          {jobs.map(j=>(
+            <div key={j.id} style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:14,padding:'16px 18px',marginBottom:10,display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,backdropFilter:'blur(12px)'}}>
+              <div>
+                <div style={{fontSize:13,fontWeight:600,color:WHITE,fontFamily:FH,marginBottom:3}}>{j.title}</div>
+                <div style={{fontSize:11,color:SUBTLE,fontFamily:FB}}>{j.type} · {j.location} · {j.duration}</div>
+              </div>
+              <div style={{display:'flex',gap:8}}>
+                <span style={{fontSize:11,fontWeight:600,color:j.published?GR:MUTED,fontFamily:FB}}>{j.published?'✓ Publié':'Masqué'}</span>
+                <button onClick={()=>togglePublish(j.id)} style={{padding:'6px 12px',borderRadius:980,background:j.published?'rgba(248,113,113,0.12)':'rgba(74,222,128,0.12)',color:j.published?RED:GR,fontWeight:600,fontSize:11,border:`1px solid ${j.published?RED:GR}28`,cursor:'pointer',fontFamily:FB}}>{j.published?'Masquer':'Publier'}</button>
+                <button onClick={()=>setEditJob(j)} style={{padding:'6px 12px',borderRadius:980,background:LIME_LT,color:LIME,fontWeight:600,fontSize:11,border:'1px solid rgba(132,204,22,0.28)',cursor:'pointer',fontFamily:FB}}>Modifier</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeView==='candidatures' && (
+        <div>
+          {loadingCands&&<p style={{fontSize:13,color:MUTED,fontFamily:FB,marginBottom:16}}>Chargement...</p>}
+          {!loadingCands&&cands.length===0&&(
+            <div style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:14,padding:'32px',textAlign:'center' as const}}>
+              <p style={{fontSize:13,color:MUTED,fontFamily:FB}}>Aucune candidature pour l&apos;instant. Elles apparaîtront ici dès que quelqu&apos;un postulera via le site.</p>
+              {!SB_URL&&<p style={{fontSize:12,color:SUBTLE,fontFamily:FB,marginTop:8}}>Supabase non configuré — configurez les variables d&apos;env pour persister les candidatures.</p>}
+            </div>
+          )}
+          {cands.map((c,i)=>(
+            <div key={c.id||i} style={{background:CARD,border:`1px solid ${BDR}`,borderRadius:14,padding:'18px 20px',marginBottom:12,backdropFilter:'blur(12px)'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12,flexWrap:'wrap' as const,gap:10}}>
+                <div>
+                  <div style={{fontSize:14,fontWeight:700,color:WHITE,fontFamily:FH,marginBottom:2}}>{c.prenom} {c.nom}</div>
+                  <div style={{fontSize:12,color:MUTED,fontFamily:FB}}>
+                    <a href={`mailto:${c.email}`} style={{color:LIME}}>{c.email}</a>
+                    {c.phone&&<span> · {c.phone}</span>}
+                  </div>
+                  <div style={{fontSize:11,color:SUBTLE,fontFamily:FB,marginTop:3}}>{c.job_title} · {new Date(c.ts).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+                </div>
+                <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                  {c.linkedin&&<a href={c.linkedin} target="_blank" rel="noopener noreferrer" style={{fontSize:11,color:TEAL,fontFamily:FB}}>LinkedIn →</a>}
+                  {c.portfolio&&<a href={c.portfolio} target="_blank" rel="noopener noreferrer" style={{fontSize:11,color:TEAL,fontFamily:FB}}>Portfolio →</a>}
+                  {c.cv_filename&&<span style={{fontSize:11,color:LIME,fontFamily:FB}}>📎 {c.cv_filename}</span>}
+                  <select value={c.status||'nouvelle'} onChange={e=>c.id&&updateStatus(c.id,e.target.value)}
+                    style={{padding:'5px 10px',borderRadius:8,border:`1px solid ${statusColors[c.status]||BDR}`,background:'rgba(30,41,59,0.80)',color:statusColors[c.status]||WHITE,fontSize:11,cursor:'pointer',fontFamily:FB,fontWeight:700}}>
+                    {Object.entries(statusLabels).map(([v,l])=>(
+                      <option key={v} value={v} style={{background:'#0B1E2D'}}>{l}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div style={{fontSize:12,color:MUTED,lineHeight:1.65,fontFamily:FB,padding:'12px 14px',borderRadius:10,background:'rgba(255,255,255,0.03)',border:`1px solid ${BDR}`}}>
+                {c.message}
+              </div>
+              <div style={{marginTop:10,display:'flex',gap:10}}>
+                <a href={`mailto:${c.email}?subject=Votre candidature chez Vanivert — ${c.job_title}`}
+                  style={{padding:'7px 14px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:11,textDecoration:'none',fontFamily:FH}}>
+                  Répondre par email →
+                </a>
+                {c.phone&&<a href={`tel:${c.phone}`} style={{padding:'7px 14px',borderRadius:980,border:`1px solid ${BDR2}`,color:MUTED,fontSize:11,textDecoration:'none',fontFamily:FB}}>Appeler</a>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function SettingsTab({onLogout}:{onLogout:()=>void}) {
   const [newPass,setNewPass]=useState(''); const [saved,setSaved]=useState(false)
   function savePass(){if(!newPass||newPass.length<8){alert('Mot de passe trop court (8 caractères minimum)');return}try{localStorage.setItem('vanivert_admin_pass',newPass);setSaved(true);setTimeout(()=>setSaved(false),2000)}catch{}}
@@ -578,6 +745,7 @@ export default function AdminPage() {
             {tab==='blog'&&<BlogTab/>}
             {tab==='leads'&&<LeadsTab/>}
             {tab==='analytics'&&<AnalyticsTab/>}
+            {tab==='carrieres'&&<CarrieresTab/>}
             {tab==='settings'&&<SettingsTab onLogout={logout}/>}
           </motion.div>
         </AnimatePresence>
