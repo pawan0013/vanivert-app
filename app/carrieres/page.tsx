@@ -72,7 +72,7 @@ export const DEFAULT_JOBS = [
     duration: 'Dès août 2026 · Mission de 2 à 4 semaines',
     color: TEAL,
     published: true,
-    tags: ['IA','Voice AI','NLP','Freelance'],
+    tags: ['IA','IA vocale','NLP','Freelance'],
     mission: 'Sophie, notre agent vocal IA, doit parler comme un vrai conseiller immobilier français, et non comme un robot traduit de l\'anglais. On cherche quelqu\'un qui comprend à la fois les conversations immobilières et comment entraîner un modèle de langage.',
     responsibilities: [
       'Écouter et annoter des centaines d\'appels réels (décrochés ou manqués) pour identifier les patterns',
@@ -127,7 +127,7 @@ function FadeUp({children,delay=0,style={}}:{children:React.ReactNode;delay?:num
 }
 
 // ── APPLICATION FORM ──────────────────────────────────────────────────────────
-function ApplyForm({job,onClose}:{job:Job;onClose:()=>void}) {
+function ApplyForm({job,onFermer}:{job:Job;onFermer:()=>void}) {
   const [prenom,setPrenom]=useState('')
   const [nom,setNom]=useState('')
   const [email,setEmail]=useState('')
@@ -182,11 +182,11 @@ function ApplyForm({job,onClose}:{job:Job;onClose:()=>void}) {
   return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
       style={{position:'fixed',inset:0,zIndex:500,background:'rgba(2,6,23,0.85)',backdropFilter:'blur(12px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}
-      onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      onClick={e=>{if(e.target===e.currentTarget)onFermer()}}>
       <motion.div initial={{opacity:0,y:24,scale:0.97}} animate={{opacity:1,y:0,scale:1}} exit={{opacity:0,y:24}}
         transition={{duration:0.35,ease:EZ}}
         style={{background:'#0B1E2D',border:`1px solid ${BDR2}`,borderRadius:24,padding:'32px 28px',width:'100%',maxWidth:560,maxHeight:'90dvh',overflowY:'auto' as const,position:'relative'}}>
-        <button onClick={onClose} style={{position:'absolute',top:16,right:16,background:'rgba(255,255,255,0.08)',border:`1px solid ${BDR}`,borderRadius:8,color:MUTED,fontSize:14,cursor:'pointer',padding:'6px 10px',fontFamily:FB}}>✕</button>
+        <button onClick={onFermer} style={{position:'absolute',top:16,right:16,background:'rgba(255,255,255,0.08)',border:`1px solid ${BDR}`,borderRadius:8,color:MUTED,fontSize:14,cursor:'pointer',padding:'6px 10px',fontFamily:FB}}>✕</button>
         <div style={{fontSize:11,fontWeight:700,color:job.color,letterSpacing:'0.10em',textTransform:'uppercase' as const,fontFamily:FB,marginBottom:8}}>{job.type}</div>
         <h2 style={{fontFamily:FH,fontWeight:700,fontSize:18,color:WHITE,marginBottom:24,lineHeight:1.3}}>{job.title}</h2>
 
@@ -195,7 +195,7 @@ function ApplyForm({job,onClose}:{job:Job;onClose:()=>void}) {
             <div style={{fontSize:48,marginBottom:16}}>✅</div>
             <div style={{fontSize:18,fontWeight:700,color:WHITE,marginBottom:8,fontFamily:FH}}>Candidature envoyée !</div>
             <div style={{fontSize:14,color:MUTED,lineHeight:1.7,fontFamily:FB}}>On revient vers vous sous 48h ouvrées. En attendant, testez Sophie au <a href="tel:+33221826074" style={{color:LIME}}>02 21 82 60 74</a></div>
-            <button onClick={onClose} style={{marginTop:24,padding:'12px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:13,border:'none',cursor:'pointer',fontFamily:FH}}>Fermer</button>
+            <button onClick={onFermer} style={{marginTop:24,padding:'12px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:13,border:'none',cursor:'pointer',fontFamily:FH}}>Fermer</button>
           </div>
         ) : (
           <form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:10}}>
@@ -462,7 +462,7 @@ export default function Carrieres() {
 
       {/* Application modal */}
       <AnimatePresence>
-        {applying && <ApplyForm job={applying} onClose={()=>setApplying(null)}/>}
+        {applying && <ApplyForm job={applying} onFermer={()=>setApplying(null)}/>}
       </AnimatePresence>
     </div>
   )
