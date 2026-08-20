@@ -127,30 +127,29 @@ function FadeUp({children,delay=0,style={}}:{children:React.ReactNode;delay?:num
 }
 
 // ── APPLICATION FORM ──────────────────────────────────────────────────────────
-function ApplyForm({job,onFermer}:{job:Job;onFermer:()=>void}) {
+const COUNTRY_CODES = [
+  {code:'+33',flag:'🇫🇷',label:'France'},
+  {code:'+32',flag:'🇧🇪',label:'Belgique'},
+  {code:'+41',flag:'🇨🇭',label:'Suisse'},
+  {code:'+352',flag:'🇱🇺',label:'Luxembourg'},
+  {code:'+44',flag:'🇬🇧',label:'Royaume-Uni'},
+  {code:'+49',flag:'🇩🇪',label:'Allemagne'},
+  {code:'+1',flag:'🇺🇸',label:'États-Unis'},
+]
+
+function ApplyForm({job,onClose}:{job:Job;onClose:()=>void}) {
   const [prenom,setPrenom]=useState('')
   const [nom,setNom]=useState('')
   const [email,setEmail]=useState('')
-  const [phone,setPhone]=useState('')
+  const [countryCode,setCountryCode]=useState('+33')
+  const [phoneNum,setPhoneNum]=useState('')
   const [linkedin,setLinkedin]=useState('')
   const [portfolio,setPortfolio]=useState('')
   const [message,setMessage]=useState('')
-  const [cvName,setCvName]=useState('')
-  const [cvB64,setCvB64]=useState('')
   const [sent,setSent]=useState(false)
   const [loading,setLoading]=useState(false)
   const [error,setError]=useState('')
-  const fileRef=useRef<HTMLInputElement>(null)
-
-  function handleFile(e:React.ChangeEvent<HTMLInputElement>) {
-    const f=e.target.files?.[0]
-    if(!f) return
-    if(f.size>5*1024*1024){setError('Fichier trop lourd (5 Mo max)');return}
-    setCvName(f.name)
-    const reader=new FileReader()
-    reader.onload=ev=>{setCvB64((ev.target?.result as string).split(',')[1]||'')}
-    reader.readAsDataURL(f)
-  }
+  const [showCC,setShowCC]=useState(false)
 
   async function submit(e:React.FormEvent) {
     e.preventDefault()
@@ -162,67 +161,138 @@ function ApplyForm({job,onFermer}:{job:Job;onFermer:()=>void}) {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
-          job_id: job.id,
+          job_id:    job.id,
           job_title: job.title,
-          prenom,nom,email,phone,linkedin,portfolio,message,
-          cv_filename: cvName,
-          cv_base64: cvB64,
+          prenom, nom, email,
+          phone:     phoneNum ? `${countryCode} ${phoneNum}` : '',
+          linkedin, portfolio, message,
+          cv_filename: '',
         })
       })
-      if(!res.ok) throw new Error('Erreur serveur')
+      const data = await res.json()
+      if(!res.ok) throw new Error(data.error||'Erreur serveur')
       setSent(true)
-    } catch {
-      setError('Une erreur est survenue. Envoyez directement à team@vanivert.eu')
+    } catch(err) {
+      console.error(err)
+      setError('Une erreur est survenue. Écrivez directement à team@vanivert.eu')
     }
     setLoading(false)
   }
 
-  const inp:React.CSSProperties={width:'100%',padding:'12px 14px',borderRadius:12,border:`1px solid ${BDR2}`,fontSize:13,outline:'none',color:WHITE,fontFamily:FB,background:'rgba(30,41,59,0.60)',boxSizing:'border-box' as const}
+  const inp:React.CSSProperties={
+    width:'100%',padding:'12px 14px',borderRadius:12,
+    border:`1px solid ${BDR2}`,fontSize:13,outline:'none',
+    color:WHITE,fontFamily:FB,background:'rgba(30,41,59,0.60)',
+    boxSizing:'border-box' as const
+  }
 
   return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
-      style={{position:'fixed',inset:0,zIndex:500,background:'rgba(2,6,23,0.85)',backdropFilter:'blur(12px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}
-      onClick={e=>{if(e.target===e.currentTarget)onFermer()}}>
+      style={{position:'fixed',inset:0,zIndex:500,background:'rgba(2,6,23,0.88)',backdropFilter:'blur(14px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}
+      onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
       <motion.div initial={{opacity:0,y:24,scale:0.97}} animate={{opacity:1,y:0,scale:1}} exit={{opacity:0,y:24}}
         transition={{duration:0.35,ease:EZ}}
-        style={{background:'#0B1E2D',border:`1px solid ${BDR2}`,borderRadius:24,padding:'32px 28px',width:'100%',maxWidth:560,maxHeight:'90dvh',overflowY:'auto' as const,position:'relative'}}>
-        <button onClick={onFermer} style={{position:'absolute',top:16,right:16,background:'rgba(255,255,255,0.08)',border:`1px solid ${BDR}`,borderRadius:8,color:MUTED,fontSize:14,cursor:'pointer',padding:'6px 10px',fontFamily:FB}}>✕</button>
-        <div style={{fontSize:11,fontWeight:700,color:job.color,letterSpacing:'0.10em',textTransform:'uppercase' as const,fontFamily:FB,marginBottom:8}}>{job.type}</div>
-        <h2 style={{fontFamily:FH,fontWeight:700,fontSize:18,color:WHITE,marginBottom:24,lineHeight:1.3}}>{job.title}</h2>
+        style={{background:'#0B1E2D',border:`1px solid ${BDR2}`,borderRadius:24,padding:'32px 28px',width:'100%',maxWidth:520,maxHeight:'90dvh',overflowY:'auto' as const,position:'relative'}}>
+
+        <button onClick={onClose} style={{position:'absolute',top:14,right:14,background:'rgba(255,255,255,0.08)',border:`1px solid ${BDR}`,borderRadius:8,color:MUTED,fontSize:13,cursor:'pointer',padding:'5px 10px',fontFamily:FB}}>✕</button>
+
+        <div style={{fontSize:10,fontWeight:700,color:job.color,letterSpacing:'0.10em',textTransform:'uppercase' as const,fontFamily:FB,marginBottom:6}}>{job.type}</div>
+        <h2 style={{fontFamily:FH,fontWeight:700,fontSize:17,color:WHITE,marginBottom:22,lineHeight:1.3}}>{job.title}</h2>
 
         {sent ? (
-          <div style={{textAlign:'center' as const,padding:'32px 0'}}>
-            <div style={{fontSize:48,marginBottom:16}}>✅</div>
+          <div style={{textAlign:'center' as const,padding:'28px 0'}}>
+            <div style={{fontSize:44,marginBottom:14}}>✅</div>
             <div style={{fontSize:18,fontWeight:700,color:WHITE,marginBottom:8,fontFamily:FH}}>Candidature envoyée !</div>
-            <div style={{fontSize:14,color:MUTED,lineHeight:1.7,fontFamily:FB}}>On revient vers vous sous 48h ouvrées. En attendant, testez Sophie au <a href="tel:+33221826074" style={{color:LIME}}>02 21 82 60 74</a></div>
-            <button onClick={onFermer} style={{marginTop:24,padding:'12px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:13,border:'none',cursor:'pointer',fontFamily:FH}}>Fermer</button>
+            <div style={{fontSize:13,color:MUTED,lineHeight:1.7,fontFamily:FB}}>
+              On vous répond sous 48h ouvrées.<br/>
+              En attendant, testez Sophie au{' '}
+              <a href="tel:+33221826074" style={{color:LIME}}>02 21 82 60 74</a>
+            </div>
+            <button onClick={onClose} style={{marginTop:22,padding:'11px 28px',borderRadius:980,background:LIME,color:'#000',fontWeight:700,fontSize:13,border:'none',cursor:'pointer',fontFamily:FH}}>Fermer</button>
           </div>
         ) : (
           <form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:10}}>
+            {/* Name row */}
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-              <input required value={prenom} onChange={e=>setPrenom(e.target.value)} placeholder="Prénom *" style={inp}/>
-              <input required value={nom} onChange={e=>setNom(e.target.value)} placeholder="Nom *" style={inp}/>
+              <div>
+                <div style={{fontSize:10,color:SUBTLE,fontFamily:FB,marginBottom:5}}>Prénom *</div>
+                <input required value={prenom} onChange={e=>setPrenom(e.target.value)} placeholder="Marie" style={inp}/>
+              </div>
+              <div>
+                <div style={{fontSize:10,color:SUBTLE,fontFamily:FB,marginBottom:5}}>Nom *</div>
+                <input required value={nom} onChange={e=>setNom(e.target.value)} placeholder="Dupont" style={inp}/>
+              </div>
             </div>
-            <input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email *" style={inp}/>
-            <input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="Téléphone" style={inp}/>
-            <input value={linkedin} onChange={e=>setLinkedin(e.target.value)} placeholder="Profil LinkedIn (url)" style={inp}/>
-            <input value={portfolio} onChange={e=>setPortfolio(e.target.value)} placeholder="Portfolio / GitHub / site perso (optionnel)" style={inp}/>
-            <textarea required value={message} onChange={e=>setMessage(e.target.value)} placeholder={`Pourquoi ce poste ? Qu'est-ce qui vous correspond dans ce que fait Vanivert ? (3-5 lignes)`} rows={5} style={{...inp,resize:'vertical' as const}}/>
-            {/* CV upload */}
+
+            {/* Email */}
             <div>
-              <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" style={{display:'none'}} onChange={handleFile}/>
-              <button type="button" onClick={()=>fileRef.current?.click()}
-                style={{width:'100%',padding:'12px',borderRadius:12,border:`1.5px dashed ${cvName?LIME:BDR2}`,background:cvName?LIME_LT:'transparent',color:cvName?LIME:MUTED,fontSize:13,cursor:'pointer',fontFamily:FB,transition:'all 0.2s'}}>
-                {cvName ? `✓ ${cvName}` : '📎 Joindre votre CV (PDF, max 5 Mo, optionnel)'}
-              </button>
+              <div style={{fontSize:10,color:SUBTLE,fontFamily:FB,marginBottom:5}}>Email *</div>
+              <input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="marie.dupont@gmail.com" style={inp}/>
             </div>
-            {error&&<p style={{fontSize:12,color:RED,fontFamily:FB,margin:0}}>{error}</p>}
-            <p style={{fontSize:11,color:SUBTLE,fontFamily:FB,lineHeight:1.55}}>En envoyant ce formulaire, vous acceptez que vos données soient utilisées pour l&apos;instruction de votre candidature. Données stockées en Europe, supprimées après 6 mois. <a href="/legal/confidentialite" style={{color:LIME}}>Confidentialité</a></p>
+
+            {/* Phone with country code */}
+            <div>
+              <div style={{fontSize:10,color:SUBTLE,fontFamily:FB,marginBottom:5}}>Téléphone</div>
+              <div style={{display:'flex',position:'relative'}}>
+                <button type="button" onClick={()=>setShowCC(!showCC)}
+                  style={{padding:'12px 12px',borderRadius:'12px 0 0 12px',border:`1px solid ${BDR2}`,borderRight:'none',background:'rgba(30,41,59,0.80)',color:WHITE,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',gap:6,flexShrink:0,fontFamily:FB,whiteSpace:'nowrap' as const}}>
+                  {COUNTRY_CODES.find(c=>c.code===countryCode)?.flag} {countryCode} ▾
+                </button>
+                <input type="tel" value={phoneNum} onChange={e=>setPhoneNum(e.target.value.replace(/[^0-9 ]/g,''))}
+                  placeholder="6 12 34 56 78"
+                  style={{...inp,borderRadius:'0 12px 12px 0',flex:1}}/>
+                {showCC && (
+                  <div style={{position:'absolute',top:'100%',left:0,zIndex:50,marginTop:4,background:'#0B1E2D',border:`1px solid ${BDR2}`,borderRadius:12,overflow:'hidden',minWidth:200,boxShadow:'0 8px 24px rgba(0,0,0,0.50)'}}>
+                    {COUNTRY_CODES.map(c=>(
+                      <button key={c.code} type="button" onClick={()=>{setCountryCode(c.code);setShowCC(false)}}
+                        style={{width:'100%',padding:'10px 14px',background:c.code===countryCode?LIME_LT:'transparent',color:WHITE,border:'none',cursor:'pointer',textAlign:'left' as const,display:'flex',alignItems:'center',gap:10,fontSize:12,fontFamily:FB}}>
+                        <span>{c.flag}</span><span>{c.label}</span><span style={{color:SUBTLE,marginLeft:'auto'}}>{c.code}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* LinkedIn */}
+            <div>
+              <div style={{fontSize:10,color:SUBTLE,fontFamily:FB,marginBottom:5}}>Profil LinkedIn</div>
+              <input value={linkedin} onChange={e=>setLinkedin(e.target.value)} placeholder="linkedin.com/in/marie-dupont" style={inp}/>
+            </div>
+
+            {/* Portfolio */}
+            <div>
+              <div style={{fontSize:10,color:SUBTLE,fontFamily:FB,marginBottom:5}}>Portfolio / GitHub / site perso</div>
+              <input value={portfolio} onChange={e=>setPortfolio(e.target.value)} placeholder="https://..." style={inp}/>
+            </div>
+
+            {/* Motivation */}
+            <div>
+              <div style={{fontSize:10,color:SUBTLE,fontFamily:FB,marginBottom:5}}>Pourquoi ce poste ? *</div>
+              <textarea required value={message} onChange={e=>setMessage(e.target.value)}
+                placeholder="Parlez-nous de vous en 3-5 lignes. Qu'est-ce qui vous correspond dans ce que fait Vanivert ?"
+                rows={5} style={{...inp,resize:'vertical' as const}}/>
+            </div>
+
+            {/* CV note */}
+            <div style={{padding:'10px 14px',borderRadius:10,background:'rgba(255,255,255,0.03)',border:`1px solid ${BDR}`,fontSize:11,color:SUBTLE,fontFamily:FB}}>
+              📎 Joignez votre CV en répondant par email après soumission, ou incluez un lien dans votre message.
+            </div>
+
+            {error && (
+              <p style={{fontSize:12,color:RED,fontFamily:FB,margin:0,padding:'10px 14px',borderRadius:10,background:'rgba(248,113,113,0.08)',border:'1px solid rgba(248,113,113,0.25)'}}>{error}</p>
+            )}
+
+            <p style={{fontSize:10,color:SUBTLE,fontFamily:FB,lineHeight:1.55}}>
+              En envoyant ce formulaire, vous acceptez que vos données soient utilisées pour votre candidature. Données stockées en Europe, supprimées après 6 mois.{' '}
+              <a href="/legal/confidentialite" style={{color:LIME}}>Confidentialité</a>
+            </p>
+
             <button type="submit" disabled={loading}
               style={{padding:'14px',borderRadius:980,background:loading?'rgba(255,255,255,0.1)':LIME,color:loading?MUTED:'#000',fontWeight:700,fontSize:14,border:'none',cursor:loading?'not-allowed':'pointer',fontFamily:FH,transition:'all 0.2s'}}
               onMouseEnter={e=>{if(!loading)(e.currentTarget as HTMLElement).style.background=LIME2}}
               onMouseLeave={e=>{if(!loading)(e.currentTarget as HTMLElement).style.background=LIME}}>
-              {loading?'Envoi en cours...':'Envoyer ma candidature →'}
+              {loading ? 'Envoi en cours...' : 'Envoyer ma candidature →'}
             </button>
           </form>
         )}
@@ -462,7 +532,7 @@ export default function Carrieres() {
 
       {/* Application modal */}
       <AnimatePresence>
-        {applying && <ApplyForm job={applying} onFermer={()=>setApplying(null)}/>}
+        {applying && <ApplyForm job={applying} onClose={()=>setApplying(null)}/>}
       </AnimatePresence>
     </div>
   )
