@@ -157,23 +157,31 @@ function ApplyForm({job,onClose}:{job:Job;onClose:()=>void}) {
     if(!message){setError('Dites-nous quelques mots sur votre candidature');return}
     setError('');setLoading(true)
     try {
-      const res = await fetch('/api/apply',{
+      // Call Web3Forms directly from browser (free plan requires client-side calls)
+      const res = await fetch('https://api.web3forms.com/submit',{
         method:'POST',
-        headers:{'Content-Type':'application/json'},
+        headers:{'Content-Type':'application/json',Accept:'application/json'},
         body: JSON.stringify({
-          job_id:    job.id,
-          job_title: job.title,
-          prenom, nom, email,
-          phone:     phoneNum ? `${countryCode} ${phoneNum}` : '',
-          linkedin, portfolio, message,
-          cv_filename: '',
+          access_key: '82a00fc0-7383-43f4-8672-f4effccbd1d4', // <-- replace after getting new key from web3forms.com
+          subject:    `Candidature Vanivert : ${job.title} - ${prenom} ${nom}`,
+          from_name:  `${prenom} ${nom} via Vanivert Carrieres`,
+          name:       `${prenom} ${nom}`,
+          email:      email,
+          replyto:    email,
+          phone:      phoneNum ? `${countryCode} ${phoneNum}` : 'non renseigne',
+          linkedin:   linkedin  || 'non renseigne',
+          portfolio:  portfolio || 'non renseigne',
+          poste:      job.title,
+          message:    message,
+          botcheck:   false,
         })
       })
       const data = await res.json()
-      if(!res.ok) throw new Error(data.error||'Erreur serveur')
+      console.log('Web3Forms response:', data)
+      if(!res.ok || data.success === false) throw new Error(data.message||'Erreur Web3Forms')
       setSent(true)
     } catch(err) {
-      console.error(err)
+      console.error('Submit error:', err)
       setError('Une erreur est survenue. Écrivez directement à team@vanivert.eu')
     }
     setLoading(false)
